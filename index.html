@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable 6-Max Opening Matrix</title>
+    <style>
+        :root {
+            /* Default Color Definitions - CSS Variables */
+            --color-ep1-bg: #a46ab5; --color-ep1-text: #fff; /* Purple */
+            --color-ep2-bg: #8a7e77; --color-ep2-text: #fff; /* Taupe */
+            --color-ep3-bg: #7e9aa8; --color-ep3-text: #fff; /* Slate */
+            --color-lj-bg: #d9534f;  --color-lj-text: #fff; /* Red */
+            --color-hj-bg: #f0ad4e;  --color-hj-text: #fff; /* Orange */
+            --color-co-bg: #5bc0de;  --color-co-text: #fff; /* Info Blue */
+            --color-btn-bg: #5cb85c; --color-btn-text: #fff; /* Green */
+            --color-sb-bg: #0275d8;  --color-sb-text: #fff; /* Primary Blue */
+            --color-fold-bg: #e9ecef; --color-fold-text: #495057; /* Light Gray */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1d2129;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .matrix-container, .controls, .io-container, .color-picker-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .hand-matrix {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+            border: 1px solid #ccc;
+            user-select: none; /* Prevent text selection during drag */
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
+        }
+
+        .hand-matrix td {
+            border: 1px solid #ddd;
+            width: calc(100% / 13);
+            height: 0;
+            padding-bottom: calc(100% / 13 - 2px);
+            text-align: center;
+            position: relative;
+            font-size: clamp(8px, 1.8vw, 12px);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.05s ease-in-out;
+        }
+
+        .hand-matrix td span {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: block; width: 100%;
+            pointer-events: none;
+        }
+
+        /* Position Cell Colors - Use CSS Variables */
+        .ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); }
+        .ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); }
+        .ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); }
+        .lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text); }
+        .hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text); }
+        .co  { background-color: var(--color-co-bg);  color: var(--color-co-text); }
+        .btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); }
+        .sb  { background-color: var(--color-sb-bg);  color: var(--color-sb-text); }
+        .fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text); }
+
+        .pair { font-weight: 700; }
+
+        /* Controls Section */
+        .controls h2, .io-container h2, .color-picker-container h2 {
+            margin-top: 0; margin-bottom: 15px;
+            font-weight: 400; font-size: 1.2em; color: #1d2129;
+        }
+        .controls { text-align: center; }
+
+        .position-selector {
+            display: inline-block;
+            margin: 3px; padding: 8px 10px;
+            font-size: 0.85em; /* Slightly smaller to fit more */
+            border-radius: 5px; cursor: pointer;
+            border: 1px solid transparent;
+            transition: border 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            min-width: 50px; /* Ensure minimum width */
+            text-align: center;
+        }
+        .position-selector:hover { opacity: 0.9; }
+        .position-selector.active-position {
+            border-width: 2px;
+            border-style: solid;
+            border-color: #333 !important; /* Use important to override specific border colors */
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        /* Selector Button Colors - Use CSS Variables */
+        .pos-ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); border: 1px solid var(--color-ep1-bg); }
+        .pos-ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); border: 1px solid var(--color-ep2-bg); }
+        .pos-ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); border: 1px solid var(--color-ep3-bg); }
+        .pos-lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text);  border: 1px solid var(--color-lj-bg); }
+        .pos-hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text);  border: 1px solid var(--color-hj-bg); }
+        .pos-co  { background-color: var(--color-co-bg);  color: var(--color-co-text);  border: 1px solid var(--color-co-bg); }
+        .pos-btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); border: 1px solid var(--color-btn-bg); }
+        .pos-sb  { background-color: var(--color-sb-bg);  color: var(--color-sb-text);  border: 1px solid var(--color-sb-bg); }
+        .pos-fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text);border: 1px solid #ccc; }
+
+
+        /* IO Container */
+        .io-container textarea {
+            width: 95%; min-height: 60px; /* Smaller height */
+            margin: 10px 0; padding: 8px;
+            border: 1px solid #ccc; border-radius: 4px;
+            font-family: monospace; font-size: 0.9em; resize: vertical;
+        }
+        .io-container button, .share-container button {
+            padding: 8px 15px; margin: 5px; border: none; border-radius: 4px;
+            background-color: #007bff; color: white; cursor: pointer; font-size: 0.9em;
+        }
+        .io-container button:hover, .share-container button:hover { background-color: #0056b3; }
+        .io-feedback, .share-feedback {
+            font-size: 0.85em; margin-top: 10px; min-height: 1.2em;
+        }
+        .success { color: green; } .error { color: red; }
+
+        /* Share Container */
+         .share-container { text-align: center; padding-top: 0;}
+         .share-container input {
+             width: calc(95% - 90px); /* Adjust width to fit button */
+             padding: 8px; margin: 5px 0 5px 5px;
+             border: 1px solid #ccc; border-radius: 4px;
+             font-size: 0.9em;
+         }
+
+        /* Color Picker */
+        .color-picker-container h2 { margin-bottom: 10px; }
+        .color-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        .color-picker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .color-picker-item label {
+            font-size: 0.9em;
+            flex-shrink: 0; /* Prevent label shrinking */
+            width: 40px; /* Align labels */
+        }
+        .color-picker-item input[type="color"] {
+            width: 40px; height: 25px; padding: 0; border: 1px solid #ccc; cursor: pointer;
+        }
+
+
+        .notes {
+            max-width: 700px; margin: 30px auto; font-size: 0.9em;
+            color: #6c757d; text-align: center; padding: 0 20px;
+        }
+        .notes p { margin-bottom: 5px; }
+
+        /* Tooltip */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip); position: absolute; bottom: 105%; left: 50%;
+            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.8); color: white;
+            padding: 4px 8px; border-radius: 4px; font-size: 0.8em; white-space: nowrap;
+            z-index: 10; pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Customizable 6-Max Opening Matrix</h1>
+
+    <!-- Position Selection Controls -->
+    <div class="controls">
+        <h2>Select Position to Edit:</h2>
+        <div> <!-- Wrap selectors for better centering -->
+            <div class="position-selector pos-ep1" data-position-class="ep1" data-position-name="EP1">EP1</div>
+            <div class="position-selector pos-ep2" data-position-class="ep2" data-position-name="EP2">EP2</div>
+            <div class="position-selector pos-ep3" data-position-class="ep3" data-position-name="EP3">EP3</div>
+            <div class="position-selector pos-lj" data-position-class="lj" data-position-name="LJ">LJ</div>
+            <div class="position-selector pos-hj" data-position-class="hj" data-position-name="HJ">HJ</div>
+            <div class="position-selector pos-co" data-position-class="co" data-position-name="CO">CO</div>
+            <div class="position-selector pos-btn" data-position-class="btn" data-position-name="BTN">BTN</div>
+            <div class="position-selector pos-sb" data-position-class="sb" data-position-name="SB">SB</div>
+            <div class="position-selector pos-fold active-position" data-position-class="fold" data-position-name="Fold">Fold</div>
+        </div>
+        <p style="font-size: 0.8em; margin-top: 10px;">Click a position, then click or click-and-drag on the matrix below.</p>
+    </div>
+
+    <!-- Hand Matrix -->
+    <div class="matrix-container">
+        <table class="hand-matrix" id="handMatrix">
+             <tbody>
+                <!-- Initial state based on previous example, EP hands are Fold by default -->
+                <!-- Row A -->
+                <tr>
+                    <td class="lj pair" data-tooltip="AA (LJ)"><span>AA</span></td>
+                    <td class="lj" data-tooltip="AKs (LJ)"><span>AKs</span></td>
+                    <td class="lj" data-tooltip="AQs (LJ)"><span>AQs</span></td>
+                    <td class="lj" data-tooltip="AJs (LJ)"><span>AJs</span></td>
+                    <td class="lj" data-tooltip="ATs (LJ)"><span>ATs</span></td>
+                    <td class="hj" data-tooltip="A9s (HJ)"><span>A9s</span></td>
+                    <td class="hj" data-tooltip="A8s (HJ)"><span>A8s</span></td>
+                    <td class="hj" data-tooltip="A7s (HJ)"><span>A7s</span></td>
+                    <td class="co" data-tooltip="A6s (CO)"><span>A6s</span></td>
+                    <td class="hj" data-tooltip="A5s (HJ)"><span>A5s</span></td>
+                    <td class="hj" data-tooltip="A4s (HJ)"><span>A4s</span></td>
+                    <td class="co" data-tooltip="A3s (CO)"><span>A3s</span></td>
+                    <td class="co" data-tooltip="A2s (CO)"><span>A2s</span></td>
+                </tr>
+                <!-- Rows K to 2 - same initial data as before -->
+                <!-- Row K -->
+                <tr>
+                    <td class="lj" data-tooltip="AKo (LJ)"><span>AKo</span></td>
+                    <td class="lj pair" data-tooltip="KK (LJ)"><span>KK</span></td>
+                    <td class="lj" data-tooltip="KQs (LJ)"><span>KQs</span></td>
+                    <td class="lj" data-tooltip="KJs (LJ)"><span>KJs</span></td>
+                    <td class="lj" data-tooltip="KTs (LJ)"><span>KTs</span></td>
+                    <td class="hj" data-tooltip="K9s (HJ)"><span>K9s</span></td>
+                    <td class="co" data-tooltip="K8s (CO)"><span>K8s</span></td>
+                    <td class="co" data-tooltip="K7s (CO)"><span>K7s</span></td>
+                    <td class="co" data-tooltip="K6s (CO)"><span>K6s</span></td>
+                    <td class="co" data-tooltip="K5s (CO)"><span>K5s</span></td>
+                    <td class="btn" data-tooltip="K4s (BTN)"><span>K4s</span></td>
+                    <td class="btn" data-tooltip="K3s (BTN)"><span>K3s</span></td>
+                    <td class="btn" data-tooltip="K2s (BTN)"><span>K2s</span></td>
+                </tr>
+                <!-- Row Q -->
+                <tr>
+                    <td class="lj" data-tooltip="AQo (LJ)"><span>AQo</span></td>
+                    <td class="lj" data-tooltip="KQo (LJ)"><span>KQo</span></td>
+                    <td class="lj pair" data-tooltip="QQ (LJ)"><span>QQ</span></td>
+                    <td class="lj" data-tooltip="QJs (LJ)"><span>QJs</span></td>
+                    <td class="hj" data-tooltip="QTs (HJ)"><span>QTs</span></td>
+                    <td class="hj" data-tooltip="Q9s (HJ)"><span>Q9s</span></td>
+                    <td class="co" data-tooltip="Q8s (CO)"><span>Q8s</span></td>
+                    <td class="co" data-tooltip="Q7s (CO)"><span>Q7s</span></td>
+                    <td class="co" data-tooltip="Q6s (CO)"><span>Q6s</span></td>
+                    <td class="btn" data-tooltip="Q5s (BTN)"><span>Q5s</span></td>
+                    <td class="btn" data-tooltip="Q4s (BTN)"><span>Q4s</span></td>
+                    <td class="btn" data-tooltip="Q3s (BTN)"><span>Q3s</span></td>
+                    <td class="sb" data-tooltip="Q2s (SB)"><span>Q2s</span></td>
+                </tr>
+                <!-- Row J -->
+                <tr>
+                    <td class="hj" data-tooltip="AJo (HJ)"><span>AJo</span></td>
+                    <td class="hj" data-tooltip="KJo (HJ)"><span>KJo</span></td>
+                    <td class="co" data-tooltip="QJo (CO)"><span>QJo</span></td>
+                    <td class="lj pair" data-tooltip="JJ (LJ)"><span>JJ</span></td>
+                    <td class="lj" data-tooltip="JTs (LJ)"><span>JTs</span></td>
+                    <td class="hj" data-tooltip="J9s (HJ)"><span>J9s</span></td>
+                    <td class="co" data-tooltip="J8s (CO)"><span>J8s</span></td>
+                    <td class="co" data-tooltip="J7s (CO)"><span>J7s</span></td>
+                    <td class="btn" data-tooltip="J6s (BTN)"><span>J6s</span></td>
+                    <td class="btn" data-tooltip="J5s (BTN)"><span>J5s</span></td>
+                    <td class="sb" data-tooltip="J4s (SB)"><span>J4s</span></td>
+                    <td class="sb" data-tooltip="J3s (SB)"><span>J3s</span></td>
+                    <td class="sb" data-tooltip="J2s (SB)"><span>J2s</span></td>
+                </tr>
+                <!-- Row T -->
+                <tr>
+                    <td class="co" data-tooltip="ATo (CO)"><span>ATo</span></td>
+                    <td class="co" data-tooltip="KTo (CO)"><span>KTo</span></td>
+                    <td class="co" data-tooltip="QTo (CO)"><span>QTo</span></td>
+                    <td class="co" data-tooltip="JTo (CO)"><span>JTo</span></td>
+                    <td class="lj pair" data-tooltip="TT (LJ)"><span>TT</span></td>
+                    <td class="lj" data-tooltip="T9s (LJ)"><span>T9s</span></td>
+                    <td class="hj" data-tooltip="T8s (HJ)"><span>T8s</span></td>
+                    <td class="co" data-tooltip="T7s (CO)"><span>T7s</span></td>
+                    <td class="btn" data-tooltip="T6s (BTN)"><span>T6s</span></td>
+                    <td class="btn" data-tooltip="T5s (BTN)"><span>T5s</span></td>
+                    <td class="sb" data-tooltip="T4s (SB)"><span>T4s</span></td>
+                    <td class="sb" data-tooltip="T3s (SB)"><span>T3s</span></td>
+                    <td class="fold" data-tooltip="T2s (Fold)"><span>T2s</span></td>
+                </tr>
+                <!-- Row 9 -->
+                <tr>
+                    <td class="co" data-tooltip="A9o (CO)"><span>A9o</span></td>
+                    <td class="btn" data-tooltip="K9o (BTN)"><span>K9o</span></td>
+                    <td class="btn" data-tooltip="Q9o (BTN)"><span>Q9o</span></td>
+                    <td class="btn" data-tooltip="J9o (BTN)"><span>J9o</span></td>
+                    <td class="btn" data-tooltip="T9o (BTN)"><span>T9o</span></td>
+                    <td class="lj pair" data-tooltip="99 (LJ)"><span>99</span></td>
+                    <td class="hj" data-tooltip="98s (HJ)"><span>98s</span></td>
+                    <td class="co" data-tooltip="97s (CO)"><span>97s</span></td>
+                    <td class="btn" data-tooltip="96s (BTN)"><span>96s</span></td>
+                    <td class="btn" data-tooltip="95s (BTN)"><span>95s</span></td>
+                    <td class="sb" data-tooltip="94s (SB)"><span>94s</span></td>
+                    <td class="fold" data-tooltip="93s (Fold)"><span>93s</span></td>
+                    <td class="fold" data-tooltip="92s (Fold)"><span>92s</span></td>
+                </tr>
+                <!-- Row 8 -->
+                <tr>
+                    <td class="btn" data-tooltip="A8o (BTN)"><span>A8o</span></td>
+                    <td class="btn" data-tooltip="K8o (BTN)"><span>K8o</span></td>
+                    <td class="sb" data-tooltip="Q8o (SB)"><span>Q8o</span></td>
+                    <td class="sb" data-tooltip="J8o (SB)"><span>J8o</span></td>
+                    <td class="sb" data-tooltip="T8o (SB)"><span>T8o</span></td>
+                    <td class="sb" data-tooltip="98o (SB)"><span>98o</span></td>
+                    <td class="lj pair" data-tooltip="88 (LJ)"><span>88</span></td>
+                    <td class="hj" data-tooltip="87s (HJ)"><span>87s</span></td>
+                    <td class="co" data-tooltip="86s (CO)"><span>86s</span></td>
+                    <td class="btn" data-tooltip="85s (BTN)"><span>85s</span></td>
+                    <td class="sb" data-tooltip="84s (SB)"><span>84s</span></td>
+                    <td class="fold" data-tooltip="83s (Fold)"><span>83s</span></td>
+                    <td class="fold" data-tooltip="82s (Fold)"><span>82s</span></td>
+                </tr>
+                <!-- Row 7 -->
+                <tr>
+                    <td class="btn" data-tooltip="A7o (BTN)"><span>A7o</span></td>
+                    <td class="sb" data-tooltip="K7o (SB)"><span>K7o</span></td>
+                    <td class="fold" data-tooltip="Q7o (Fold)"><span>Q7o</span></td>
+                    <td class="fold" data-tooltip="J7o (Fold)"><span>J7o</span></td>
+                    <td class="fold" data-tooltip="T7o (Fold)"><span>T7o</span></td>
+                    <td class="fold" data-tooltip="97o (Fold)"><span>97o</span></td>
+                    <td class="sb" data-tooltip="87o (SB)"><span>87o</span></td>
+                    <td class="lj pair" data-tooltip="77 (LJ)"><span>77</span></td>
+                    <td class="hj" data-tooltip="76s (HJ)"><span>76s</span></td>
+                    <td class="co" data-tooltip="75s (CO)"><span>75s</span></td>
+                    <td class="btn" data-tooltip="74s (BTN)"><span>74s</span></td>
+                    <td class="sb" data-tooltip="73s (SB)"><span>73s</span></td>
+                    <td class="fold" data-tooltip="72s (Fold)"><span>72s</span></td>
+                </tr>
+                <!-- Row 6 -->
+                <tr>
+                    <td class="btn" data-tooltip="A6o (BTN)"><span>A6o</span></td>
+                    <td class="fold" data-tooltip="K6o (Fold)"><span>K6o</span></td>
+                    <td class="fold" data-tooltip="Q6o (Fold)"><span>Q6o</span></td>
+                    <td class="fold" data-tooltip="J6o (Fold)"><span>J6o</span></td>
+                    <td class="fold" data-tooltip="T6o (Fold)"><span>T6o</span></td>
+                    <td class="fold" data-tooltip="96o (Fold)"><span>96o</span></td>
+                    <td class="fold" data-tooltip="86o (Fold)"><span>86o</span></td>
+                    <td class="sb" data-tooltip="76o (SB)"><span>76o</span></td>
+                    <td class="hj pair" data-tooltip="66 (HJ)"><span>66</span></td>
+                    <td class="co" data-tooltip="65s (CO)"><span>65s</span></td>
+                    <td class="btn" data-tooltip="64s (BTN)"><span>64s</span></td>
+                    <td class="sb" data-tooltip="63s (SB)"><span>63s</span></td>
+                    <td class="sb" data-tooltip="62s (SB)"><span>62s</span></td>
+                </tr>
+                <!-- Row 5 -->
+                <tr>
+                    <td class="btn" data-tooltip="A5o (BTN)"><span>A5o</span></td>
+                    <td class="fold" data-tooltip="K5o (Fold)"><span>K5o</span></td>
+                    <td class="fold" data-tooltip="Q5o (Fold)"><span>Q5o</span></td>
+                    <td class="fold" data-tooltip="J5o (Fold)"><span>J5o</span></td>
+                    <td class="fold" data-tooltip="T5o (Fold)"><span>T5o</span></td>
+                    <td class="fold" data-tooltip="95o (Fold)"><span>95o</span></td>
+                    <td class="fold" data-tooltip="85o (Fold)"><span>85o</span></td>
+                    <td class="fold" data-tooltip="75o (Fold)"><span>75o</span></td>
+                    <td class="fold" data-tooltip="65o (Fold)"><span>65o</span></td>
+                    <td class="hj pair" data-tooltip="55 (HJ)"><span>55</span></td>
+                    <td class="co" data-tooltip="54s (CO)"><span>54s</span></td>
+                    <td class="btn" data-tooltip="53s (BTN)"><span>53s</span></td>
+                    <td class="sb" data-tooltip="52s (SB)"><span>52s</span></td>
+                </tr>
+                 <!-- Row 4 -->
+                <tr>
+                    <td class="co" data-tooltip="A4o (CO)"><span>A4o</span></td>
+                    <td class="fold" data-tooltip="K4o (Fold)"><span>K4o</span></td>
+                    <td class="fold" data-tooltip="Q4o (Fold)"><span>Q4o</span></td>
+                    <td class="fold" data-tooltip="J4o (Fold)"><span>J4o</span></td>
+                    <td class="fold" data-tooltip="T4o (Fold)"><span>T4o</span></td>
+                    <td class="fold" data-tooltip="94o (Fold)"><span>94o</span></td>
+                    <td class="fold" data-tooltip="84o (Fold)"><span>84o</span></td>
+                    <td class="fold" data-tooltip="74o (Fold)"><span>74o</span></td>
+                    <td class="fold" data-tooltip="64o (Fold)"><span>64o</span></td>
+                    <td class="fold" data-tooltip="54o (Fold)"><span>54o</span></td>
+                    <td class="co pair" data-tooltip="44 (CO)"><span>44</span></td>
+                    <td class="btn" data-tooltip="43s (BTN)"><span>43s</span></td>
+                    <td class="sb" data-tooltip="42s (SB)"><span>42s</span></td>
+                </tr>
+                 <!-- Row 3 -->
+                <tr>
+                    <td class="co" data-tooltip="A3o (CO)"><span>A3o</span></td>
+                    <td class="fold" data-tooltip="K3o (Fold)"><span>K3o</span></td>
+                    <td class="fold" data-tooltip="Q3o (Fold)"><span>Q3o</span></td>
+                    <td class="fold" data-tooltip="J3o (Fold)"><span>J3o</span></td>
+                    <td class="fold" data-tooltip="T3o (Fold)"><span>T3o</span></td>
+                    <td class="fold" data-tooltip="93o (Fold)"><span>93o</span></td>
+                    <td class="fold" data-tooltip="83o (Fold)"><span>83o</span></td>
+                    <td class="fold" data-tooltip="73o (Fold)"><span>73o</span></td>
+                    <td class="fold" data-tooltip="63o (Fold)"><span>63o</span></td>
+                    <td class="fold" data-tooltip="53o (Fold)"><span>53o</span></td>
+                    <td class="fold" data-tooltip="43o (Fold)"><span>43o</span></td>
+                    <td class="co pair" data-tooltip="33 (CO)"><span>33</span></td>
+                    <td class="btn" data-tooltip="32s (BTN)"><span>32s</span></td>
+                </tr>
+                 <!-- Row 2 -->
+                <tr>
+                    <td class="co" data-tooltip="A2o (CO)"><span>A2o</span></td>
+                    <td class="fold" data-tooltip="K2o (Fold)"><span>K2o</span></td>
+                    <td class="fold" data-tooltip="Q2o (Fold)"><span>Q2o</span></td>
+                    <td class="fold" data-tooltip="J2o (Fold)"><span>J2o</span></td>
+                    <td class="fold" data-tooltip="T2o (Fold)"><span>T2o</span></td>
+                    <td class="fold" data-tooltip="92o (Fold)"><span>92o</span></td>
+                    <td class="fold" data-tooltip="82o (Fold)"><span>82o</span></td>
+                    <td class="fold" data-tooltip="72o (Fold)"><span>72o</span></td>
+                    <td class="fold" data-tooltip="62o (Fold)"><span>62o</span></td>
+                    <td class="fold" data-tooltip="52o (Fold)"><span>52o</span></td>
+                    <td class="fold" data-tooltip="42o (Fold)"><span>42o</span></td>
+                    <td class="fold" data-tooltip="32o (Fold)"><span>32o</span></td>
+                    <td class="co pair" data-tooltip="22 (CO)"><span>22</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Import / Export / Share -->
+    <div class="io-container">
+        <h2>Save / Load / Share Matrix</h2>
+        <textarea id="configArea" placeholder="Paste configuration string here to import..."></textarea>
+        <button id="exportBtn">Export to Clipboard</button>
+        <button id="importBtn">Import from Text Area</button>
+        <div id="ioFeedback" class="io-feedback"></div>
+
+        <div class="share-container" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+             <input type="text" id="shareLinkInput" placeholder="Click 'Generate Share Link'" readonly>
+             <button id="shareBtn">Generate Share Link</button>
+             <div id="shareFeedback" class="share-feedback"></div>
+        </div>
+    </div>
+
+    <!-- Color Customization -->
+    <div class="color-picker-container">
+        <h2>Customize Colors</h2>
+        <div class="color-picker-grid">
+            <div class="color-picker-item">
+                <label for="color-ep1">EP1:</label>
+                <input type="color" id="color-ep1" data-position="ep1">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-ep2">EP2:</label>
+                <input type="color" id="color-ep2" data-position="ep2">
+            </div>
+             <div class="color-picker-item">
+                <label for="color-ep3">EP3:</label>
+                <input type="color" id="color-ep3" data-position="ep3">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-lj">LJ:</label>
+                <input type="color" id="color-lj" data-position="lj">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-hj">HJ:</label>
+                <input type="color" id="color-hj" data-position="hj">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-co">CO:</label>
+                <input type="color" id="color-co" data-position="co">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-btn">BTN:</label>
+                <input type="color" id="color-btn" data-position="btn">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-sb">SB:</label>
+                <input type="color" id="color-sb" data-position="sb">
+            </div>
+            <div class="color-picker-item">
+                <label for="color-fold">Fold:</label>
+                <input type="color" id="color-fold" data-position="fold">
+            </div>
+        </div>
+         <p style="font-size: 0.8em; margin-top: 10px;">Color choices are saved locally in your browser.</p>
+    </div>
+
+    <div class="notes">
+        <p><strong>Note:</strong> Click a position button, then click or drag on the matrix. Use Export/Import/Share for matrix configurations. Customize colors below.</p>
+         <p>Diagonal cells are pocket pairs. Cells above are suited hands. Cells below are offsuit hands.</p>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const controlsContainer = document.querySelector('.controls');
+        const matrix = document.getElementById('handMatrix');
+        const positionSelectors = document.querySelectorAll('.position-selector');
+        const configArea = document.getElementById('configArea');
+        const exportBtn = document.getElementById('exportBtn');
+        const importBtn = document.getElementById('importBtn');
+        const ioFeedback = document.getElementById('ioFeedback');
+        const shareBtn = document.getElementById('shareBtn');
+        const shareLinkInput = document.getElementById('shareLinkInput');
+        const shareFeedback = document.getElementById('shareFeedback');
+        const colorPickerContainer = document.querySelector('.color-picker-grid');
+        const colorInputs = colorPickerContainer.querySelectorAll('input[type="color"]');
+        const matrixCells = matrix.querySelectorAll('td'); // Get all cells once
+
+        // --- Configuration & State ---
+        const positionClasses = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb', 'fold'];
+        const positionMap = {}; // Map class name to display name
+        positionSelectors.forEach(sel => {
+            positionMap[sel.dataset.positionClass] = sel.dataset.positionName;
+        });
+        const LOCAL_STORAGE_COLORS_KEY = 'matrixCustomColors';
+
+        let currentPositionClass = 'fold'; // Default to fold
+        let currentPositionName = 'Fold';
+        let isMouseDown = false; // Track mouse button state
+
+        // --- Utility Functions ---
+
+        // Calculates contrast ratio and returns 'dark' or 'light'
+        // Simple luminance check - more sophisticated methods exist
+        function getTextColorForBackground(hexColor) {
+            const rgb = parseInt(hexColor.slice(1), 16);
+            const r = (rgb >> 16) & 0xff;
+            const g = (rgb >>  8) & 0xff;
+            const b = (rgb >>  0) & 0xff;
+            const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per WCAG
+            return luminance < 140 ? '#ffffff' : '#333333'; // Threshold might need adjustment
+        }
+
+        function setCssVariable(variableName, value) {
+            document.documentElement.style.setProperty(variableName, value);
+        }
+
+        function saveColorsToLocalStorage() {
+            const colors = {};
+            colorInputs.forEach(input => {
+                colors[input.dataset.position] = input.value;
+            });
+            localStorage.setItem(LOCAL_STORAGE_COLORS_KEY, JSON.stringify(colors));
+        }
+
+        function loadColorsFromLocalStorage() {
+            const savedColors = localStorage.getItem(LOCAL_STORAGE_COLORS_KEY);
+            if (savedColors) {
+                try {
+                    const colors = JSON.parse(savedColors);
+                    colorInputs.forEach(input => {
+                        const pos = input.dataset.position;
+                        if (colors[pos]) {
+                            input.value = colors[pos]; // Set input value first
+                            // Then update CSS variables
+                            const bgColorVar = `--color-${pos}-bg`;
+                            const textColorVar = `--color-${pos}-text`;
+                            setCssVariable(bgColorVar, colors[pos]);
+                            setCssVariable(textColorVar, getTextColorForBackground(colors[pos]));
+                        }
+                    });
+                     console.log("Custom colors loaded from localStorage.");
+                } catch (e) {
+                    console.error("Failed to parse saved colors from localStorage", e);
+                    // Apply default colors if parsing fails
+                    applyDefaultColors();
+                }
+            } else {
+                // Apply default colors if nothing is saved
+                 applyDefaultColors();
+            }
+        }
+
+         function applyDefaultColors() {
+             colorInputs.forEach(input => {
+                const pos = input.dataset.position;
+                const bgColorVar = `--color-${pos}-bg`;
+                const textColorVar = `--color-${pos}-text`;
+                // Get default value from :root style declaration
+                const defaultBgColor = getComputedStyle(document.documentElement).getPropertyValue(bgColorVar).trim();
+                if (defaultBgColor) {
+                     input.value = defaultBgColor; // Set input to default
+                     // Ensure text color is correct based on default BG
+                     setCssVariable(textColorVar, getTextColorForBackground(defaultBgColor));
+                }
+             });
+             console.log("Default colors applied.");
+         }
+
+
+        // --- Core Logic Functions ---
+
+        function applyStyleToCell(cell) {
+            if (!cell || cell.tagName !== 'TD') return;
+            const handText = cell.querySelector('span')?.textContent || '';
+
+            if (!cell.classList.contains(currentPositionClass)) {
+                cell.classList.remove(...positionClasses);
+                cell.classList.add(currentPositionClass);
+            }
+            cell.dataset.tooltip = `${handText} (${currentPositionName})`;
+        }
+
+        function generateConfigString() {
+            const config = [];
+            matrixCells.forEach(cell => {
+                let foundClass = 'fold';
+                for (const className of positionClasses) {
+                    if (cell.classList.contains(className)) {
+                        foundClass = className;
+                        break;
+                    }
+                }
+                config.push(foundClass);
+            });
+            return config.join(',');
+        }
+
+        function applyConfig(configString, feedbackElement = ioFeedback) {
+             const importedClasses = configString.trim().split(',');
+
+            // Validation
+            if (importedClasses.length !== 169) {
+                 feedbackElement.textContent = `Import failed: Expected 169 values, found ${importedClasses.length}.`;
+                 feedbackElement.className = feedbackElement.id + ' error';
+                 return false;
+            }
+
+            let invalidClassFound = null;
+            for (const cls of importedClasses) {
+                if (!positionClasses.includes(cls)) {
+                    invalidClassFound = cls;
+                    break;
+                }
+            }
+            if (invalidClassFound) {
+                 feedbackElement.textContent = `Import failed: Invalid class name "${invalidClassFound}" found.`;
+                 feedbackElement.className = feedbackElement.id + ' error';
+                 return false;
+             }
+
+
+            // Apply imported configuration
+            matrixCells.forEach((cell, index) => {
+                const newClass = importedClasses[index];
+                const newName = positionMap[newClass] || 'Unknown';
+                const handText = cell.querySelector('span')?.textContent || '';
+
+                cell.classList.remove(...positionClasses);
+                cell.classList.add(newClass);
+                cell.dataset.tooltip = `${handText} (${newName})`;
+            });
+
+            feedbackElement.textContent = 'Configuration applied successfully!';
+            feedbackElement.className = feedbackElement.id + ' success';
+            // Ensure no stale error messages linger
+             if (feedbackElement !== ioFeedback) ioFeedback.textContent = '';
+             if (feedbackElement !== shareFeedback) shareFeedback.textContent = '';
+            return true;
+        }
+
+        function loadConfigFromURL() {
+             if (window.location.hash && window.location.hash.length > 1) {
+                 try {
+                    const configString = decodeURIComponent(window.location.hash.substring(1));
+                    console.log("Loading config from URL hash...");
+                    const success = applyConfig(configString, ioFeedback); // Use main feedback for loading
+                    if (success) {
+                         // Clear the hash to avoid re-applying on manual refresh if desired
+                         // history.replaceState(null, null, ' '); // Optional: removes hash from URL bar
+                    }
+                 } catch(e) {
+                     console.error("Error decoding or applying config from URL hash:", e);
+                     ioFeedback.textContent = 'Failed to load configuration from URL.';
+                     ioFeedback.className = ioFeedback.id + ' error';
+                 }
+             }
+        }
+
+
+        // --- Event Listeners ---
+
+        // Position Selection
+        controlsContainer.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.classList.contains('position-selector')) {
+                currentPositionClass = target.dataset.positionClass;
+                currentPositionName = target.dataset.positionName;
+                positionSelectors.forEach(button => button.classList.remove('active-position'));
+                target.classList.add('active-position');
+            }
+        });
+
+        // Matrix Click-and-Drag Painting
+        matrix.addEventListener('mousedown', (event) => {
+            if (event.target.tagName === 'TD') {
+                isMouseDown = true;
+                applyStyleToCell(event.target);
+                event.preventDefault();
+            }
+        });
+        matrix.addEventListener('mouseover', (event) => {
+            if (isMouseDown && event.target.tagName === 'TD') {
+                applyStyleToCell(event.target);
+            }
+        });
+        window.addEventListener('mouseup', () => { isMouseDown = false; });
+        matrix.addEventListener('dragstart', (event) => { event.preventDefault(); });
+
+        // Export Button
+        exportBtn.addEventListener('click', () => {
+            const configString = generateConfigString();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(configString).then(() => {
+                    configArea.value = configString;
+                    ioFeedback.textContent = 'Configuration copied to clipboard!';
+                    ioFeedback.className = 'io-feedback success';
+                }).catch(err => {
+                    console.error('Failed to copy to clipboard:', err);
+                    configArea.value = configString;
+                    ioFeedback.textContent = 'Could not copy. Config in text area.';
+                    ioFeedback.className = 'io-feedback error';
+                });
+            } else {
+                configArea.value = configString;
+                ioFeedback.textContent = 'Clipboard unavailable. Config in text area.';
+                ioFeedback.className = 'io-feedback error';
+            }
+        });
+
+        // Import Button
+        importBtn.addEventListener('click', () => {
+            const configString = configArea.value;
+            if (!configString) {
+                 ioFeedback.textContent = 'Import failed: Text area is empty.';
+                 ioFeedback.className = 'io-feedback error';
+                 return;
+            }
+            applyConfig(configString, ioFeedback);
+        });
+
+        // Share Button
+        shareBtn.addEventListener('click', () => {
+            try {
+                const configString = generateConfigString();
+                const encodedConfig = encodeURIComponent(configString);
+                const shareUrl = `${window.location.origin}${window.location.pathname}#${encodedConfig}`;
+                shareLinkInput.value = shareUrl;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                     navigator.clipboard.writeText(shareUrl).then(() => {
+                         shareFeedback.textContent = 'Share link copied to clipboard!';
+                         shareFeedback.className = 'share-feedback success';
+                     }).catch(err => {
+                         console.error('Failed to copy share link:', err);
+                         shareFeedback.textContent = 'Could not copy link. Link shown above.';
+                         shareFeedback.className = 'share-feedback error';
+                     });
+                 } else {
+                     shareFeedback.textContent = 'Clipboard unavailable. Link shown above.';
+                     shareFeedback.className = 'share-feedback error';
+                 }
+
+            } catch (e) {
+                 console.error("Error generating share link:", e);
+                 shareFeedback.textContent = 'Error generating share link.';
+                 shareFeedback.className = 'share-feedback error';
+            }
+        });
+
+        // Color Pickers
+        colorInputs.forEach(input => {
+            input.addEventListener('input', (event) => {
+                const position = event.target.dataset.position;
+                const newColor = event.target.value;
+                const bgColorVar = `--color-${position}-bg`;
+                const textColorVar = `--color-${position}-text`;
+
+                setCssVariable(bgColorVar, newColor);
+                setCssVariable(textColorVar, getTextColorForBackground(newColor));
+
+                saveColorsToLocalStorage(); // Save immediately on change
+            });
+        });
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadColorsFromLocalStorage(); // Load custom/default colors first
+            loadConfigFromURL(); // Then load matrix config from URL if present
+        });
+
+    </script>
+
+</body>
+</html>
