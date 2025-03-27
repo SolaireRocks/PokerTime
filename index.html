@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable 9-Max RFI Preflop</title>
+    <title>Customizable 9-Max RFI Preflop Chart</title>
     <style>
         :root {
-            /* Default Color Definitions - CSS Variables */
+            /* Default Color Definitions - CSS Variables (BTN/SB Swapped) */
             --color-ep1-bg: #a46ab5; --color-ep1-text: #fff; /* Purple */
             --color-ep2-bg: #8a7e77; --color-ep2-text: #fff; /* Taupe */
             --color-ep3-bg: #7e9aa8; --color-ep3-text: #fff; /* Slate */
             --color-lj-bg: #d9534f;  --color-lj-text: #fff; /* Red */
             --color-hj-bg: #f0ad4e;  --color-hj-text: #fff; /* Orange */
             --color-co-bg: #5bc0de;  --color-co-text: #fff; /* Info Blue */
-            --color-btn-bg: #5cb85c; --color-btn-text: #fff; /* Green */
-            --color-sb-bg: #0275d8;  --color-sb-text: #fff; /* Primary Blue */
+            --color-btn-bg: #0275d8; --color-btn-text: #fff; /* Primary Blue (WAS SB) */
+            --color-sb-bg: #5cb85c;  --color-sb-text: #fff; /* Green (WAS BTN) */
             --color-fold-bg: #e9ecef; --color-fold-text: #495057; /* Light Gray */
         }
 
@@ -191,7 +191,7 @@
 </head>
 <body>
 
-    <h1>Customizable 9-Max RFI Preflop</h1>
+    <h1>Customizable 9-Max RFI Preflop Chart</h1>
 
     <!-- Position Selection Controls -->
     <div class="controls">
@@ -214,215 +214,58 @@
     <div class="matrix-container">
         <table class="hand-matrix" id="handMatrix">
              <tbody>
-                <!-- Initial state based on previous example, EP hands are Fold by default -->
+                <!-- Default state based on provided string -->
                 <!-- Row A -->
                 <tr>
-                    <td class="lj pair" data-tooltip="AA (LJ)"><span>AA</span></td>
-                    <td class="lj" data-tooltip="AKs (LJ)"><span>AKs</span></td>
-                    <td class="lj" data-tooltip="AQs (LJ)"><span>AQs</span></td>
-                    <td class="lj" data-tooltip="AJs (LJ)"><span>AJs</span></td>
-                    <td class="lj" data-tooltip="ATs (LJ)"><span>ATs</span></td>
-                    <td class="hj" data-tooltip="A9s (HJ)"><span>A9s</span></td>
-                    <td class="hj" data-tooltip="A8s (HJ)"><span>A8s</span></td>
-                    <td class="hj" data-tooltip="A7s (HJ)"><span>A7s</span></td>
-                    <td class="co" data-tooltip="A6s (CO)"><span>A6s</span></td>
-                    <td class="hj" data-tooltip="A5s (HJ)"><span>A5s</span></td>
-                    <td class="hj" data-tooltip="A4s (HJ)"><span>A4s</span></td>
-                    <td class="co" data-tooltip="A3s (CO)"><span>A3s</span></td>
-                    <td class="co" data-tooltip="A2s (CO)"><span>A2s</span></td>
+                    <td class="lj pair" data-tooltip="AA (LJ)"><span>AA</span></td> <td class="lj" data-tooltip="AKs (LJ)"><span>AKs</span></td> <td class="lj" data-tooltip="AQs (LJ)"><span>AQs</span></td> <td class="lj" data-tooltip="AJs (LJ)"><span>AJs</span></td> <td class="lj" data-tooltip="ATs (LJ)"><span>ATs</span></td> <td class="lj" data-tooltip="A9s (LJ)"><span>A9s</span></td> <td class="lj" data-tooltip="A8s (LJ)"><span>A8s</span></td> <td class="lj" data-tooltip="A7s (LJ)"><span>A7s</span></td> <td class="lj" data-tooltip="A6s (LJ)"><span>A6s</span></td> <td class="lj" data-tooltip="A5s (LJ)"><span>A5s</span></td> <td class="lj" data-tooltip="A4s (LJ)"><span>A4s</span></td> <td class="lj" data-tooltip="A3s (LJ)"><span>A3s</span></td> <td class="lj" data-tooltip="A2s (LJ)"><span>A2s</span></td>
                 </tr>
-                <!-- Rows K to 2 - same initial data as before -->
                 <!-- Row K -->
                 <tr>
-                    <td class="lj" data-tooltip="AKo (LJ)"><span>AKo</span></td>
-                    <td class="lj pair" data-tooltip="KK (LJ)"><span>KK</span></td>
-                    <td class="lj" data-tooltip="KQs (LJ)"><span>KQs</span></td>
-                    <td class="lj" data-tooltip="KJs (LJ)"><span>KJs</span></td>
-                    <td class="lj" data-tooltip="KTs (LJ)"><span>KTs</span></td>
-                    <td class="hj" data-tooltip="K9s (HJ)"><span>K9s</span></td>
-                    <td class="co" data-tooltip="K8s (CO)"><span>K8s</span></td>
-                    <td class="co" data-tooltip="K7s (CO)"><span>K7s</span></td>
-                    <td class="co" data-tooltip="K6s (CO)"><span>K6s</span></td>
-                    <td class="co" data-tooltip="K5s (CO)"><span>K5s</span></td>
-                    <td class="btn" data-tooltip="K4s (BTN)"><span>K4s</span></td>
-                    <td class="btn" data-tooltip="K3s (BTN)"><span>K3s</span></td>
-                    <td class="btn" data-tooltip="K2s (BTN)"><span>K2s</span></td>
+                    <td class="lj" data-tooltip="AKo (LJ)"><span>AKo</span></td> <td class="lj pair" data-tooltip="KK (LJ)"><span>KK</span></td> <td class="lj" data-tooltip="KQs (LJ)"><span>KQs</span></td> <td class="lj" data-tooltip="KJs (LJ)"><span>KJs</span></td> <td class="lj" data-tooltip="KTs (LJ)"><span>KTs</span></td> <td class="lj" data-tooltip="K9s (LJ)"><span>K9s</span></td> <td class="lj" data-tooltip="K8s (LJ)"><span>K8s</span></td> <td class="lj" data-tooltip="K7s (LJ)"><span>K7s</span></td> <td class="lj" data-tooltip="K6s (LJ)"><span>K6s</span></td> <td class="co" data-tooltip="K5s (CO)"><span>K5s</span></td> <td class="co" data-tooltip="K4s (CO)"><span>K4s</span></td> <td class="btn" data-tooltip="K3s (BTN)"><span>K3s</span></td> <td class="btn" data-tooltip="K2s (BTN)"><span>K2s</span></td>
                 </tr>
                 <!-- Row Q -->
                 <tr>
-                    <td class="lj" data-tooltip="AQo (LJ)"><span>AQo</span></td>
-                    <td class="lj" data-tooltip="KQo (LJ)"><span>KQo</span></td>
-                    <td class="lj pair" data-tooltip="QQ (LJ)"><span>QQ</span></td>
-                    <td class="lj" data-tooltip="QJs (LJ)"><span>QJs</span></td>
-                    <td class="hj" data-tooltip="QTs (HJ)"><span>QTs</span></td>
-                    <td class="hj" data-tooltip="Q9s (HJ)"><span>Q9s</span></td>
-                    <td class="co" data-tooltip="Q8s (CO)"><span>Q8s</span></td>
-                    <td class="co" data-tooltip="Q7s (CO)"><span>Q7s</span></td>
-                    <td class="co" data-tooltip="Q6s (CO)"><span>Q6s</span></td>
-                    <td class="btn" data-tooltip="Q5s (BTN)"><span>Q5s</span></td>
-                    <td class="btn" data-tooltip="Q4s (BTN)"><span>Q4s</span></td>
-                    <td class="btn" data-tooltip="Q3s (BTN)"><span>Q3s</span></td>
-                    <td class="sb" data-tooltip="Q2s (SB)"><span>Q2s</span></td>
+                    <td class="lj" data-tooltip="AQo (LJ)"><span>AQo</span></td> <td class="lj" data-tooltip="KQo (LJ)"><span>KQo</span></td> <td class="lj pair" data-tooltip="QQ (LJ)"><span>QQ</span></td> <td class="lj" data-tooltip="QJs (LJ)"><span>QJs</span></td> <td class="lj" data-tooltip="QTs (LJ)"><span>QTs</span></td> <td class="lj" data-tooltip="Q9s (LJ)"><span>Q9s</span></td> <td class="hj" data-tooltip="Q8s (HJ)"><span>Q8s</span></td> <td class="co" data-tooltip="Q7s (CO)"><span>Q7s</span></td> <td class="co" data-tooltip="Q6s (CO)"><span>Q6s</span></td> <td class="co" data-tooltip="Q5s (CO)"><span>Q5s</span></td> <td class="btn" data-tooltip="Q4s (BTN)"><span>Q4s</span></td> <td class="btn" data-tooltip="Q3s (BTN)"><span>Q3s</span></td> <td class="btn" data-tooltip="Q2s (BTN)"><span>Q2s</span></td>
                 </tr>
                 <!-- Row J -->
                 <tr>
-                    <td class="hj" data-tooltip="AJo (HJ)"><span>AJo</span></td>
-                    <td class="hj" data-tooltip="KJo (HJ)"><span>KJo</span></td>
-                    <td class="co" data-tooltip="QJo (CO)"><span>QJo</span></td>
-                    <td class="lj pair" data-tooltip="JJ (LJ)"><span>JJ</span></td>
-                    <td class="lj" data-tooltip="JTs (LJ)"><span>JTs</span></td>
-                    <td class="hj" data-tooltip="J9s (HJ)"><span>J9s</span></td>
-                    <td class="co" data-tooltip="J8s (CO)"><span>J8s</span></td>
-                    <td class="co" data-tooltip="J7s (CO)"><span>J7s</span></td>
-                    <td class="btn" data-tooltip="J6s (BTN)"><span>J6s</span></td>
-                    <td class="btn" data-tooltip="J5s (BTN)"><span>J5s</span></td>
-                    <td class="sb" data-tooltip="J4s (SB)"><span>J4s</span></td>
-                    <td class="sb" data-tooltip="J3s (SB)"><span>J3s</span></td>
-                    <td class="sb" data-tooltip="J2s (SB)"><span>J2s</span></td>
+                    <td class="lj" data-tooltip="AJo (LJ)"><span>AJo</span></td> <td class="lj" data-tooltip="KJo (LJ)"><span>KJo</span></td> <td class="lj" data-tooltip="QJo (LJ)"><span>QJo</span></td> <td class="lj pair" data-tooltip="JJ (LJ)"><span>JJ</span></td> <td class="lj" data-tooltip="JTs (LJ)"><span>JTs</span></td> <td class="hj" data-tooltip="J9s (HJ)"><span>J9s</span></td> <td class="co" data-tooltip="J8s (CO)"><span>J8s</span></td> <td class="co" data-tooltip="J7s (CO)"><span>J7s</span></td> <td class="btn" data-tooltip="J6s (BTN)"><span>J6s</span></td> <td class="btn" data-tooltip="J5s (BTN)"><span>J5s</span></td> <td class="btn" data-tooltip="J4s (BTN)"><span>J4s</span></td> <td class="fold" data-tooltip="J3s (Fold)"><span>J3s</span></td> <td class="fold" data-tooltip="J2s (Fold)"><span>J2s</span></td>
                 </tr>
                 <!-- Row T -->
                 <tr>
-                    <td class="co" data-tooltip="ATo (CO)"><span>ATo</span></td>
-                    <td class="co" data-tooltip="KTo (CO)"><span>KTo</span></td>
-                    <td class="co" data-tooltip="QTo (CO)"><span>QTo</span></td>
-                    <td class="co" data-tooltip="JTo (CO)"><span>JTo</span></td>
-                    <td class="lj pair" data-tooltip="TT (LJ)"><span>TT</span></td>
-                    <td class="lj" data-tooltip="T9s (LJ)"><span>T9s</span></td>
-                    <td class="hj" data-tooltip="T8s (HJ)"><span>T8s</span></td>
-                    <td class="co" data-tooltip="T7s (CO)"><span>T7s</span></td>
-                    <td class="btn" data-tooltip="T6s (BTN)"><span>T6s</span></td>
-                    <td class="btn" data-tooltip="T5s (BTN)"><span>T5s</span></td>
-                    <td class="sb" data-tooltip="T4s (SB)"><span>T4s</span></td>
-                    <td class="sb" data-tooltip="T3s (SB)"><span>T3s</span></td>
-                    <td class="fold" data-tooltip="T2s (Fold)"><span>T2s</span></td>
+                    <td class="lj" data-tooltip="ATo (LJ)"><span>ATo</span></td> <td class="hj" data-tooltip="KTo (HJ)"><span>KTo</span></td> <td class="hj" data-tooltip="QTo (HJ)"><span>QTo</span></td> <td class="co" data-tooltip="JTo (CO)"><span>JTo</span></td> <td class="lj pair" data-tooltip="TT (LJ)"><span>TT</span></td> <td class="lj" data-tooltip="T9s (LJ)"><span>T9s</span></td> <td class="co" data-tooltip="T8s (CO)"><span>T8s</span></td> <td class="btn" data-tooltip="T7s (BTN)"><span>T7s</span></td> <td class="btn" data-tooltip="T6s (BTN)"><span>T6s</span></td> <td class="fold" data-tooltip="T5s (Fold)"><span>T5s</span></td> <td class="fold" data-tooltip="T4s (Fold)"><span>T4s</span></td> <td class="fold" data-tooltip="T3s (Fold)"><span>T3s</span></td> <td class="fold" data-tooltip="T2s (Fold)"><span>T2s</span></td>
                 </tr>
                 <!-- Row 9 -->
                 <tr>
-                    <td class="co" data-tooltip="A9o (CO)"><span>A9o</span></td>
-                    <td class="btn" data-tooltip="K9o (BTN)"><span>K9o</span></td>
-                    <td class="btn" data-tooltip="Q9o (BTN)"><span>Q9o</span></td>
-                    <td class="btn" data-tooltip="J9o (BTN)"><span>J9o</span></td>
-                    <td class="btn" data-tooltip="T9o (BTN)"><span>T9o</span></td>
-                    <td class="lj pair" data-tooltip="99 (LJ)"><span>99</span></td>
-                    <td class="hj" data-tooltip="98s (HJ)"><span>98s</span></td>
-                    <td class="co" data-tooltip="97s (CO)"><span>97s</span></td>
-                    <td class="btn" data-tooltip="96s (BTN)"><span>96s</span></td>
-                    <td class="btn" data-tooltip="95s (BTN)"><span>95s</span></td>
-                    <td class="sb" data-tooltip="94s (SB)"><span>94s</span></td>
-                    <td class="fold" data-tooltip="93s (Fold)"><span>93s</span></td>
-                    <td class="fold" data-tooltip="92s (Fold)"><span>92s</span></td>
+                    <td class="hj" data-tooltip="A9o (HJ)"><span>A9o</span></td> <td class="co" data-tooltip="K9o (CO)"><span>K9o</span></td> <td class="btn" data-tooltip="Q9o (BTN)"><span>Q9o</span></td> <td class="btn" data-tooltip="J9o (BTN)"><span>J9o</span></td> <td class="btn" data-tooltip="T9o (BTN)"><span>T9o</span></td> <td class="lj pair" data-tooltip="99 (LJ)"><span>99</span></td> <td class="co" data-tooltip="98s (CO)"><span>98s</span></td> <td class="btn" data-tooltip="97s (BTN)"><span>97s</span></td> <td class="btn" data-tooltip="96s (BTN)"><span>96s</span></td> <td class="fold" data-tooltip="95s (Fold)"><span>95s</span></td> <td class="fold" data-tooltip="94s (Fold)"><span>94s</span></td> <td class="fold" data-tooltip="93s (Fold)"><span>93s</span></td> <td class="fold" data-tooltip="92s (Fold)"><span>92s</span></td>
                 </tr>
                 <!-- Row 8 -->
                 <tr>
-                    <td class="btn" data-tooltip="A8o (BTN)"><span>A8o</span></td>
-                    <td class="btn" data-tooltip="K8o (BTN)"><span>K8o</span></td>
-                    <td class="sb" data-tooltip="Q8o (SB)"><span>Q8o</span></td>
-                    <td class="sb" data-tooltip="J8o (SB)"><span>J8o</span></td>
-                    <td class="sb" data-tooltip="T8o (SB)"><span>T8o</span></td>
-                    <td class="sb" data-tooltip="98o (SB)"><span>98o</span></td>
-                    <td class="lj pair" data-tooltip="88 (LJ)"><span>88</span></td>
-                    <td class="hj" data-tooltip="87s (HJ)"><span>87s</span></td>
-                    <td class="co" data-tooltip="86s (CO)"><span>86s</span></td>
-                    <td class="btn" data-tooltip="85s (BTN)"><span>85s</span></td>
-                    <td class="sb" data-tooltip="84s (SB)"><span>84s</span></td>
-                    <td class="fold" data-tooltip="83s (Fold)"><span>83s</span></td>
-                    <td class="fold" data-tooltip="82s (Fold)"><span>82s</span></td>
+                    <td class="co" data-tooltip="A8o (CO)"><span>A8o</span></td> <td class="btn" data-tooltip="K8o (BTN)"><span>K8o</span></td> <td class="fold" data-tooltip="Q8o (Fold)"><span>Q8o</span></td> <td class="fold" data-tooltip="J8o (Fold)"><span>J8o</span></td> <td class="fold" data-tooltip="T8o (Fold)"><span>T8o</span></td> <td class="fold" data-tooltip="98o (Fold)"><span>98o</span></td> <td class="lj pair" data-tooltip="88 (LJ)"><span>88</span></td> <td class="btn" data-tooltip="87s (BTN)"><span>87s</span></td> <td class="btn" data-tooltip="86s (BTN)"><span>86s</span></td> <td class="fold" data-tooltip="85s (Fold)"><span>85s</span></td> <td class="fold" data-tooltip="84s (Fold)"><span>84s</span></td> <td class="fold" data-tooltip="83s (Fold)"><span>83s</span></td> <td class="fold" data-tooltip="82s (Fold)"><span>82s</span></td>
                 </tr>
                 <!-- Row 7 -->
                 <tr>
-                    <td class="btn" data-tooltip="A7o (BTN)"><span>A7o</span></td>
-                    <td class="sb" data-tooltip="K7o (SB)"><span>K7o</span></td>
-                    <td class="fold" data-tooltip="Q7o (Fold)"><span>Q7o</span></td>
-                    <td class="fold" data-tooltip="J7o (Fold)"><span>J7o</span></td>
-                    <td class="fold" data-tooltip="T7o (Fold)"><span>T7o</span></td>
-                    <td class="fold" data-tooltip="97o (Fold)"><span>97o</span></td>
-                    <td class="sb" data-tooltip="87o (SB)"><span>87o</span></td>
-                    <td class="lj pair" data-tooltip="77 (LJ)"><span>77</span></td>
-                    <td class="hj" data-tooltip="76s (HJ)"><span>76s</span></td>
-                    <td class="co" data-tooltip="75s (CO)"><span>75s</span></td>
-                    <td class="btn" data-tooltip="74s (BTN)"><span>74s</span></td>
-                    <td class="sb" data-tooltip="73s (SB)"><span>73s</span></td>
-                    <td class="fold" data-tooltip="72s (Fold)"><span>72s</span></td>
+                    <td class="btn" data-tooltip="A7o (BTN)"><span>A7o</span></td> <td class="fold" data-tooltip="K7o (Fold)"><span>K7o</span></td> <td class="fold" data-tooltip="Q7o (Fold)"><span>Q7o</span></td> <td class="fold" data-tooltip="J7o (Fold)"><span>J7o</span></td> <td class="fold" data-tooltip="T7o (Fold)"><span>T7o</span></td> <td class="fold" data-tooltip="97o (Fold)"><span>97o</span></td> <td class="fold" data-tooltip="87o (Fold)"><span>87o</span></td> <td class="lj pair" data-tooltip="77 (LJ)"><span>77</span></td> <td class="btn" data-tooltip="76s (BTN)"><span>76s</span></td> <td class="btn" data-tooltip="75s (BTN)"><span>75s</span></td> <td class="fold" data-tooltip="74s (Fold)"><span>74s</span></td> <td class="fold" data-tooltip="73s (Fold)"><span>73s</span></td> <td class="fold" data-tooltip="72s (Fold)"><span>72s</span></td>
                 </tr>
                 <!-- Row 6 -->
                 <tr>
-                    <td class="btn" data-tooltip="A6o (BTN)"><span>A6o</span></td>
-                    <td class="fold" data-tooltip="K6o (Fold)"><span>K6o</span></td>
-                    <td class="fold" data-tooltip="Q6o (Fold)"><span>Q6o</span></td>
-                    <td class="fold" data-tooltip="J6o (Fold)"><span>J6o</span></td>
-                    <td class="fold" data-tooltip="T6o (Fold)"><span>T6o</span></td>
-                    <td class="fold" data-tooltip="96o (Fold)"><span>96o</span></td>
-                    <td class="fold" data-tooltip="86o (Fold)"><span>86o</span></td>
-                    <td class="sb" data-tooltip="76o (SB)"><span>76o</span></td>
-                    <td class="hj pair" data-tooltip="66 (HJ)"><span>66</span></td>
-                    <td class="co" data-tooltip="65s (CO)"><span>65s</span></td>
-                    <td class="btn" data-tooltip="64s (BTN)"><span>64s</span></td>
-                    <td class="sb" data-tooltip="63s (SB)"><span>63s</span></td>
-                    <td class="sb" data-tooltip="62s (SB)"><span>62s</span></td>
+                    <td class="btn" data-tooltip="A6o (BTN)"><span>A6o</span></td> <td class="fold" data-tooltip="K6o (Fold)"><span>K6o</span></td> <td class="fold" data-tooltip="Q6o (Fold)"><span>Q6o</span></td> <td class="fold" data-tooltip="J6o (Fold)"><span>J6o</span></td> <td class="fold" data-tooltip="T6o (Fold)"><span>T6o</span></td> <td class="fold" data-tooltip="96o (Fold)"><span>96o</span></td> <td class="fold" data-tooltip="86o (Fold)"><span>86o</span></td> <td class="fold" data-tooltip="76o (Fold)"><span>76o</span></td> <td class="hj pair" data-tooltip="66 (HJ)"><span>66</span></td> <td class="btn" data-tooltip="65s (BTN)"><span>65s</span></td> <td class="fold" data-tooltip="64s (Fold)"><span>64s</span></td> <td class="fold" data-tooltip="63s (Fold)"><span>63s</span></td> <td class="fold" data-tooltip="62s (Fold)"><span>62s</span></td>
                 </tr>
                 <!-- Row 5 -->
                 <tr>
-                    <td class="btn" data-tooltip="A5o (BTN)"><span>A5o</span></td>
-                    <td class="fold" data-tooltip="K5o (Fold)"><span>K5o</span></td>
-                    <td class="fold" data-tooltip="Q5o (Fold)"><span>Q5o</span></td>
-                    <td class="fold" data-tooltip="J5o (Fold)"><span>J5o</span></td>
-                    <td class="fold" data-tooltip="T5o (Fold)"><span>T5o</span></td>
-                    <td class="fold" data-tooltip="95o (Fold)"><span>95o</span></td>
-                    <td class="fold" data-tooltip="85o (Fold)"><span>85o</span></td>
-                    <td class="fold" data-tooltip="75o (Fold)"><span>75o</span></td>
-                    <td class="fold" data-tooltip="65o (Fold)"><span>65o</span></td>
-                    <td class="hj pair" data-tooltip="55 (HJ)"><span>55</span></td>
-                    <td class="co" data-tooltip="54s (CO)"><span>54s</span></td>
-                    <td class="btn" data-tooltip="53s (BTN)"><span>53s</span></td>
-                    <td class="sb" data-tooltip="52s (SB)"><span>52s</span></td>
+                    <td class="btn" data-tooltip="A5o (BTN)"><span>A5o</span></td> <td class="fold" data-tooltip="K5o (Fold)"><span>K5o</span></td> <td class="fold" data-tooltip="Q5o (Fold)"><span>Q5o</span></td> <td class="fold" data-tooltip="J5o (Fold)"><span>J5o</span></td> <td class="fold" data-tooltip="T5o (Fold)"><span>T5o</span></td> <td class="fold" data-tooltip="95o (Fold)"><span>95o</span></td> <td class="fold" data-tooltip="85o (Fold)"><span>85o</span></td> <td class="fold" data-tooltip="75o (Fold)"><span>75o</span></td> <td class="fold" data-tooltip="65o (Fold)"><span>65o</span></td> <td class="co pair" data-tooltip="55 (CO)"><span>55</span></td> <td class="btn" data-tooltip="54s (BTN)"><span>54s</span></td> <td class="fold" data-tooltip="53s (Fold)"><span>53s</span></td> <td class="fold" data-tooltip="52s (Fold)"><span>52s</span></td>
                 </tr>
                  <!-- Row 4 -->
                 <tr>
-                    <td class="co" data-tooltip="A4o (CO)"><span>A4o</span></td>
-                    <td class="fold" data-tooltip="K4o (Fold)"><span>K4o</span></td>
-                    <td class="fold" data-tooltip="Q4o (Fold)"><span>Q4o</span></td>
-                    <td class="fold" data-tooltip="J4o (Fold)"><span>J4o</span></td>
-                    <td class="fold" data-tooltip="T4o (Fold)"><span>T4o</span></td>
-                    <td class="fold" data-tooltip="94o (Fold)"><span>94o</span></td>
-                    <td class="fold" data-tooltip="84o (Fold)"><span>84o</span></td>
-                    <td class="fold" data-tooltip="74o (Fold)"><span>74o</span></td>
-                    <td class="fold" data-tooltip="64o (Fold)"><span>64o</span></td>
-                    <td class="fold" data-tooltip="54o (Fold)"><span>54o</span></td>
-                    <td class="co pair" data-tooltip="44 (CO)"><span>44</span></td>
-                    <td class="btn" data-tooltip="43s (BTN)"><span>43s</span></td>
-                    <td class="sb" data-tooltip="42s (SB)"><span>42s</span></td>
+                    <td class="btn" data-tooltip="A4o (BTN)"><span>A4o</span></td> <td class="fold" data-tooltip="K4o (Fold)"><span>K4o</span></td> <td class="fold" data-tooltip="Q4o (Fold)"><span>Q4o</span></td> <td class="fold" data-tooltip="J4o (Fold)"><span>J4o</span></td> <td class="fold" data-tooltip="T4o (Fold)"><span>T4o</span></td> <td class="fold" data-tooltip="94o (Fold)"><span>94o</span></td> <td class="fold" data-tooltip="84o (Fold)"><span>84o</span></td> <td class="fold" data-tooltip="74o (Fold)"><span>74o</span></td> <td class="fold" data-tooltip="64o (Fold)"><span>64o</span></td> <td class="fold" data-tooltip="54o (Fold)"><span>54o</span></td> <td class="co pair" data-tooltip="44 (CO)"><span>44</span></td> <td class="fold" data-tooltip="43s (Fold)"><span>43s</span></td> <td class="fold" data-tooltip="42s (Fold)"><span>42s</span></td>
                 </tr>
                  <!-- Row 3 -->
                 <tr>
-                    <td class="co" data-tooltip="A3o (CO)"><span>A3o</span></td>
-                    <td class="fold" data-tooltip="K3o (Fold)"><span>K3o</span></td>
-                    <td class="fold" data-tooltip="Q3o (Fold)"><span>Q3o</span></td>
-                    <td class="fold" data-tooltip="J3o (Fold)"><span>J3o</span></td>
-                    <td class="fold" data-tooltip="T3o (Fold)"><span>T3o</span></td>
-                    <td class="fold" data-tooltip="93o (Fold)"><span>93o</span></td>
-                    <td class="fold" data-tooltip="83o (Fold)"><span>83o</span></td>
-                    <td class="fold" data-tooltip="73o (Fold)"><span>73o</span></td>
-                    <td class="fold" data-tooltip="63o (Fold)"><span>63o</span></td>
-                    <td class="fold" data-tooltip="53o (Fold)"><span>53o</span></td>
-                    <td class="fold" data-tooltip="43o (Fold)"><span>43o</span></td>
-                    <td class="co pair" data-tooltip="33 (CO)"><span>33</span></td>
-                    <td class="btn" data-tooltip="32s (BTN)"><span>32s</span></td>
+                    <td class="btn" data-tooltip="A3o (BTN)"><span>A3o</span></td> <td class="fold" data-tooltip="K3o (Fold)"><span>K3o</span></td> <td class="fold" data-tooltip="Q3o (Fold)"><span>Q3o</span></td> <td class="fold" data-tooltip="J3o (Fold)"><span>J3o</span></td> <td class="fold" data-tooltip="T3o (Fold)"><span>T3o</span></td> <td class="fold" data-tooltip="93o (Fold)"><span>93o</span></td> <td class="fold" data-tooltip="83o (Fold)"><span>83o</span></td> <td class="fold" data-tooltip="73o (Fold)"><span>73o</span></td> <td class="fold" data-tooltip="63o (Fold)"><span>63o</span></td> <td class="fold" data-tooltip="53o (Fold)"><span>53o</span></td> <td class="fold" data-tooltip="43o (Fold)"><span>43o</span></td> <td class="co pair" data-tooltip="33 (CO)"><span>33</span></td> <td class="fold" data-tooltip="32s (Fold)"><span>32s</span></td>
                 </tr>
                  <!-- Row 2 -->
                 <tr>
-                    <td class="co" data-tooltip="A2o (CO)"><span>A2o</span></td>
-                    <td class="fold" data-tooltip="K2o (Fold)"><span>K2o</span></td>
-                    <td class="fold" data-tooltip="Q2o (Fold)"><span>Q2o</span></td>
-                    <td class="fold" data-tooltip="J2o (Fold)"><span>J2o</span></td>
-                    <td class="fold" data-tooltip="T2o (Fold)"><span>T2o</span></td>
-                    <td class="fold" data-tooltip="92o (Fold)"><span>92o</span></td>
-                    <td class="fold" data-tooltip="82o (Fold)"><span>82o</span></td>
-                    <td class="fold" data-tooltip="72o (Fold)"><span>72o</span></td>
-                    <td class="fold" data-tooltip="62o (Fold)"><span>62o</span></td>
-                    <td class="fold" data-tooltip="52o (Fold)"><span>52o</span></td>
-                    <td class="fold" data-tooltip="42o (Fold)"><span>42o</span></td>
-                    <td class="fold" data-tooltip="32o (Fold)"><span>32o</span></td>
-                    <td class="co pair" data-tooltip="22 (CO)"><span>22</span></td>
+                    <td class="fold" data-tooltip="A2o (Fold)"><span>A2o</span></td> <td class="fold" data-tooltip="K2o (Fold)"><span>K2o</span></td> <td class="fold" data-tooltip="Q2o (Fold)"><span>Q2o</span></td> <td class="fold" data-tooltip="J2o (Fold)"><span>J2o</span></td> <td class="fold" data-tooltip="T2o (Fold)"><span>T2o</span></td> <td class="fold" data-tooltip="92o (Fold)"><span>92o</span></td> <td class="fold" data-tooltip="82o (Fold)"><span>82o</span></td> <td class="fold" data-tooltip="72o (Fold)"><span>72o</span></td> <td class="fold" data-tooltip="62o (Fold)"><span>62o</span></td> <td class="fold" data-tooltip="52o (Fold)"><span>52o</span></td> <td class="fold" data-tooltip="42o (Fold)"><span>42o</span></td> <td class="fold" data-tooltip="32o (Fold)"><span>32o</span></td> <td class="co pair" data-tooltip="22 (CO)"><span>22</span></td>
                 </tr>
             </tbody>
         </table>
@@ -514,7 +357,7 @@
         positionSelectors.forEach(sel => {
             positionMap[sel.dataset.positionClass] = sel.dataset.positionName;
         });
-        const LOCAL_STORAGE_COLORS_KEY = 'matrixCustomColors';
+        const LOCAL_STORAGE_COLORS_KEY = 'matrixCustomColors_v2'; // Changed key slightly in case of structure change
 
         let currentPositionClass = 'fold'; // Default to fold
         let currentPositionName = 'Fold';
@@ -522,15 +365,19 @@
 
         // --- Utility Functions ---
 
-        // Calculates contrast ratio and returns 'dark' or 'light'
-        // Simple luminance check - more sophisticated methods exist
         function getTextColorForBackground(hexColor) {
-            const rgb = parseInt(hexColor.slice(1), 16);
-            const r = (rgb >> 16) & 0xff;
-            const g = (rgb >>  8) & 0xff;
-            const b = (rgb >>  0) & 0xff;
-            const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per WCAG
-            return luminance < 140 ? '#ffffff' : '#333333'; // Threshold might need adjustment
+            if (!hexColor || hexColor.length < 7) return '#333333'; // Basic check for valid hex
+            try {
+                const rgb = parseInt(hexColor.slice(1), 16);
+                const r = (rgb >> 16) & 0xff;
+                const g = (rgb >>  8) & 0xff;
+                const b = (rgb >>  0) & 0xff;
+                const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                return luminance < 140 ? '#ffffff' : '#333333';
+            } catch(e) {
+                 console.error("Error processing color:", hexColor, e);
+                 return '#333333'; // Fallback
+            }
         }
 
         function setCssVariable(variableName, value) {
@@ -540,7 +387,7 @@
         function saveColorsToLocalStorage() {
             const colors = {};
             colorInputs.forEach(input => {
-                colors[input.dataset.position] = input.value;
+                colors[input.dataset.position] = { bg: input.value, text: getTextColorForBackground(input.value) };
             });
             localStorage.setItem(LOCAL_STORAGE_COLORS_KEY, JSON.stringify(colors));
         }
@@ -552,41 +399,48 @@
                     const colors = JSON.parse(savedColors);
                     colorInputs.forEach(input => {
                         const pos = input.dataset.position;
-                        if (colors[pos]) {
-                            input.value = colors[pos]; // Set input value first
-                            // Then update CSS variables
-                            const bgColorVar = `--color-${pos}-bg`;
-                            const textColorVar = `--color-${pos}-text`;
-                            setCssVariable(bgColorVar, colors[pos]);
-                            setCssVariable(textColorVar, getTextColorForBackground(colors[pos]));
+                        if (colors[pos] && colors[pos].bg) {
+                            input.value = colors[pos].bg; // Set input value
+                            // Update CSS variables from saved data
+                            setCssVariable(`--color-${pos}-bg`, colors[pos].bg);
+                            // Use saved text color if available, otherwise recalculate
+                            setCssVariable(`--color-${pos}-text`, colors[pos].text || getTextColorForBackground(colors[pos].bg));
+                        } else {
+                            // If a specific color is missing in saved data, apply default for that one
+                            applyDefaultColorForPosition(input, pos);
                         }
                     });
                      console.log("Custom colors loaded from localStorage.");
                 } catch (e) {
                     console.error("Failed to parse saved colors from localStorage", e);
-                    // Apply default colors if parsing fails
-                    applyDefaultColors();
+                    applyDefaultColors(); // Apply all defaults if parsing fails
                 }
             } else {
-                // Apply default colors if nothing is saved
-                 applyDefaultColors();
+                 applyDefaultColors(); // Apply all defaults if nothing is saved
             }
+        }
+
+        function applyDefaultColorForPosition(inputElement, positionName) {
+             const bgColorVar = `--color-${positionName}-bg`;
+             const textColorVar = `--color-${positionName}-text`;
+             // Get default value from computed style (which reads from :root)
+             const defaultBgColor = getComputedStyle(document.documentElement).getPropertyValue(bgColorVar).trim();
+             if (defaultBgColor) {
+                 inputElement.value = defaultBgColor; // Set input to default
+                 const defaultTextColor = getTextColorForBackground(defaultBgColor);
+                 // Set CSS variables to default (redundant if not changed, but safe)
+                 setCssVariable(bgColorVar, defaultBgColor);
+                 setCssVariable(textColorVar, defaultTextColor);
+             }
         }
 
          function applyDefaultColors() {
              colorInputs.forEach(input => {
-                const pos = input.dataset.position;
-                const bgColorVar = `--color-${pos}-bg`;
-                const textColorVar = `--color-${pos}-text`;
-                // Get default value from :root style declaration
-                const defaultBgColor = getComputedStyle(document.documentElement).getPropertyValue(bgColorVar).trim();
-                if (defaultBgColor) {
-                     input.value = defaultBgColor; // Set input to default
-                     // Ensure text color is correct based on default BG
-                     setCssVariable(textColorVar, getTextColorForBackground(defaultBgColor));
-                }
+                 applyDefaultColorForPosition(input, input.dataset.position);
              });
              console.log("Default colors applied.");
+             // Optionally clear local storage if applying defaults due to an error or explicitly
+             // localStorage.removeItem(LOCAL_STORAGE_COLORS_KEY);
          }
 
 
@@ -655,7 +509,7 @@
 
             feedbackElement.textContent = 'Configuration applied successfully!';
             feedbackElement.className = feedbackElement.id + ' success';
-            // Ensure no stale error messages linger
+            // Clear other feedback elements
              if (feedbackElement !== ioFeedback) ioFeedback.textContent = '';
              if (feedbackElement !== shareFeedback) shareFeedback.textContent = '';
             return true;
@@ -664,12 +518,13 @@
         function loadConfigFromURL() {
              if (window.location.hash && window.location.hash.length > 1) {
                  try {
+                    // # symbol is part of hash, remove it with substring(1)
                     const configString = decodeURIComponent(window.location.hash.substring(1));
                     console.log("Loading config from URL hash...");
-                    const success = applyConfig(configString, ioFeedback); // Use main feedback for loading
+                    const success = applyConfig(configString, ioFeedback);
                     if (success) {
-                         // Clear the hash to avoid re-applying on manual refresh if desired
-                         // history.replaceState(null, null, ' '); // Optional: removes hash from URL bar
+                         // Optionally clear the hash after successful load
+                         // history.replaceState(null, document.title, window.location.pathname + window.location.search);
                     }
                  } catch(e) {
                      console.error("Error decoding or applying config from URL hash:", e);
@@ -746,7 +601,8 @@
             try {
                 const configString = generateConfigString();
                 const encodedConfig = encodeURIComponent(configString);
-                const shareUrl = `${window.location.origin}${window.location.pathname}#${encodedConfig}`;
+                // Construct URL carefully, ensuring no double hashes if one already exists from loading
+                const shareUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${encodedConfig}`;
                 shareLinkInput.value = shareUrl;
 
                 if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -788,7 +644,7 @@
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             loadColorsFromLocalStorage(); // Load custom/default colors first
-            loadConfigFromURL(); // Then load matrix config from URL if present
+            loadConfigFromURL(); // Then load matrix config from URL if present (overrides HTML default)
         });
 
     </script>
