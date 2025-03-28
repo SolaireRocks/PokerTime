@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFI Range Trainer (Customizable)</title>
+    <style>
+        /* Color Variables */
+        :root {
+            --color-ep1-bg: #a46ab5; --color-ep1-text: #fff;
+            --color-ep2-bg: #8a7e77; --color-ep2-text: #fff;
+            --color-ep3-bg: #7e9aa8; --color-ep3-text: #fff;
+            --color-lj-bg: #d9534f;  --color-lj-text: #fff;
+            --color-hj-bg: #f0ad4e;  --color-hj-text: #fff;
+            --color-co-bg: #5bc0de;  --color-co-text: #fff;
+            --color-btn-bg: #0275d8; --color-btn-text: #fff;
+            --color-fold-bg: #e9ecef; --color-fold-text: #495057;
+            --color-card-red: #D90000;
+            --color-card-black: #333;
+            --color-correct: #28a745; /* Green */
+            --color-incorrect: #dc3545; /* Red */
+            --color-warning: #f0ad4e; /* Orange */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; background-color: #f0f2f5;
+            margin: 0; padding: 20px 0;
+        }
+
+        #trainer-container {
+            background-color: #fff; padding: 30px; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;
+            width: 90%; max-width: 650px; margin-bottom: 20px;
+        }
+
+        h1 {
+             color: #1d2129; margin-bottom: 15px; font-weight: 400;
+        }
+
+        /* --- Controls & Display --- */
+         .control-group {
+             margin-bottom: 20px; display: flex; justify-content: center;
+             align-items: center; gap: 15px; flex-wrap: wrap;
+         }
+         .checkbox-group {
+             margin-bottom: 20px; display: flex; justify-content: center;
+             align-items: center; gap: 5px; font-size: 0.9em; color: #555;
+         }
+         .checkbox-group input[type="checkbox"] { margin-right: 3px; cursor: pointer; }
+         .checkbox-group label { cursor: pointer; user-select: none; }
+
+        #position-selector label { margin: 0; font-weight: 500; color: #333; }
+        #position-selector select {
+            padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc;
+            font-size: 1em; background-color: #fff;
+        }
+
+        #hand-display {
+            font-size: 5.5em; font-weight: normal; margin: 25px 0; padding: 15px;
+            border: 1px solid #ddd; border-radius: 5px; min-height: 100px;
+            display: flex; justify-content: center; align-items: center;
+            background-color: #f9f9f9; letter-spacing: 0.1em; user-select: none;
+        }
+        .card-char { display: inline-block; }
+        .suit-h, .suit-d { color: var(--color-card-red); }
+        .suit-s, .suit-c { color: var(--color-card-black); }
+
+        #action-buttons button {
+            padding: 15px 30px; font-size: 1.2em; margin: 0 15px; cursor: pointer;
+            border: none; border-radius: 5px; color: white;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+         #action-buttons button:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+         #action-buttons button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+        #raise-button { background-color: var(--color-correct); }
+        #raise-button:hover:not(:disabled) { background-color: #218838; }
+        #fold-button { background-color: var(--color-incorrect); }
+        #fold-button:hover:not(:disabled) { background-color: #c82333; }
+
+        #feedback {
+            margin-top: 20px; font-size: 1.1em; font-weight: 500;
+            min-height: 25px; color: #555;
+        }
+        /* Feedback colors use variables now */
+        .correct { color: var(--color-correct); }
+        .incorrect { color: var(--color-incorrect); }
+        .warning { color: var(--color-warning); font-weight: bold;}
+
+        /* --- Session Stats --- */
+        #session-stats {
+            margin-top: 15px; /* Space above stats */
+            padding-top: 15px; /* Space below feedback */
+            border-top: 1px solid #eee; /* Separator line */
+            font-size: 0.95em;
+            color: #666;
+        }
+        #session-stats span {
+            font-weight: bold;
+            margin: 0 8px; /* Spacing between stats */
+        }
+        #stats-correct { color: var(--color-correct); }
+        #stats-incorrect { color: var(--color-incorrect); }
+        #stats-percentage { color: #333; } /* Neutral color for percentage */
+
+
+        /* --- Import Section --- */
+        #import-section {
+            margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; text-align: left;
+        }
+        #import-section h2 {
+            font-weight: 400; font-size: 1.1em; color: #1d2129;
+            margin-bottom: 10px; text-align: center;
+        }
+        #import-section textarea {
+            width: 96%; min-height: 70px; margin: 10px auto; padding: 8px;
+            border: 1px solid #ccc; border-radius: 4px; font-family: monospace;
+            font-size: 0.9em; resize: vertical; display: block;
+        }
+        #import-section button {
+            padding: 8px 15px; margin: 5px auto; border: none; border-radius: 4px;
+            background-color: #007bff; color: white; cursor: pointer;
+            font-size: 0.9em; display: block;
+        }
+        #import-section button:hover { background-color: #0056b3; }
+        #importFeedback {
+            font-size: 0.85em; margin-top: 10px; min-height: 1.2em; text-align: center;
+        }
+        #importFeedback.success { color: var(--color-correct); } /* Use variable */
+        #importFeedback.error { color: var(--color-incorrect); } /* Use variable */
+
+
+        /* --- Grid Overlay --- */
+        #grid-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.75); display: none;
+            justify-content: center; align-items: center; z-index: 1000; cursor: pointer;
+        }
+        #grid-container {
+            background-color: #fff; padding: 25px; border-radius: 5px;
+            cursor: default; max-width: 95%; overflow: auto; max-height: 90vh;
+        }
+        .hand-matrix {
+            border-collapse: collapse; margin: 15px auto; font-size: 0.8em;
+            user-select: none; border: 1px solid #ccc;
+        }
+        .hand-matrix td {
+            border: 1px solid #ddd; padding: 4px 7px; text-align: center;
+            min-width: 40px; position: relative; transition: background-color 0.1s ease;
+        }
+         .hand-matrix td span { display: block; font-weight: 500; }
+
+        /* Grid colors using Variables */
+        .hand-matrix .ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); }
+        .hand-matrix .ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); }
+        .hand-matrix .ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); }
+        .hand-matrix .lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text); }
+        .hand-matrix .hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text); }
+        .hand-matrix .co  { background-color: var(--color-co-bg);  color: var(--color-co-text); }
+        .hand-matrix .btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); }
+        .hand-matrix .fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text); }
+        .hand-matrix .pair span { font-weight: bold; }
+
+        .hand-matrix .highlight-error {
+             outline: 4px solid var(--color-incorrect) !important; outline-offset: -2px;
+             filter: brightness(1.1); z-index: 1;
+        }
+
+        /* Tooltips */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip); position: absolute; bottom: 105%; left: 50%;
+            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.8); color: white;
+            padding: 4px 8px; border-radius: 4px; font-size: 0.9em; white-space: nowrap;
+            z-index: 10; pointer-events: none; opacity: 0; visibility: hidden;
+             transition: opacity 0.2s, visibility 0.2s;
+        }
+        [data-tooltip]:hover::after { opacity: 1; visibility: visible; }
+
+    </style>
+</head>
+<body>
+    <div id="trainer-container">
+        <h1>RFI Range Trainer</h1>
+
+        <!-- Controls -->
+        <div class="control-group">
+            <div id="position-selector">
+                <label for="position">Train for Position:</label>
+                <select id="position">
+                    <option value="ep1">EP1 (UTG)</option>
+                    <option value="ep2">EP2 (UTG+1)</option>
+                    <option value="ep3">EP3 (LJ)</option>
+                    <option value="lj" selected>LJ (Actual 6-Max LJ)</option>
+                    <option value="hj">HJ (Hijack)</option>
+                    <option value="co">CO (Cutoff)</option>
+                    <option value="btn">BTN (Button)</option>
+                </select>
+            </div>
+        </div>
+         <div class="checkbox-group">
+             <input type="checkbox" id="edge-cases-only">
+             <label for="edge-cases-only">Train Edge Cases Only (±3)</label>
+        </div>
+
+        <!-- Hand Display -->
+        <div id="hand-display">--</div>
+
+        <!-- Action Buttons -->
+        <div id="action-buttons">
+            <button id="raise-button">Raise</button>
+            <button id="fold-button">Fold</button>
+        </div>
+
+        <!-- Feedback -->
+        <div id="feedback">Select a position to start training.</div>
+
+        <!-- Session Stats Display -->
+        <div id="session-stats">
+            Session: <span id="stats-correct">0</span> Correct /
+            <span id="stats-incorrect">0</span> Incorrect
+            (<span id="stats-percentage">N/A</span>)
+        </div>
+
+
+        <!-- Import Section -->
+        <div id="import-section">
+            <h2>Import Custom Range</h2>
+            <textarea id="configArea" placeholder="Paste configuration string..."></textarea>
+            <button id="importBtn">Import and Use This Range</button>
+            <div id="importFeedback"></div>
+        </div>
+    </div>
+
+    <!-- Grid Overlay -->
+    <div id="grid-overlay">
+        <div id="grid-container">
+             <p style="text-align: center; margin-top: 0; margin-bottom: 15px; font-weight: bold; color: var(--color-incorrect);">Incorrect!</p>
+            <p style="text-align: center; margin-top: 0; margin-bottom: 15px; font-size: 0.9em;">The correct action for <span id="error-hand-notation" style="font-weight: bold;"></span> from <span id="error-position" style="font-weight: bold;"></span> is shown below. Click background to continue.</p>
+            <table class="hand-matrix" id="handMatrix">
+                 <!-- Grid content remains the same -->
+                 <tbody>
+                    <!-- Row A -->
+                    <tr><td class="lj pair" data-tooltip="AA (LJ)"><span>AA</span></td><td class="lj" data-tooltip="AKs (LJ)"><span>AKs</span></td><td class="lj" data-tooltip="AQs (LJ)"><span>AQs</span></td><td class="lj" data-tooltip="AJs (LJ)"><span>AJs</span></td><td class="lj" data-tooltip="ATs (LJ)"><span>ATs</span></td><td class="lj" data-tooltip="A9s (LJ)"><span>A9s</span></td><td class="lj" data-tooltip="A8s (LJ)"><span>A8s</span></td><td class="lj" data-tooltip="A7s (LJ)"><span>A7s</span></td><td class="lj" data-tooltip="A6s (LJ)"><span>A6s</span></td><td class="lj" data-tooltip="A5s (LJ)"><span>A5s</span></td><td class="lj" data-tooltip="A4s (LJ)"><span>A4s</span></td><td class="lj" data-tooltip="A3s (LJ)"><span>A3s</span></td><td class="lj" data-tooltip="A2s (LJ)"><span>A2s</span></td></tr>
+                    <!-- Row K -->
+                    <tr><td class="lj" data-tooltip="AKo (LJ)"><span>AKo</span></td><td class="lj pair" data-tooltip="KK (LJ)"><span>KK</span></td><td class="lj" data-tooltip="KQs (LJ)"><span>KQs</span></td><td class="lj" data-tooltip="KJs (LJ)"><span>KJs</span></td><td class="lj" data-tooltip="KTs (LJ)"><span>KTs</span></td><td class="lj" data-tooltip="K9s (LJ)"><span>K9s</span></td><td class="lj" data-tooltip="K8s (LJ)"><span>K8s</span></td><td class="lj" data-tooltip="K7s (LJ)"><span>K7s</span></td><td class="lj" data-tooltip="K6s (LJ)"><span>K6s</span></td><td class="co" data-tooltip="K5s (CO)"><span>K5s</span></td><td class="co" data-tooltip="K4s (CO)"><span>K4s</span></td><td class="btn" data-tooltip="K3s (BTN)"><span>K3s</span></td><td class="btn" data-tooltip="K2s (BTN)"><span>K2s</span></td></tr>
+                    <!-- Row Q -->
+                    <tr><td class="lj" data-tooltip="AQo (LJ)"><span>AQo</span></td><td class="lj" data-tooltip="KQo (LJ)"><span>KQo</span></td><td class="lj pair" data-tooltip="QQ (LJ)"><span>QQ</span></td><td class="lj" data-tooltip="QJs (LJ)"><span>QJs</span></td><td class="lj" data-tooltip="QTs (LJ)"><span>QTs</span></td><td class="lj" data-tooltip="Q9s (LJ)"><span>Q9s</span></td><td class="hj" data-tooltip="Q8s (HJ)"><span>Q8s</span></td><td class="co" data-tooltip="Q7s (CO)"><span>Q7s</span></td><td class="co" data-tooltip="Q6s (CO)"><span>Q6s</span></td><td class="co" data-tooltip="Q5s (CO)"><span>Q5s</span></td><td class="btn" data-tooltip="Q4s (BTN)"><span>Q4s</span></td><td class="btn" data-tooltip="Q3s (BTN)"><span>Q3s</span></td><td class="btn" data-tooltip="Q2s (BTN)"><span>Q2s</span></td></tr>
+                    <!-- Row J -->
+                    <tr><td class="lj" data-tooltip="AJo (LJ)"><span>AJo</span></td><td class="lj" data-tooltip="KJo (LJ)"><span>KJo</span></td><td class="lj" data-tooltip="QJo (LJ)"><span>QJo</span></td><td class="lj pair" data-tooltip="JJ (LJ)"><span>JJ</span></td><td class="lj" data-tooltip="JTs (LJ)"><span>JTs</span></td><td class="hj" data-tooltip="J9s (HJ)"><span>J9s</span></td><td class="co" data-tooltip="J8s (CO)"><span>J8s</span></td><td class="co" data-tooltip="J7s (CO)"><span>J7s</span></td><td class="btn" data-tooltip="J6s (BTN)"><span>J6s</span></td><td class="btn" data-tooltip="J5s (BTN)"><span>J5s</span></td><td class="btn" data-tooltip="J4s (BTN)"><span>J4s</span></td><td class="fold" data-tooltip="J3s (Fold)"><span>J3s</span></td><td class="fold" data-tooltip="J2s (Fold)"><span>J2s</span></td></tr>
+                    <!-- Row T -->
+                    <tr><td class="lj" data-tooltip="ATo (LJ)"><span>ATo</span></td><td class="hj" data-tooltip="KTo (HJ)"><span>KTo</span></td><td class="hj" data-tooltip="QTo (HJ)"><span>QTo</span></td><td class="co" data-tooltip="JTo (CO)"><span>JTo</span></td><td class="lj pair" data-tooltip="TT (LJ)"><span>TT</span></td><td class="lj" data-tooltip="T9s (LJ)"><span>T9s</span></td><td class="co" data-tooltip="T8s (CO)"><span>T8s</span></td><td class="btn" data-tooltip="T7s (BTN)"><span>T7s</span></td><td class="btn" data-tooltip="T6s (BTN)"><span>T6s</span></td><td class="fold" data-tooltip="T5s (Fold)"><span>T5s</span></td><td class="fold" data-tooltip="T4s (Fold)"><span>T4s</span></td><td class="fold" data-tooltip="T3s (Fold)"><span>T3s</span></td><td class="fold" data-tooltip="T2s (Fold)"><span>T2s</span></td></tr>
+                    <!-- Row 9 -->
+                    <tr><td class="hj" data-tooltip="A9o (HJ)"><span>A9o</span></td><td class="co" data-tooltip="K9o (CO)"><span>K9o</span></td><td class="btn" data-tooltip="Q9o (BTN)"><span>Q9o</span></td><td class="btn" data-tooltip="J9o (BTN)"><span>J9o</span></td><td class="btn" data-tooltip="T9o (BTN)"><span>T9o</span></td><td class="lj pair" data-tooltip="99 (LJ)"><span>99</span></td><td class="co" data-tooltip="98s (CO)"><span>98s</span></td><td class="btn" data-tooltip="97s (BTN)"><span>97s</span></td><td class="btn" data-tooltip="96s (BTN)"><span>96s</span></td><td class="fold" data-tooltip="95s (Fold)"><span>95s</span></td><td class="fold" data-tooltip="94s (Fold)"><span>94s</span></td><td class="fold" data-tooltip="93s (Fold)"><span>93s</span></td><td class="fold" data-tooltip="92s (Fold)"><span>92s</span></td></tr>
+                    <!-- Row 8 -->
+                    <tr><td class="co" data-tooltip="A8o (CO)"><span>A8o</span></td><td class="btn" data-tooltip="K8o (BTN)"><span>K8o</span></td><td class="fold" data-tooltip="Q8o (Fold)"><span>Q8o</span></td><td class="fold" data-tooltip="J8o (Fold)"><span>J8o</span></td><td class="fold" data-tooltip="T8o (Fold)"><span>T8o</span></td><td class="fold" data-tooltip="98o (Fold)"><span>98o</span></td><td class="lj pair" data-tooltip="88 (LJ)"><span>88</span></td><td class="btn" data-tooltip="87s (BTN)"><span>87s</span></td><td class="btn" data-tooltip="86s (BTN)"><span>86s</span></td><td class="fold" data-tooltip="85s (Fold)"><span>85s</span></td><td class="fold" data-tooltip="84s (Fold)"><span>84s</span></td><td class="fold" data-tooltip="83s (Fold)"><span>83s</span></td><td class="fold" data-tooltip="82s (Fold)"><span>82s</span></td></tr>
+                    <!-- Row 7 -->
+                    <tr><td class="btn" data-tooltip="A7o (BTN)"><span>A7o</span></td><td class="fold" data-tooltip="K7o (Fold)"><span>K7o</span></td><td class="fold" data-tooltip="Q7o (Fold)"><span>Q7o</span></td><td class="fold" data-tooltip="J7o (Fold)"><span>J7o</span></td><td class="fold" data-tooltip="T7o (Fold)"><span>T7o</span></td><td class="fold" data-tooltip="97o (Fold)"><span>97o</span></td><td class="fold" data-tooltip="87o (Fold)"><span>87o</span></td><td class="lj pair" data-tooltip="77 (LJ)"><span>77</span></td><td class="btn" data-tooltip="76s (BTN)"><span>76s</span></td><td class="btn" data-tooltip="75s (BTN)"><span>75s</span></td><td class="fold" data-tooltip="74s (Fold)"><span>74s</span></td><td class="fold" data-tooltip="73s (Fold)"><span>73s</span></td><td class="fold" data-tooltip="72s (Fold)"><span>72s</span></td></tr>
+                    <!-- Row 6 -->
+                    <tr><td class="btn" data-tooltip="A6o (BTN)"><span>A6o</span></td><td class="fold" data-tooltip="K6o (Fold)"><span>K6o</span></td><td class="fold" data-tooltip="Q6o (Fold)"><span>Q6o</span></td><td class="fold" data-tooltip="J6o (Fold)"><span>J6o</span></td><td class="fold" data-tooltip="T6o (Fold)"><span>T6o</span></td><td class="fold" data-tooltip="96o (Fold)"><span>96o</span></td><td class="fold" data-tooltip="86o (Fold)"><span>86o</span></td><td class="fold" data-tooltip="76o (Fold)"><span>76o</span></td><td class="hj pair" data-tooltip="66 (HJ)"><span>66</span></td><td class="btn" data-tooltip="65s (BTN)"><span>65s</span></td><td class="fold" data-tooltip="64s (Fold)"><span>64s</span></td><td class="fold" data-tooltip="63s (Fold)"><span>63s</span></td><td class="fold" data-tooltip="62s (Fold)"><span>62s</span></td></tr>
+                    <!-- Row 5 -->
+                    <tr><td class="btn" data-tooltip="A5o (BTN)"><span>A5o</span></td><td class="fold" data-tooltip="K5o (Fold)"><span>K5o</span></td><td class="fold" data-tooltip="Q5o (Fold)"><span>Q5o</span></td><td class="fold" data-tooltip="J5o (Fold)"><span>J5o</span></td><td class="fold" data-tooltip="T5o (Fold)"><span>T5o</span></td><td class="fold" data-tooltip="95o (Fold)"><span>95o</span></td><td class="fold" data-tooltip="85o (Fold)"><span>85o</span></td><td class="fold" data-tooltip="75o (Fold)"><span>75o</span></td><td class="fold" data-tooltip="65o (Fold)"><span>65o</span></td><td class="co pair" data-tooltip="55 (CO)"><span>55</span></td><td class="btn" data-tooltip="54s (BTN)"><span>54s</span></td><td class="fold" data-tooltip="53s (Fold)"><span>53s</span></td><td class="fold" data-tooltip="52s (Fold)"><span>52s</span></td></tr>
+                     <!-- Row 4 -->
+                    <tr><td class="btn" data-tooltip="A4o (BTN)"><span>A4o</span></td><td class="fold" data-tooltip="K4o (Fold)"><span>K4o</span></td><td class="fold" data-tooltip="Q4o (Fold)"><span>Q4o</span></td><td class="fold" data-tooltip="J4o (Fold)"><span>J4o</span></td><td class="fold" data-tooltip="T4o (Fold)"><span>T4o</span></td><td class="fold" data-tooltip="94o (Fold)"><span>94o</span></td><td class="fold" data-tooltip="84o (Fold)"><span>84o</span></td><td class="fold" data-tooltip="74o (Fold)"><span>74o</span></td><td class="fold" data-tooltip="64o (Fold)"><span>64o</span></td><td class="fold" data-tooltip="54o (Fold)"><span>54o</span></td><td class="co pair" data-tooltip="44 (CO)"><span>44</span></td><td class="fold" data-tooltip="43s (Fold)"><span>43s</span></td><td class="fold" data-tooltip="42s (Fold)"><span>42s</span></td></tr>
+                     <!-- Row 3 -->
+                    <tr><td class="btn" data-tooltip="A3o (BTN)"><span>A3o</span></td><td class="fold" data-tooltip="K3o (Fold)"><span>K3o</span></td><td class="fold" data-tooltip="Q3o (Fold)"><span>Q3o</span></td><td class="fold" data-tooltip="J3o (Fold)"><span>J3o</span></td><td class="fold" data-tooltip="T3o (Fold)"><span>T3o</span></td><td class="fold" data-tooltip="93o (Fold)"><span>93o</span></td><td class="fold" data-tooltip="83o (Fold)"><span>83o</span></td><td class="fold" data-tooltip="73o (Fold)"><span>73o</span></td><td class="fold" data-tooltip="63o (Fold)"><span>63o</span></td><td class="fold" data-tooltip="53o (Fold)"><span>53o</span></td><td class="fold" data-tooltip="43o (Fold)"><span>43o</span></td><td class="co pair" data-tooltip="33 (CO)"><span>33</span></td><td class="fold" data-tooltip="32s (Fold)"><span>32s</span></td></tr>
+                     <!-- Row 2 -->
+                    <tr><td class="fold" data-tooltip="A2o (Fold)"><span>A2o</span></td><td class="fold" data-tooltip="K2o (Fold)"><span>K2o</span></td><td class="fold" data-tooltip="Q2o (Fold)"><span>Q2o</span></td><td class="fold" data-tooltip="J2o (Fold)"><span>J2o</span></td><td class="fold" data-tooltip="T2o (Fold)"><span>T2o</span></td><td class="fold" data-tooltip="92o (Fold)"><span>92o</span></td><td class="fold" data-tooltip="82o (Fold)"><span>82o</span></td><td class="fold" data-tooltip="72o (Fold)"><span>72o</span></td><td class="fold" data-tooltip="62o (Fold)"><span>62o</span></td><td class="fold" data-tooltip="52o (Fold)"><span>52o</span></td><td class="fold" data-tooltip="42o (Fold)"><span>42o</span></td><td class="fold" data-tooltip="32o (Fold)"><span>32o</span></td><td class="co pair" data-tooltip="22 (CO)"><span>22</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const positionSelect = document.getElementById('position');
+            const edgeCasesCheckbox = document.getElementById('edge-cases-only');
+            const handDisplay = document.getElementById('hand-display');
+            const raiseButton = document.getElementById('raise-button');
+            const foldButton = document.getElementById('fold-button');
+            const feedbackDiv = document.getElementById('feedback');
+            const gridOverlay = document.getElementById('grid-overlay');
+            const handMatrix = document.getElementById('handMatrix');
+            const gridCells = Array.from(handMatrix.getElementsByTagName('td'));
+            const configArea = document.getElementById('configArea');
+            const importBtn = document.getElementById('importBtn');
+            const importFeedback = document.getElementById('importFeedback');
+            const errorHandNotationSpan = document.getElementById('error-hand-notation');
+            const errorPositionSpan = document.getElementById('error-position');
+            const statsCorrectSpan = document.getElementById('stats-correct');
+            const statsIncorrectSpan = document.getElementById('stats-incorrect');
+            const statsPercentageSpan = document.getElementById('stats-percentage');
+
+
+            // --- Configuration & State ---
+            const RANKS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+            const SUITS_UNICODE = { h: '♥', d: '♦', c: '♣', s: '♠' };
+            const SUIT_CLASSES = { h: 'suit-h', d: 'suit-d', c: 'suit-c', s: 'suit-s' };
+            const ALL_SUITS = ['h', 'd', 'c', 's'];
+            const POSITION_ORDER = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn'];
+            const VALID_POSITION_CLASSES = [...POSITION_ORDER, 'fold'];
+            const EDGE_DISTANCE = 3;
+
+            let currentHandNotation = null;
+            let currentPosition = 'lj';
+            let trainEdgeCasesOnly = false;
+            let handData = {};
+            let allHandsNotations = [];
+            let cellMap = {};
+            let isEpCheckPassed = true;
+            let sessionCorrect = 0;
+            let sessionIncorrect = 0;
+
+
+            // --- Utility Functions ---
+            function getRandomElement(arr) {
+                 if (!arr || arr.length === 0) return null;
+                 return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            function createCardHtml(rank, suit) {
+                 const suitChar = SUITS_UNICODE[suit];
+                 const suitClass = SUIT_CLASSES[suit];
+                 return `<span class="card-char ${suitClass}">${rank}${suitChar}</span>`;
+            }
+
+            function generateUnicodeHand(notation) {
+                if (!notation || notation.length < 2 || notation.length > 3) return '--';
+
+                let r1 = notation[0];
+                let r2 = notation[1];
+                const type = notation.length === 3 ? notation[2] : (r1 === r2 ? 'p' : ''); // 's', 'o', or 'p' (pair)
+
+                let s1, s2;
+                if (type === 's') { // Suited
+                    s1 = s2 = getRandomElement(ALL_SUITS);
+                } else if (type === 'o') { // Offsuit
+                    s1 = getRandomElement(ALL_SUITS);
+                    do { s2 = getRandomElement(ALL_SUITS); } while (s1 === s2); // Ensure different suits
+                } else { // Pair
+                    s1 = getRandomElement(ALL_SUITS);
+                     do { s2 = getRandomElement(ALL_SUITS); } while (s1 === s2); // Ensure different suits
+                }
+
+                // --- Ensure higher rank card is displayed first ---
+                const rankOrder = RANKS;
+                if (type !== 'p' && rankOrder.indexOf(r1) > rankOrder.indexOf(r2)) {
+                    // r1 is lower rank, swap everything
+                    [r1, r2] = [r2, r1];
+                    [s1, s2] = [s2, s1];
+                }
+                // --- End Swap Logic ---
+
+                return createCardHtml(r1, s1) + createCardHtml(r2, s2);
+            }
+
+
+            // --- Data Parsing and Handling ---
+            function parseDefaultGridData() {
+                const defaultHandData = {};
+                allHandsNotations = [];
+                cellMap = {};
+
+                gridCells.forEach(cell => {
+                    const handText = cell.querySelector('span')?.innerText;
+                    if (!handText) return;
+
+                    allHandsNotations.push(handText);
+                    cellMap[handText] = cell;
+
+                    let minPos = 'fold';
+                    const cellClasses = cell.className.split(' ');
+                    for (const pos of POSITION_ORDER) {
+                        if (cellClasses.includes(pos)) {
+                            minPos = pos;
+                            break;
+                        }
+                    }
+                    defaultHandData[handText] = minPos;
+                });
+                 console.log("Parsed Default Hand Data:", defaultHandData);
+                 return defaultHandData;
+            }
+
+            function applyImportedConfig(configString) {
+                importFeedback.textContent = '';
+                importFeedback.className = '';
+                const importedClasses = configString.trim().split(',');
+
+                if (importedClasses.length !== 169) {
+                    importFeedback.textContent = `Import failed: Expected 169 values, found ${importedClasses.length}.`;
+                    importFeedback.className = 'error';
+                    return false;
+                }
+                const invalidClass = importedClasses.find(cls => !VALID_POSITION_CLASSES.includes(cls));
+                if (invalidClass) {
+                    importFeedback.textContent = `Import failed: Invalid position code "${invalidClass}". Valid: ${VALID_POSITION_CLASSES.join(', ')}.`;
+                    importFeedback.className = 'error';
+                    return false;
+                }
+
+                const newHandData = {};
+                if (allHandsNotations.length !== 169) {
+                      importFeedback.textContent = `Import failed: Internal error parsing grid cells.`;
+                      importFeedback.className = 'error';
+                      return false;
+                }
+
+                gridCells.forEach((cell, index) => {
+                    const handNotation = cell.querySelector('span')?.innerText;
+                    if (!handNotation) return;
+                    const newClass = importedClasses[index];
+                    newHandData[handNotation] = newClass;
+
+                    const positionName = newClass.toUpperCase();
+                    cell.classList.remove(...VALID_POSITION_CLASSES);
+                    cell.classList.add(newClass);
+                    cell.dataset.tooltip = `${handNotation} (${positionName})`;
+                });
+
+                handData = newHandData;
+                console.log("Applied Imported Hand Data:", handData);
+                importFeedback.textContent = 'Custom range imported successfully!';
+                importFeedback.className = 'success';
+
+                if (!checkEpAvailability(currentPosition)) {
+                    isEpCheckPassed = false;
+                    disableButtons();
+                } else {
+                     isEpCheckPassed = true;
+                     displayNewHand(); // Start training if the current position is now valid
+                }
+                return true;
+            }
+
+
+            // --- Game Logic ---
+            function checkEpAvailability(positionToCheck) {
+                const checkPositions = ['ep1', 'ep2', 'ep3'];
+                if (!checkPositions.includes(positionToCheck)) {
+                    return true; // Not an EP position, always available
+                }
+
+                const targetIndex = POSITION_ORDER.indexOf(positionToCheck);
+                if (targetIndex === -1) return true; // Should not happen
+
+                for (const hand in handData) {
+                    const assignedPos = handData[hand];
+                    if (assignedPos === 'fold') continue;
+                    const assignedIndex = POSITION_ORDER.indexOf(assignedPos);
+                    if (assignedIndex !== -1 && assignedIndex <= targetIndex) {
+                        return true; // Found at least one hand defined for this position or earlier
+                    }
+                }
+
+                // If loop finishes, no hands are defined for this EP position or earlier
+                const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
+                feedbackDiv.textContent = `The current range has no hands defined for ${positionDisplay}. Select a later position or import a range that includes ${positionDisplay}.`;
+                feedbackDiv.className = 'warning';
+                return false;
+            }
+
+            function getRandomHandNotation() {
+                if (!trainEdgeCasesOnly) {
+                    return getRandomElement(allHandsNotations); // Original behavior
+                }
+
+                const edgeHands = [];
+                const currentPositionIndex = POSITION_ORDER.indexOf(currentPosition);
+                if (currentPositionIndex === -1) {
+                    console.error("Cannot determine index for current position:", currentPosition);
+                    return getRandomElement(allHandsNotations); // Fallback
+                }
+
+                for (const hand of allHandsNotations) {
+                    const assignedPos = handData[hand];
+                    const assignedIndex = assignedPos === 'fold' ? -1 : POSITION_ORDER.indexOf(assignedPos);
+
+                    const isInRange = assignedIndex !== -1 && assignedIndex <= currentPositionIndex;
+
+                    if (isInRange) {
+                        const boundaryIndex = currentPositionIndex - EDGE_DISTANCE;
+                         const isOutOfRangeAtBoundary = assignedIndex > boundaryIndex;
+                         if (isOutOfRangeAtBoundary) {
+                            edgeHands.push(hand);
+                            continue;
+                         }
+                    }
+                    else { // (!isInRange)
+                        const boundaryIndex = currentPositionIndex + EDGE_DISTANCE;
+                         const isInRangeAtBoundary = assignedIndex !== -1 && assignedIndex <= boundaryIndex;
+                         if (isInRangeAtBoundary) {
+                            edgeHands.push(hand);
+                         }
+                    }
+                }
+
+                if (edgeHands.length > 0) {
+                    console.log(`Found ${edgeHands.length} edge hands for ${currentPosition}.`);
+                    return getRandomElement(edgeHands);
+                } else {
+                    console.warn(`No edge hands found for ${currentPosition}. Falling back to random hand.`);
+                     return getRandomElement(allHandsNotations);
+                }
+            }
+
+            function updateStatsDisplay() {
+                 const total = sessionCorrect + sessionIncorrect;
+                 let percentage = "N/A";
+                 if (total > 0) {
+                     percentage = ((sessionCorrect / total) * 100).toFixed(1) + "%";
+                 }
+                 statsCorrectSpan.textContent = sessionCorrect;
+                 statsIncorrectSpan.textContent = sessionIncorrect;
+                 statsPercentageSpan.textContent = percentage;
+             }
+
+            function displayNewHand() {
+                 if (!isEpCheckPassed) {
+                     console.log("EP Check failed, not displaying new hand.");
+                     handDisplay.textContent = '--';
+                     disableButtons();
+                     return;
+                 }
+
+                currentHandNotation = getRandomHandNotation();
+                if (currentHandNotation) {
+                     handDisplay.innerHTML = generateUnicodeHand(currentHandNotation);
+                     feedbackDiv.textContent = ''; // Clear previous feedback only on success
+                     feedbackDiv.className = '';
+                     enableButtons();
+                } else {
+                    handDisplay.textContent = '??';
+                    feedbackDiv.textContent = 'No suitable hands found for criteria.';
+                    feedbackDiv.className = 'warning';
+                    disableButtons();
+                }
+            }
+
+            function isHandInRfiRange(handNotationToCheck, selectedPosition) {
+                const assignedPosition = handData[handNotationToCheck];
+                if (!assignedPosition || assignedPosition === 'fold') {
+                    return false;
+                }
+                const assignedPositionIndex = POSITION_ORDER.indexOf(assignedPosition);
+                const selectedPositionIndex = POSITION_ORDER.indexOf(selectedPosition);
+                 if (assignedPositionIndex === -1 || selectedPositionIndex === -1) return false; // Safety check
+                return selectedPositionIndex >= assignedPositionIndex;
+            }
+
+            function checkAnswer(userAction) {
+                if (!currentHandNotation || !isEpCheckPassed) return;
+                disableButtons();
+
+                const shouldRaise = isHandInRfiRange(currentHandNotation, currentPosition);
+                const correctAction = shouldRaise ? 'raise' : 'fold';
+
+                if (userAction === correctAction) {
+                    feedbackDiv.textContent = 'Correct!';
+                    feedbackDiv.className = 'correct';
+                    sessionCorrect++;
+                    setTimeout(displayNewHand, 600);
+                } else {
+                    const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
+                    feedbackDiv.innerHTML = `Incorrect! <span style="font-weight:bold;">${currentHandNotation}</span> is a <span style="font-weight:bold;">${correctAction.toUpperCase()}</span> from ${positionDisplay}.`;
+                    feedbackDiv.className = 'incorrect';
+                    sessionIncorrect++;
+                    showGridError(currentHandNotation, positionDisplay);
+                }
+                updateStatsDisplay();
+            }
+
+            function showGridError(handToShow, positionName) {
+                const highlighted = handMatrix.querySelector('.highlight-error');
+                if (highlighted) highlighted.classList.remove('highlight-error');
+                errorHandNotationSpan.textContent = handToShow;
+                errorPositionSpan.textContent = positionName;
+                const cellToHighlight = cellMap[handToShow];
+                 if (cellToHighlight) {
+                     cellToHighlight.classList.add('highlight-error');
+                     cellToHighlight.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                 }
+                gridOverlay.style.display = 'flex';
+            }
+
+            function hideGridAndContinue() {
+                gridOverlay.style.display = 'none';
+                const highlighted = handMatrix.querySelector('.highlight-error');
+                if (highlighted) highlighted.classList.remove('highlight-error');
+                if (isEpCheckPassed) {
+                     setTimeout(displayNewHand, 100);
+                }
+            }
+
+            function disableButtons() {
+                raiseButton.disabled = true;
+                foldButton.disabled = true;
+            }
+
+            function enableButtons() {
+                if (isEpCheckPassed) {
+                    raiseButton.disabled = false;
+                    foldButton.disabled = false;
+                } else {
+                     disableButtons();
+                }
+            }
+
+            // --- Event Listeners ---
+            positionSelect.addEventListener('change', (e) => {
+                currentPosition = e.target.value;
+                const positionDisplay = e.target.options[e.target.selectedIndex].text;
+                isEpCheckPassed = checkEpAvailability(currentPosition);
+                if (isEpCheckPassed) {
+                    feedbackDiv.textContent = `Training for ${positionDisplay}...`;
+                    feedbackDiv.className = '';
+                    disableButtons();
+                    setTimeout(() => { displayNewHand(); }, 300);
+                } else {
+                     handDisplay.textContent = '--';
+                     disableButtons();
+                }
+            });
+
+            edgeCasesCheckbox.addEventListener('change', (e) => {
+                trainEdgeCasesOnly = e.target.checked;
+                console.log("Train Edge Cases Only:", trainEdgeCasesOnly);
+                 if (isEpCheckPassed) {
+                    displayNewHand();
+                 }
+            });
+
+            raiseButton.addEventListener('click', () => checkAnswer('raise'));
+            foldButton.addEventListener('click', () => checkAnswer('fold'));
+
+            importBtn.addEventListener('click', () => {
+                 const configString = configArea.value;
+                 applyImportedConfig(configString);
+            });
+
+            gridOverlay.addEventListener('click', (e) => {
+                 if (e.target === gridOverlay) {
+                    hideGridAndContinue();
+                 }
+            });
+
+
+            // --- Initialization ---
+            handData = parseDefaultGridData();
+            currentPosition = positionSelect.value;
+            trainEdgeCasesOnly = edgeCasesCheckbox.checked;
+
+            updateStatsDisplay(); // Initialize stats display
+
+            isEpCheckPassed = checkEpAvailability(currentPosition);
+             if (isEpCheckPassed) {
+                 const initialPositionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
+                 feedbackDiv.textContent = `Training for ${initialPositionDisplay}. Press Raise or Fold.`;
+                 displayNewHand();
+             } else {
+                 handDisplay.textContent = '--';
+                 disableButtons();
+             }
+
+        });
+    </script>
+
+</body>
+</html>

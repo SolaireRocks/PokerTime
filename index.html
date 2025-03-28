@@ -23,8 +23,34 @@
             background-color: #f0f2f5;
             color: #333;
             margin: 0;
-            padding: 20px;
+            /* padding: 20px; */ /* Remove top padding to allow header to touch top */
+            padding: 0 20px 20px 20px; /* Adjust padding */
             line-height: 1.4;
+        }
+
+     /* Style for the top navigation link */
+        .top-nav {
+            /* background-color: #343a40; */ /* REMOVED - Old Dark background */
+            background-color: #e9ecef; /* Light background (matches body) - or use #f8f9fa or #e9ecef */
+            width: 25%;             /* Make the background container narrow */
+            min-width: 180px;         /* Optional: Prevent it becoming too small on narrow screens */
+            margin: 0 auto;         /* Center the container horizontally */
+            margin-bottom: 20px;    /* Keep the space below nav */
+            padding: 10px 15px;     /* Adjust padding slightly for narrower width */
+            text-align: center;     /* Keep the link text centered within the container */
+            border-radius: 5px;     /* Optional: Soften the corners of the background */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Optional: Subtle shadow */
+        }
+        .top-nav a {
+            /* color: #fff; */     /* REMOVED - Old White text */
+            color: #333;         /* Dark text for light background */
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .top-nav a:hover {
+            color: #0056b3; /* Slightly darker blue on hover for better contrast */
         }
 
         h1 {
@@ -190,6 +216,12 @@
     </style>
 </head>
 <body>
+
+    <!-- ===== ADDED TOP NAVIGATION LINK HERE ===== -->
+    <div class="top-nav">
+        <a href="RFITrainer.html">RFI Trainer</a>
+    </div>
+    <!-- ========================================= -->
 
     <h1>Customizable 9-Max RFI Preflop Chart</h1>
 
