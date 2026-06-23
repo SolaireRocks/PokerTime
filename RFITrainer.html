@@ -217,6 +217,25 @@
         .hand-matrix .fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text); }
         .hand-matrix .pair span { font-weight: bold; }
 
+        /* Trainer overlay view: highlight only the hands in the trained position's range */
+        .hand-matrix .in-range { background-color: var(--color-correct); color: #fff; }
+        .hand-matrix .out-of-range { background-color: var(--color-fold-bg); color: #adb5bd; }
+
+        /* Header + legend shown above the matrix on a failed answer */
+        #training-position-header {
+            text-align: center; margin: 5px 0 4px 0;
+            font-weight: bold; font-size: 1.1em; color: #1d2129;
+        }
+        #grid-legend {
+            text-align: center; margin: 0 0 12px 0; font-size: 0.85em; color: #555;
+        }
+        #grid-legend .swatch {
+            display: inline-block; width: 12px; height: 12px;
+            border-radius: 2px; vertical-align: middle; margin: 0 4px 0 10px;
+        }
+        #grid-legend .swatch-raise { background-color: var(--color-correct); }
+        #grid-legend .swatch-fold { background-color: var(--color-fold-bg); border: 1px solid #ccc; }
+
         .hand-matrix .highlight-error {
              outline: 4px solid var(--color-incorrect) !important; outline-offset: -2px;
              filter: brightness(1.1); z-index: 1;
@@ -309,8 +328,13 @@
 <!-- Grid Overlay -->
 <div id="grid-overlay">
     <div id="grid-container">
-         <p style="text-align: center; margin-top: 0; margin-bottom: 15px; font-weight: bold; color: var(--color-incorrect);">Incorrect!</p>
-        <p style="text-align: center; margin-top: 0; margin-bottom: 15px; font-size: 0.9em;">The correct action for <span id="error-hand-notation" style="font-weight: bold;"></span> from <span id="error-position" style="font-weight: bold;"></span> is shown below. Click background to continue.</p>
+         <p style="text-align: center; margin-top: 0; margin-bottom: 10px; font-weight: bold; color: var(--color-incorrect);">Incorrect!</p>
+        <p style="text-align: center; margin-top: 0; margin-bottom: 12px; font-size: 0.9em;">The correct action for <span id="error-hand-notation" style="font-weight: bold;"></span> from <span id="error-position" style="font-weight: bold;"></span> is highlighted below. Click background to continue.</p>
+        <p id="training-position-header">Training: <span id="training-position-name"></span></p>
+        <p id="grid-legend">
+            <span class="swatch swatch-raise"></span>Raise (in range)
+            <span class="swatch swatch-fold"></span>Fold
+        </p>
         <table class="hand-matrix" id="handMatrix">
              <!-- Grid content remains the same - populated by JS now -->
              <tbody>
@@ -340,6 +364,7 @@
         const importFeedback = document.getElementById('importFeedback');
         const errorHandNotationSpan = document.getElementById('error-hand-notation');
         const errorPositionSpan = document.getElementById('error-position');
+        const trainingPositionNameSpan = document.getElementById('training-position-name');
         const statsCorrectSpan = document.getElementById('stats-correct');
         const statsIncorrectSpan = document.getElementById('stats-incorrect');
         const statsPercentageSpan = document.getElementById('stats-percentage');
@@ -363,6 +388,7 @@
         let isEpCheckPassed = true;
         let sessionCorrect = 0;
         let sessionIncorrect = 0;
+        let pendingWarning = ''; // Non-blocking message to show with the next hand (e.g. edge-case fallback)
 
         // Default Range String (example, replace with your actual default if different)
         // Default Range String (Corrected to user-provided default)
@@ -545,49 +571,54 @@
             return false;
         }
 
+        // Edge cases = hands near the raise/fold border for the position being trained.
+        // The matrix layout itself is used as a strength proxy: neighbouring cells are
+        // similar hands, and the open range is a contiguous region, so "within +/-N of
+        // the edge" means within N grid steps of the nearest cell whose decision (raise
+        // vs fold) differs. This drills both the loosest opens and the strongest folds
+        // while keeping obvious trash (e.g. 72s) out of the tight settings.
+        function getEdgeCaseHands(edgeDistance) {
+            const size = RANKS.length; // 13x13 grid; allHandsNotations is in row-major order
+            const total = allHandsNotations.length;
+            if (POSITION_ORDER.indexOf(currentPosition) === -1) {
+                console.error("Cannot determine index for current position:", currentPosition);
+                return [];
+            }
+            // Raise/fold decision for every cell at the current position.
+            const isRaise = allHandsNotations.map(hand => isHandInRfiRange(hand, currentPosition));
+
+            const edgeHands = [];
+            for (let i = 0; i < total; i++) {
+                const ri = Math.floor(i / size);
+                const ci = i % size;
+                let minDist = Infinity;
+                for (let j = 0; j < total && minDist > 1; j++) {
+                    if (isRaise[j] === isRaise[i]) continue; // same decision -> not across the border
+                    const dist = Math.abs(ri - Math.floor(j / size)) + Math.abs(ci - (j % size));
+                    if (dist < minDist) minDist = dist;
+                }
+                if (minDist <= edgeDistance) edgeHands.push(allHandsNotations[i]);
+            }
+            return edgeHands;
+        }
+
         function getRandomHandNotation() {
             if (!trainEdgeCasesOnly) {
-                return getRandomElement(allHandsNotations); // Original behavior
+                return getRandomElement(allHandsNotations); // Train the full range
             }
 
-            // --- Edge Case Logic ---
-            const edgeDistance = parseInt(edgeDistanceSelect.value, 10); // Get selected distance
-            const edgeHands = [];
-            const currentPositionIndex = POSITION_ORDER.indexOf(currentPosition);
-
-             if (currentPositionIndex === -1) {
-                 console.error("Cannot determine index for current position:", currentPosition);
-                 return getRandomElement(allHandsNotations); // Fallback
-             }
-
-            for (const hand of allHandsNotations) {
-                 const assignedPos = handData[hand];
-                 const assignedIndex = assignedPos === 'fold' ? POSITION_ORDER.length : POSITION_ORDER.indexOf(assignedPos); // Treat fold as highest index
-
-                 // Calculate distance: difference between hand's position index and current training position index
-                 // Use POSITION_ORDER.length for fold index to simplify comparison
-                 const distance = Math.abs(assignedIndex - currentPositionIndex);
-
-                 // Include hand if its position is within the selected distance from the current position
-                 if (distance > 0 && distance <= edgeDistance) {
-                     edgeHands.push(hand);
-                 }
-             }
-
+            const edgeDistance = parseInt(edgeDistanceSelect.value, 10);
+            const edgeHands = getEdgeCaseHands(edgeDistance);
 
             if (edgeHands.length > 0) {
-                console.log(`Found ${edgeHands.length} edge hands for ${currentPosition} with distance ±${edgeDistance}.`);
                 return getRandomElement(edgeHands);
-            } else {
-                console.warn(`No edge hands found for ${currentPosition} with distance ±${edgeDistance}. Falling back to random hand.`);
-                 feedbackDiv.textContent = `No hands found within ±${edgeDistance} of ${currentPosition}. Showing random hand.`;
-                 feedbackDiv.className = 'warning'; // Inform user
-                 // Fallback to non-edge case temporarily
-                 trainEdgeCasesOnly = false; // Temporarily disable to avoid infinite loop if range is narrow
-                 const fallbackHand = getRandomElement(allHandsNotations);
-                 trainEdgeCasesOnly = edgeCasesCheckbox.checked; // Re-enable if checkbox is still checked
-                 return fallbackHand;
             }
+
+            // No hands fall within the chosen distance for this range/position.
+            // Fall back to a random hand and surface a non-blocking warning.
+            const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
+            pendingWarning = `No edge-case hands within ±${edgeDistance} of ${positionDisplay} in this range. Showing a random hand.`;
+            return getRandomElement(allHandsNotations);
         }
 
         function updateStatsDisplay() {
@@ -609,13 +640,17 @@
                  return;
              }
 
+             pendingWarning = ''; // Reset; getRandomHandNotation may set it for this hand
              currentHandNotation = getRandomHandNotation();
              if (currentHandNotation) {
                  handDisplay.innerHTML = generateUnicodeHand(currentHandNotation);
-                 // Clear feedback unless it was specifically set (e.g., edge case warning)
-                 if (!feedbackDiv.classList.contains('warning')) {
-                    feedbackDiv.textContent = '';
-                    feedbackDiv.className = '';
+                 // Show a fresh warning if one was raised, otherwise clear old feedback.
+                 if (pendingWarning) {
+                     feedbackDiv.textContent = pendingWarning;
+                     feedbackDiv.className = 'warning';
+                 } else {
+                     feedbackDiv.textContent = '';
+                     feedbackDiv.className = '';
                  }
                  enableButtons();
              } else {
@@ -659,10 +694,25 @@
             updateStatsDisplay();
         }
 
+        // Recolour the overlay grid to a simple two-state view for the trained position:
+        // hands in the RFI range (raise) are highlighted, everything else is a muted fold.
+        function styleGridForCurrentPosition() {
+            allHandsNotations.forEach(hand => {
+                const cell = cellMap[hand];
+                if (!cell) return;
+                const shouldRaise = isHandInRfiRange(hand, currentPosition);
+                cell.classList.remove(...VALID_POSITION_CLASSES, 'in-range', 'out-of-range');
+                cell.classList.add(shouldRaise ? 'in-range' : 'out-of-range');
+                cell.dataset.tooltip = `${hand} (${shouldRaise ? 'Raise' : 'Fold'})`;
+            });
+        }
+
         function showGridError(handToShow, positionName) {
             const highlighted = handMatrixBody.querySelector('.highlight-error'); // Search within tbody
             if (highlighted) highlighted.classList.remove('highlight-error');
 
+            styleGridForCurrentPosition(); // Show in-range vs fold for the position being trained
+            trainingPositionNameSpan.textContent = positionName;
             errorHandNotationSpan.textContent = handToShow;
             errorPositionSpan.textContent = positionName;
             const cellToHighlight = cellMap[handToShow];
