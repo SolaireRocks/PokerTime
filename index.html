@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable 9-Max RFI Preflop Chart</title>
+    <title>Customizable 8-Max RFI Preflop Chart</title>
     <style>
         :root {
             /* Default Color Definitions - CSS Variables (BTN/SB Swapped) */
@@ -23,35 +23,30 @@
             background-color: #f0f2f5;
             color: #333;
             margin: 0;
-            /* padding: 20px; */ /* Remove top padding to allow header to touch top */
-            padding: 0 20px 20px 20px; /* Adjust padding */
+            padding: 0 20px 20px 20px;
             line-height: 1.4;
         }
 
-     /* Style for the top navigation link */
+        /* Style for the top navigation link */
         .top-nav {
-            /* background-color: #343a40; */ /* REMOVED - Old Dark background */
-            background-color: #e9ecef; /* Light background (matches body) - or use #f8f9fa or #e9ecef */
-            width: 25%;             /* Make the background container narrow */
-            min-width: 180px;         /* Optional: Prevent it becoming too small on narrow screens */
-            margin: 0 auto;         /* Center the container horizontally */
-            margin-bottom: 20px;    /* Keep the space below nav */
-            padding: 10px 15px;     /* Adjust padding slightly for narrower width */
-            text-align: center;     /* Keep the link text centered within the container */
-            border-radius: 5px;     /* Optional: Soften the corners of the background */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Optional: Subtle shadow */
+            background-color: #e9ecef;
+            width: 25%;
+            min-width: 180px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .top-nav a {
-            /* color: #fff; */     /* REMOVED - Old White text */
-            color: #333;         /* Dark text for light background */
+            color: #333;
             text-decoration: none;
             font-size: 1.1em;
             font-weight: 500;
             transition: color 0.2s ease;
         }
-        .top-nav a:hover {
-            color: #0056b3; /* Slightly darker blue on hover for better contrast */
-        }
+        .top-nav a:hover { color: #0056b3; }
 
         h1 {
             text-align: center;
@@ -75,7 +70,7 @@
             width: 100%;
             table-layout: fixed;
             border: 1px solid #ccc;
-            user-select: none; /* Prevent text selection during drag */
+            user-select: none;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
 
@@ -89,28 +84,32 @@
             font-size: clamp(8px, 1.8vw, 12px);
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.05s ease-in-out;
+            background-color: var(--color-fold-bg);
+            transition: background 0.05s ease-in-out;
         }
 
         .hand-matrix td span {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            display: block; width: 100%;
             pointer-events: none;
+            color: #1a1a1a;
+            /* Solid label chip keeps text crisp over any partial fill (no glow) */
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 3px;
+            padding: 1px 3px;
+            white-space: nowrap;
         }
+        .hand-matrix td.pair span { font-weight: 700; }
 
-        /* Position Cell Colors - Use CSS Variables */
-        .ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); }
-        .ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); }
-        .ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); }
-        .lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text); }
-        .hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text); }
-        .co  { background-color: var(--color-co-bg);  color: var(--color-co-text); }
-        .btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); }
-        .sb  { background-color: var(--color-sb-bg);  color: var(--color-sb-text); }
-        .fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text); }
-
-        .pair { font-weight: 700; }
+        /* Selector Button Colors - Use CSS Variables */
+        .pos-ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); border: 2px solid var(--color-ep1-bg); }
+        .pos-ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); border: 2px solid var(--color-ep2-bg); }
+        .pos-ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); border: 2px solid var(--color-ep3-bg); }
+        .pos-lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text);  border: 2px solid var(--color-lj-bg); }
+        .pos-hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text);  border: 2px solid var(--color-hj-bg); }
+        .pos-co  { background-color: var(--color-co-bg);  color: var(--color-co-text);  border: 2px solid var(--color-co-bg); }
+        .pos-btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); border: 2px solid var(--color-btn-bg); }
+        .pos-sb  { background-color: var(--color-sb-bg);  color: var(--color-sb-text);  border: 2px solid var(--color-sb-bg); }
 
         /* Controls Section */
         .controls h2, .io-container h2, .color-picker-container h2 {
@@ -122,37 +121,55 @@
         .position-selector {
             display: inline-block;
             margin: 3px; padding: 8px 10px;
-            font-size: 0.85em; /* Slightly smaller to fit more */
+            font-size: 0.85em;
             border-radius: 5px; cursor: pointer;
-            border: 1px solid transparent;
-            transition: border 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            min-width: 50px; /* Ensure minimum width */
+            /* Border is always 2px so the active state changes colour only — no reflow/shake */
+            border: 2px solid transparent;
+            transition: border-color 0.15s ease;
+            min-width: 50px;
             text-align: center;
         }
-        .position-selector:hover { opacity: 0.9; }
+        .position-selector:hover { opacity: 0.92; }
         .position-selector.active-position {
-            border-width: 2px;
-            border-style: solid;
-            border-color: #333 !important; /* Use important to override specific border colors */
-            font-weight: bold;
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            border-color: #1d2129 !important;
         }
 
-        /* Selector Button Colors - Use CSS Variables */
-        .pos-ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); border: 1px solid var(--color-ep1-bg); }
-        .pos-ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); border: 1px solid var(--color-ep2-bg); }
-        .pos-ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); border: 1px solid var(--color-ep3-bg); }
-        .pos-lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text);  border: 1px solid var(--color-lj-bg); }
-        .pos-hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text);  border: 1px solid var(--color-hj-bg); }
-        .pos-co  { background-color: var(--color-co-bg);  color: var(--color-co-text);  border: 1px solid var(--color-co-bg); }
-        .pos-btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); border: 1px solid var(--color-btn-bg); }
-        .pos-sb  { background-color: var(--color-sb-bg);  color: var(--color-sb-text);  border: 1px solid var(--color-sb-bg); }
-        .pos-fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text);border: 1px solid #ccc; }
-
+        /* Brush (raise %) controls */
+        .brush-controls {
+            margin-top: 18px; padding-top: 15px; border-top: 1px solid #eee;
+        }
+        .brush-controls h2 { font-size: 1.05em; margin-bottom: 10px; }
+        .brush-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .brush-btn {
+            padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.85em;
+            border: 1px solid #ccc; background-color: #f8f9fa; color: #333;
+            transition: all 0.15s ease;
+        }
+        .brush-btn:hover { background-color: #e9ecef; }
+        .brush-btn.active-brush {
+            border-color: #333; background-color: #343a40; color: #fff; font-weight: bold;
+        }
+        .brush-slider-row {
+            display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+        }
+        .brush-slider-row input[type="range"] { width: 220px; max-width: 60vw; cursor: pointer; }
+        .brush-slider-row input[type="number"] {
+            width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em;
+        }
+        .editing-label {
+            font-size: 0.95em; margin: 14px 0 4px 0; color: #1d2129;
+        }
+        .editing-label strong { font-size: 1.05em; }
+        .matrix-actions { margin-top: 14px; }
+        .matrix-actions button {
+            padding: 6px 12px; margin: 3px; border: 1px solid #ccc; border-radius: 4px;
+            background-color: #f8f9fa; color: #333; cursor: pointer; font-size: 0.85em;
+        }
+        .matrix-actions button:hover { background-color: #e9ecef; }
 
         /* IO Container */
         .io-container textarea {
-            width: 95%; min-height: 60px; /* Smaller height */
+            width: 95%; min-height: 60px;
             margin: 10px 0; padding: 8px;
             border: 1px solid #ccc; border-radius: 4px;
             font-family: monospace; font-size: 0.9em; resize: vertical;
@@ -168,13 +185,13 @@
         .success { color: green; } .error { color: red; }
 
         /* Share Container */
-         .share-container { text-align: center; padding-top: 0;}
-         .share-container input {
-             width: calc(95% - 90px); /* Adjust width to fit button */
-             padding: 8px; margin: 5px 0 5px 5px;
-             border: 1px solid #ccc; border-radius: 4px;
-             font-size: 0.9em;
-         }
+        .share-container { text-align: center; padding-top: 0;}
+        .share-container input {
+            width: calc(95% - 90px);
+            padding: 8px; margin: 5px 0 5px 5px;
+            border: 1px solid #ccc; border-radius: 4px;
+            font-size: 0.9em;
+        }
 
         /* Color Picker */
         .color-picker-container h2 { margin-bottom: 10px; }
@@ -183,20 +200,32 @@
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 15px;
         }
-        .color-picker-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .color-swatch-item { display: flex; align-items: center; gap: 10px; }
+        .color-swatch-item span { font-size: 0.9em; }
+        .color-swatch {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 2px solid #ccc; cursor: pointer; padding: 0; flex-shrink: 0;
+            box-shadow: inset 0 0 0 2px #fff;
         }
-        .color-picker-item label {
-            font-size: 0.9em;
-            flex-shrink: 0; /* Prevent label shrinking */
-            width: 40px; /* Align labels */
-        }
-        .color-picker-item input[type="color"] {
-            width: 40px; height: 25px; padding: 0; border: 1px solid #ccc; cursor: pointer;
-        }
+        .color-swatch:hover { border-color: #888; }
 
+        /* Inline color wheel popover */
+        .color-wheel-popover {
+            position: absolute; z-index: 50;
+            background: #fff; border: 1px solid #ccc; border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+            padding: 14px; width: 208px; text-align: center;
+        }
+        .color-wheel-popover[hidden] { display: none; }
+        .cw-title { font-size: 0.95em; margin-bottom: 8px; color: #1d2129; }
+        #wheelCanvas { cursor: crosshair; touch-action: none; border-radius: 50%; }
+        .cw-bright { display: block; font-size: 0.8em; color: #555; margin: 10px 0 4px; }
+        .cw-bright input { width: 100%; }
+        .cw-foot { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+        .wheel-preview { width: 26px; height: 26px; border-radius: 4px; border: 1px solid #ccc; flex-shrink: 0; }
+        .cw-foot input[type="text"] { flex: 1; min-width: 0; padding: 5px 6px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 0.85em; }
+        .cw-foot button { padding: 5px 10px; border: none; border-radius: 4px; background: #007bff; color: #fff; cursor: pointer; font-size: 0.85em; }
+        .cw-foot button:hover { background: #0056b3; }
 
         .notes {
             max-width: 700px; margin: 30px auto; font-size: 0.9em;
@@ -212,94 +241,61 @@
             padding: 4px 8px; border-radius: 4px; font-size: 0.8em; white-space: nowrap;
             z-index: 10; pointer-events: none;
         }
-
     </style>
 </head>
 <body>
 
-    <!-- ===== ADDED TOP NAVIGATION LINK HERE ===== -->
     <div class="top-nav">
         <a href="RFITrainer.html">RFI Trainer</a>
     </div>
-    <!-- ========================================= -->
 
-    <h1>Customizable 9-Max RFI Preflop Chart</h1>
+    <h1>Customizable 8-Max RFI Preflop Chart</h1>
 
     <!-- Position Selection Controls -->
     <div class="controls">
         <h2>Select Position to Edit:</h2>
-        <div> <!-- Wrap selectors for better centering -->
-            <div class="position-selector pos-ep1" data-position-class="ep1" data-position-name="EP1">EP1</div>
-            <div class="position-selector pos-ep2" data-position-class="ep2" data-position-name="EP2">EP2</div>
-            <div class="position-selector pos-ep3" data-position-class="ep3" data-position-name="EP3">EP3</div>
-            <div class="position-selector pos-lj" data-position-class="lj" data-position-name="LJ">LJ</div>
-            <div class="position-selector pos-hj" data-position-class="hj" data-position-name="HJ">HJ</div>
-            <div class="position-selector pos-co" data-position-class="co" data-position-name="CO">CO</div>
-            <div class="position-selector pos-btn" data-position-class="btn" data-position-name="BTN">BTN</div>
-            <div class="position-selector pos-sb" data-position-class="sb" data-position-name="SB">SB</div>
-            <div class="position-selector pos-fold active-position" data-position-class="fold" data-position-name="Fold">Fold</div>
+        <div>
+            <div class="position-selector pos-ep1" data-position="ep1">EP1</div>
+            <div class="position-selector pos-ep2" data-position="ep2">EP2</div>
+            <div class="position-selector pos-ep3" data-position="ep3">EP3</div>
+            <div class="position-selector pos-lj active-position" data-position="lj">LJ</div>
+            <div class="position-selector pos-hj" data-position="hj">HJ</div>
+            <div class="position-selector pos-co" data-position="co">CO</div>
+            <div class="position-selector pos-btn" data-position="btn">BTN</div>
+            <div class="position-selector pos-sb" data-position="sb">SB</div>
         </div>
-        <p style="font-size: 0.8em; margin-top: 10px;">Click a position, then click or click-and-drag on the matrix below.</p>
+
+        <!-- Raise % brush -->
+        <div class="brush-controls">
+            <h2>Raise % to Paint:</h2>
+            <div class="brush-buttons" id="brushButtons">
+                <span class="brush-btn" data-brush="0">0% (Fold)</span>
+                <span class="brush-btn" data-brush="25">25%</span>
+                <span class="brush-btn" data-brush="50">50%</span>
+                <span class="brush-btn" data-brush="75">75%</span>
+                <span class="brush-btn active-brush" data-brush="100">100% (Raise)</span>
+            </div>
+            <div class="brush-slider-row">
+                <input type="range" id="brushSlider" min="0" max="100" step="5" value="100">
+                <input type="number" id="brushInput" min="0" max="100" step="5" value="100">
+                <span>%</span>
+            </div>
+        </div>
+
+        <p class="editing-label">Now editing: <strong id="editingPositionLabel">LJ</strong> &mdash; each tile shows the chance you raise (open) that hand.</p>
+        <p style="font-size: 0.8em; margin-top: 6px;">Pick a position, set a Raise %, then click or click-and-drag on the matrix below.</p>
+
+        <div class="matrix-actions">
+            <button id="fillAllBtn">Fill This Position 100%</button>
+            <button id="clearBtn">Clear This Position (Fold)</button>
+            <button id="resetBtn">Reset All to Default</button>
+        </div>
     </div>
 
     <!-- Hand Matrix -->
     <div class="matrix-container">
         <table class="hand-matrix" id="handMatrix">
-             <tbody>
-                <!-- Default state based on provided string -->
-                <!-- Row A -->
-                <tr>
-                    <td class="lj pair" data-tooltip="AA (LJ)"><span>AA</span></td> <td class="lj" data-tooltip="AKs (LJ)"><span>AKs</span></td> <td class="lj" data-tooltip="AQs (LJ)"><span>AQs</span></td> <td class="lj" data-tooltip="AJs (LJ)"><span>AJs</span></td> <td class="lj" data-tooltip="ATs (LJ)"><span>ATs</span></td> <td class="lj" data-tooltip="A9s (LJ)"><span>A9s</span></td> <td class="lj" data-tooltip="A8s (LJ)"><span>A8s</span></td> <td class="lj" data-tooltip="A7s (LJ)"><span>A7s</span></td> <td class="lj" data-tooltip="A6s (LJ)"><span>A6s</span></td> <td class="lj" data-tooltip="A5s (LJ)"><span>A5s</span></td> <td class="lj" data-tooltip="A4s (LJ)"><span>A4s</span></td> <td class="lj" data-tooltip="A3s (LJ)"><span>A3s</span></td> <td class="lj" data-tooltip="A2s (LJ)"><span>A2s</span></td>
-                </tr>
-                <!-- Row K -->
-                <tr>
-                    <td class="lj" data-tooltip="AKo (LJ)"><span>AKo</span></td> <td class="lj pair" data-tooltip="KK (LJ)"><span>KK</span></td> <td class="lj" data-tooltip="KQs (LJ)"><span>KQs</span></td> <td class="lj" data-tooltip="KJs (LJ)"><span>KJs</span></td> <td class="lj" data-tooltip="KTs (LJ)"><span>KTs</span></td> <td class="lj" data-tooltip="K9s (LJ)"><span>K9s</span></td> <td class="lj" data-tooltip="K8s (LJ)"><span>K8s</span></td> <td class="lj" data-tooltip="K7s (LJ)"><span>K7s</span></td> <td class="lj" data-tooltip="K6s (LJ)"><span>K6s</span></td> <td class="co" data-tooltip="K5s (CO)"><span>K5s</span></td> <td class="co" data-tooltip="K4s (CO)"><span>K4s</span></td> <td class="btn" data-tooltip="K3s (BTN)"><span>K3s</span></td> <td class="btn" data-tooltip="K2s (BTN)"><span>K2s</span></td>
-                </tr>
-                <!-- Row Q -->
-                <tr>
-                    <td class="lj" data-tooltip="AQo (LJ)"><span>AQo</span></td> <td class="lj" data-tooltip="KQo (LJ)"><span>KQo</span></td> <td class="lj pair" data-tooltip="QQ (LJ)"><span>QQ</span></td> <td class="lj" data-tooltip="QJs (LJ)"><span>QJs</span></td> <td class="lj" data-tooltip="QTs (LJ)"><span>QTs</span></td> <td class="lj" data-tooltip="Q9s (LJ)"><span>Q9s</span></td> <td class="hj" data-tooltip="Q8s (HJ)"><span>Q8s</span></td> <td class="co" data-tooltip="Q7s (CO)"><span>Q7s</span></td> <td class="co" data-tooltip="Q6s (CO)"><span>Q6s</span></td> <td class="co" data-tooltip="Q5s (CO)"><span>Q5s</span></td> <td class="btn" data-tooltip="Q4s (BTN)"><span>Q4s</span></td> <td class="btn" data-tooltip="Q3s (BTN)"><span>Q3s</span></td> <td class="btn" data-tooltip="Q2s (BTN)"><span>Q2s</span></td>
-                </tr>
-                <!-- Row J -->
-                <tr>
-                    <td class="lj" data-tooltip="AJo (LJ)"><span>AJo</span></td> <td class="lj" data-tooltip="KJo (LJ)"><span>KJo</span></td> <td class="lj" data-tooltip="QJo (LJ)"><span>QJo</span></td> <td class="lj pair" data-tooltip="JJ (LJ)"><span>JJ</span></td> <td class="lj" data-tooltip="JTs (LJ)"><span>JTs</span></td> <td class="hj" data-tooltip="J9s (HJ)"><span>J9s</span></td> <td class="co" data-tooltip="J8s (CO)"><span>J8s</span></td> <td class="co" data-tooltip="J7s (CO)"><span>J7s</span></td> <td class="btn" data-tooltip="J6s (BTN)"><span>J6s</span></td> <td class="btn" data-tooltip="J5s (BTN)"><span>J5s</span></td> <td class="btn" data-tooltip="J4s (BTN)"><span>J4s</span></td> <td class="fold" data-tooltip="J3s (Fold)"><span>J3s</span></td> <td class="fold" data-tooltip="J2s (Fold)"><span>J2s</span></td>
-                </tr>
-                <!-- Row T -->
-                <tr>
-                    <td class="lj" data-tooltip="ATo (LJ)"><span>ATo</span></td> <td class="hj" data-tooltip="KTo (HJ)"><span>KTo</span></td> <td class="hj" data-tooltip="QTo (HJ)"><span>QTo</span></td> <td class="co" data-tooltip="JTo (CO)"><span>JTo</span></td> <td class="lj pair" data-tooltip="TT (LJ)"><span>TT</span></td> <td class="lj" data-tooltip="T9s (LJ)"><span>T9s</span></td> <td class="co" data-tooltip="T8s (CO)"><span>T8s</span></td> <td class="btn" data-tooltip="T7s (BTN)"><span>T7s</span></td> <td class="btn" data-tooltip="T6s (BTN)"><span>T6s</span></td> <td class="fold" data-tooltip="T5s (Fold)"><span>T5s</span></td> <td class="fold" data-tooltip="T4s (Fold)"><span>T4s</span></td> <td class="fold" data-tooltip="T3s (Fold)"><span>T3s</span></td> <td class="fold" data-tooltip="T2s (Fold)"><span>T2s</span></td>
-                </tr>
-                <!-- Row 9 -->
-                <tr>
-                    <td class="hj" data-tooltip="A9o (HJ)"><span>A9o</span></td> <td class="co" data-tooltip="K9o (CO)"><span>K9o</span></td> <td class="btn" data-tooltip="Q9o (BTN)"><span>Q9o</span></td> <td class="btn" data-tooltip="J9o (BTN)"><span>J9o</span></td> <td class="btn" data-tooltip="T9o (BTN)"><span>T9o</span></td> <td class="lj pair" data-tooltip="99 (LJ)"><span>99</span></td> <td class="co" data-tooltip="98s (CO)"><span>98s</span></td> <td class="btn" data-tooltip="97s (BTN)"><span>97s</span></td> <td class="btn" data-tooltip="96s (BTN)"><span>96s</span></td> <td class="fold" data-tooltip="95s (Fold)"><span>95s</span></td> <td class="fold" data-tooltip="94s (Fold)"><span>94s</span></td> <td class="fold" data-tooltip="93s (Fold)"><span>93s</span></td> <td class="fold" data-tooltip="92s (Fold)"><span>92s</span></td>
-                </tr>
-                <!-- Row 8 -->
-                <tr>
-                    <td class="co" data-tooltip="A8o (CO)"><span>A8o</span></td> <td class="btn" data-tooltip="K8o (BTN)"><span>K8o</span></td> <td class="fold" data-tooltip="Q8o (Fold)"><span>Q8o</span></td> <td class="fold" data-tooltip="J8o (Fold)"><span>J8o</span></td> <td class="fold" data-tooltip="T8o (Fold)"><span>T8o</span></td> <td class="fold" data-tooltip="98o (Fold)"><span>98o</span></td> <td class="lj pair" data-tooltip="88 (LJ)"><span>88</span></td> <td class="btn" data-tooltip="87s (BTN)"><span>87s</span></td> <td class="btn" data-tooltip="86s (BTN)"><span>86s</span></td> <td class="fold" data-tooltip="85s (Fold)"><span>85s</span></td> <td class="fold" data-tooltip="84s (Fold)"><span>84s</span></td> <td class="fold" data-tooltip="83s (Fold)"><span>83s</span></td> <td class="fold" data-tooltip="82s (Fold)"><span>82s</span></td>
-                </tr>
-                <!-- Row 7 -->
-                <tr>
-                    <td class="btn" data-tooltip="A7o (BTN)"><span>A7o</span></td> <td class="fold" data-tooltip="K7o (Fold)"><span>K7o</span></td> <td class="fold" data-tooltip="Q7o (Fold)"><span>Q7o</span></td> <td class="fold" data-tooltip="J7o (Fold)"><span>J7o</span></td> <td class="fold" data-tooltip="T7o (Fold)"><span>T7o</span></td> <td class="fold" data-tooltip="97o (Fold)"><span>97o</span></td> <td class="fold" data-tooltip="87o (Fold)"><span>87o</span></td> <td class="lj pair" data-tooltip="77 (LJ)"><span>77</span></td> <td class="btn" data-tooltip="76s (BTN)"><span>76s</span></td> <td class="btn" data-tooltip="75s (BTN)"><span>75s</span></td> <td class="fold" data-tooltip="74s (Fold)"><span>74s</span></td> <td class="fold" data-tooltip="73s (Fold)"><span>73s</span></td> <td class="fold" data-tooltip="72s (Fold)"><span>72s</span></td>
-                </tr>
-                <!-- Row 6 -->
-                <tr>
-                    <td class="btn" data-tooltip="A6o (BTN)"><span>A6o</span></td> <td class="fold" data-tooltip="K6o (Fold)"><span>K6o</span></td> <td class="fold" data-tooltip="Q6o (Fold)"><span>Q6o</span></td> <td class="fold" data-tooltip="J6o (Fold)"><span>J6o</span></td> <td class="fold" data-tooltip="T6o (Fold)"><span>T6o</span></td> <td class="fold" data-tooltip="96o (Fold)"><span>96o</span></td> <td class="fold" data-tooltip="86o (Fold)"><span>86o</span></td> <td class="fold" data-tooltip="76o (Fold)"><span>76o</span></td> <td class="hj pair" data-tooltip="66 (HJ)"><span>66</span></td> <td class="btn" data-tooltip="65s (BTN)"><span>65s</span></td> <td class="fold" data-tooltip="64s (Fold)"><span>64s</span></td> <td class="fold" data-tooltip="63s (Fold)"><span>63s</span></td> <td class="fold" data-tooltip="62s (Fold)"><span>62s</span></td>
-                </tr>
-                <!-- Row 5 -->
-                <tr>
-                    <td class="btn" data-tooltip="A5o (BTN)"><span>A5o</span></td> <td class="fold" data-tooltip="K5o (Fold)"><span>K5o</span></td> <td class="fold" data-tooltip="Q5o (Fold)"><span>Q5o</span></td> <td class="fold" data-tooltip="J5o (Fold)"><span>J5o</span></td> <td class="fold" data-tooltip="T5o (Fold)"><span>T5o</span></td> <td class="fold" data-tooltip="95o (Fold)"><span>95o</span></td> <td class="fold" data-tooltip="85o (Fold)"><span>85o</span></td> <td class="fold" data-tooltip="75o (Fold)"><span>75o</span></td> <td class="fold" data-tooltip="65o (Fold)"><span>65o</span></td> <td class="co pair" data-tooltip="55 (CO)"><span>55</span></td> <td class="btn" data-tooltip="54s (BTN)"><span>54s</span></td> <td class="fold" data-tooltip="53s (Fold)"><span>53s</span></td> <td class="fold" data-tooltip="52s (Fold)"><span>52s</span></td>
-                </tr>
-                 <!-- Row 4 -->
-                <tr>
-                    <td class="btn" data-tooltip="A4o (BTN)"><span>A4o</span></td> <td class="fold" data-tooltip="K4o (Fold)"><span>K4o</span></td> <td class="fold" data-tooltip="Q4o (Fold)"><span>Q4o</span></td> <td class="fold" data-tooltip="J4o (Fold)"><span>J4o</span></td> <td class="fold" data-tooltip="T4o (Fold)"><span>T4o</span></td> <td class="fold" data-tooltip="94o (Fold)"><span>94o</span></td> <td class="fold" data-tooltip="84o (Fold)"><span>84o</span></td> <td class="fold" data-tooltip="74o (Fold)"><span>74o</span></td> <td class="fold" data-tooltip="64o (Fold)"><span>64o</span></td> <td class="fold" data-tooltip="54o (Fold)"><span>54o</span></td> <td class="co pair" data-tooltip="44 (CO)"><span>44</span></td> <td class="fold" data-tooltip="43s (Fold)"><span>43s</span></td> <td class="fold" data-tooltip="42s (Fold)"><span>42s</span></td>
-                </tr>
-                 <!-- Row 3 -->
-                <tr>
-                    <td class="btn" data-tooltip="A3o (BTN)"><span>A3o</span></td> <td class="fold" data-tooltip="K3o (Fold)"><span>K3o</span></td> <td class="fold" data-tooltip="Q3o (Fold)"><span>Q3o</span></td> <td class="fold" data-tooltip="J3o (Fold)"><span>J3o</span></td> <td class="fold" data-tooltip="T3o (Fold)"><span>T3o</span></td> <td class="fold" data-tooltip="93o (Fold)"><span>93o</span></td> <td class="fold" data-tooltip="83o (Fold)"><span>83o</span></td> <td class="fold" data-tooltip="73o (Fold)"><span>73o</span></td> <td class="fold" data-tooltip="63o (Fold)"><span>63o</span></td> <td class="fold" data-tooltip="53o (Fold)"><span>53o</span></td> <td class="fold" data-tooltip="43o (Fold)"><span>43o</span></td> <td class="co pair" data-tooltip="33 (CO)"><span>33</span></td> <td class="fold" data-tooltip="32s (Fold)"><span>32s</span></td>
-                </tr>
-                 <!-- Row 2 -->
-                <tr>
-                    <td class="fold" data-tooltip="A2o (Fold)"><span>A2o</span></td> <td class="fold" data-tooltip="K2o (Fold)"><span>K2o</span></td> <td class="fold" data-tooltip="Q2o (Fold)"><span>Q2o</span></td> <td class="fold" data-tooltip="J2o (Fold)"><span>J2o</span></td> <td class="fold" data-tooltip="T2o (Fold)"><span>T2o</span></td> <td class="fold" data-tooltip="92o (Fold)"><span>92o</span></td> <td class="fold" data-tooltip="82o (Fold)"><span>82o</span></td> <td class="fold" data-tooltip="72o (Fold)"><span>72o</span></td> <td class="fold" data-tooltip="62o (Fold)"><span>62o</span></td> <td class="fold" data-tooltip="52o (Fold)"><span>52o</span></td> <td class="fold" data-tooltip="42o (Fold)"><span>42o</span></td> <td class="fold" data-tooltip="32o (Fold)"><span>32o</span></td> <td class="co pair" data-tooltip="22 (CO)"><span>22</span></td>
-                </tr>
-            </tbody>
+            <tbody><!-- Populated by JS --></tbody>
         </table>
     </div>
 
@@ -312,66 +308,76 @@
         <div id="ioFeedback" class="io-feedback"></div>
 
         <div class="share-container" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-             <input type="text" id="shareLinkInput" placeholder="Click 'Generate Share Link'" readonly>
-             <button id="shareBtn">Generate Share Link</button>
-             <div id="shareFeedback" class="share-feedback"></div>
+            <input type="text" id="shareLinkInput" placeholder="Click 'Generate Share Link'" readonly>
+            <button id="shareBtn">Generate Share Link</button>
+            <div id="shareFeedback" class="share-feedback"></div>
         </div>
     </div>
 
     <!-- Color Customization -->
     <div class="color-picker-container">
         <h2>Customize Colors</h2>
+        <p style="font-size: 0.85em; margin-top: -6px; margin-bottom: 14px; color: #6c757d;">Click a position's swatch to pick its colour from the wheel.</p>
         <div class="color-picker-grid">
-            <div class="color-picker-item">
-                <label for="color-ep1">EP1:</label>
-                <input type="color" id="color-ep1" data-position="ep1">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-ep2">EP2:</label>
-                <input type="color" id="color-ep2" data-position="ep2">
-            </div>
-             <div class="color-picker-item">
-                <label for="color-ep3">EP3:</label>
-                <input type="color" id="color-ep3" data-position="ep3">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-lj">LJ:</label>
-                <input type="color" id="color-lj" data-position="lj">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-hj">HJ:</label>
-                <input type="color" id="color-hj" data-position="hj">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-co">CO:</label>
-                <input type="color" id="color-co" data-position="co">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-btn">BTN:</label>
-                <input type="color" id="color-btn" data-position="btn">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-sb">SB:</label>
-                <input type="color" id="color-sb" data-position="sb">
-            </div>
-            <div class="color-picker-item">
-                <label for="color-fold">Fold:</label>
-                <input type="color" id="color-fold" data-position="fold">
-            </div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="ep1"></button><span>EP1</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="ep2"></button><span>EP2</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="ep3"></button><span>EP3</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="lj"></button><span>LJ</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="hj"></button><span>HJ</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="co"></button><span>CO</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="btn"></button><span>BTN</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="sb"></button><span>SB</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="fold"></button><span>Fold</span></div>
         </div>
-         <p style="font-size: 0.8em; margin-top: 10px;">Color choices are saved locally in your browser.</p>
+        <p style="font-size: 0.8em; margin-top: 14px;">Colour choices are saved locally in your browser.</p>
+    </div>
+
+    <!-- Color Wheel Popover -->
+    <div id="colorWheelPopover" class="color-wheel-popover" hidden>
+        <div class="cw-title" id="cwTitle">Pick a colour</div>
+        <canvas id="wheelCanvas" width="180" height="180"></canvas>
+        <label class="cw-bright">Brightness
+            <input type="range" id="wheelValue" min="0" max="100" value="100">
+        </label>
+        <div class="cw-foot">
+            <span id="wheelPreview" class="wheel-preview"></span>
+            <input type="text" id="wheelHex" maxlength="7" spellcheck="false">
+            <button type="button" id="wheelDone">Done</button>
+        </div>
     </div>
 
     <div class="notes">
-        <p><strong>Note:</strong> Click a position button, then click or drag on the matrix. Use Export/Import/Share for matrix configurations. Customize colors below.</p>
-         <p>Diagonal cells are pocket pairs. Cells above are suited hands. Cells below are offsuit hands.</p>
+        <p><strong>Note:</strong> Every position has its own independent matrix. The shaded portion of each tile = your chance to raise (open) that hand. Use Export/Import/Share to move full configurations between this chart and the RFI Trainer.</p>
+        <p>Diagonal cells are pocket pairs. Cells above are suited hands. Cells below are offsuit hands.</p>
     </div>
 
     <script>
-        // --- DOM Element References ---
+        // --- Shared configuration ---
+        const RANKS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+        const POSITION_ORDER = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb'];
+        const POSITION_NAMES = { ep1:'EP1', ep2:'EP2', ep3:'EP3', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB' };
+        const NUM_HANDS = 169;
+
+        // Legacy single-matrix default (earliest position that opens each hand), used to
+        // seed sensible per-position defaults so the chart matches the previous version.
+        const DEFAULT_RANGE_STRING = "lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,co,co,btn,btn,lj,lj,lj,lj,lj,lj,hj,co,co,co,btn,btn,btn,lj,lj,lj,lj,lj,hj,co,co,btn,btn,btn,fold,fold,lj,hj,hj,co,lj,lj,co,btn,btn,fold,fold,fold,fold,hj,co,btn,btn,btn,lj,co,btn,btn,fold,fold,fold,fold,co,btn,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,hj,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,co,btn,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co";
+
+        const LOCAL_STORAGE_COLORS_KEY = 'matrixCustomColors_v2';
+        const LOCAL_STORAGE_RANGES_KEY = 'matrixRanges_v2';
+
+        // --- DOM references ---
         const controlsContainer = document.querySelector('.controls');
         const matrix = document.getElementById('handMatrix');
+        const matrixBody = matrix.querySelector('tbody');
         const positionSelectors = document.querySelectorAll('.position-selector');
+        const editingPositionLabel = document.getElementById('editingPositionLabel');
+        const brushButtonsContainer = document.getElementById('brushButtons');
+        const brushButtons = brushButtonsContainer.querySelectorAll('.brush-btn');
+        const brushSlider = document.getElementById('brushSlider');
+        const brushInput = document.getElementById('brushInput');
+        const fillAllBtn = document.getElementById('fillAllBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const configArea = document.getElementById('configArea');
         const exportBtn = document.getElementById('exportBtn');
         const importBtn = document.getElementById('importBtn');
@@ -379,306 +385,500 @@
         const shareBtn = document.getElementById('shareBtn');
         const shareLinkInput = document.getElementById('shareLinkInput');
         const shareFeedback = document.getElementById('shareFeedback');
-        const colorPickerContainer = document.querySelector('.color-picker-grid');
-        const colorInputs = colorPickerContainer.querySelectorAll('input[type="color"]');
-        const matrixCells = matrix.querySelectorAll('td'); // Get all cells once
+        const colorSwatches = document.querySelectorAll('.color-swatch');
+        const cwPopover = document.getElementById('colorWheelPopover');
+        const cwTitle = document.getElementById('cwTitle');
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        const wheelCtx = wheelCanvas.getContext('2d');
+        const wheelValueInput = document.getElementById('wheelValue');
+        const wheelPreview = document.getElementById('wheelPreview');
+        const wheelHex = document.getElementById('wheelHex');
+        const wheelDone = document.getElementById('wheelDone');
 
-        // --- Configuration & State ---
-        const positionClasses = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb', 'fold'];
-        const positionMap = {}; // Map class name to display name
-        positionSelectors.forEach(sel => {
-            positionMap[sel.dataset.positionClass] = sel.dataset.positionName;
-        });
-        const LOCAL_STORAGE_COLORS_KEY = 'matrixCustomColors_v2'; // Changed key slightly in case of structure change
+        // --- State ---
+        let ranges = {};                 // { positionClass: number[169] }  (0-100 raise %)
+        let currentPosition = 'lj';
+        let brushValue = 100;
+        let isMouseDown = false;
+        const cellsByIndex = [];         // td element per hand index
+        let handNotations = [];          // 169 notations in grid order
 
-        let currentPositionClass = 'fold'; // Default to fold
-        let currentPositionName = 'Fold';
-        let isMouseDown = false; // Track mouse button state
-
-        // --- Utility Functions ---
-
-        function getTextColorForBackground(hexColor) {
-            if (!hexColor || hexColor.length < 7) return '#333333'; // Basic check for valid hex
-            try {
-                const rgb = parseInt(hexColor.slice(1), 16);
-                const r = (rgb >> 16) & 0xff;
-                const g = (rgb >>  8) & 0xff;
-                const b = (rgb >>  0) & 0xff;
-                const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                return luminance < 140 ? '#ffffff' : '#333333';
-            } catch(e) {
-                 console.error("Error processing color:", hexColor, e);
-                 return '#333333'; // Fallback
+        // --- Hand notations ---
+        function generateHandNotations() {
+            const notations = [];
+            for (let i = 0; i < RANKS.length; i++) {
+                for (let j = 0; j < RANKS.length; j++) {
+                    const r1 = RANKS[i], r2 = RANKS[j];
+                    if (i === j) notations.push(`${r1}${r2}`);
+                    else if (i < j) notations.push(`${r1}${r2}s`);
+                    else notations.push(`${r2}${r1}o`);
+                }
             }
+            return notations;
         }
 
-        function setCssVariable(variableName, value) {
-            document.documentElement.style.setProperty(variableName, value);
+        // Build per-position defaults from the legacy cumulative string: a hand opened by
+        // its earliest position is also opened (100%) by every later position.
+        function buildDefaultRanges() {
+            const classes = DEFAULT_RANGE_STRING.split(',');
+            const result = {};
+            POSITION_ORDER.forEach(p => { result[p] = new Array(NUM_HANDS).fill(0); });
+            classes.forEach((cls, i) => {
+                const earliest = POSITION_ORDER.indexOf(cls.trim());
+                if (earliest === -1) return; // 'fold' or unknown
+                for (let pi = earliest; pi < POSITION_ORDER.length; pi++) {
+                    result[POSITION_ORDER[pi]][i] = 100;
+                }
+            });
+            return result;
+        }
+
+        function cloneRanges(src) {
+            const out = {};
+            POSITION_ORDER.forEach(p => { out[p] = (src[p] || new Array(NUM_HANDS).fill(0)).slice(); });
+            return out;
+        }
+
+        // --- Colors ---
+        function getTextColorForBackground(hexColor) {
+            if (!hexColor || hexColor.length < 7) return '#333333';
+            try {
+                const rgb = parseInt(hexColor.slice(1), 16);
+                const r = (rgb >> 16) & 0xff, g = (rgb >> 8) & 0xff, b = rgb & 0xff;
+                const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                return luminance < 140 ? '#ffffff' : '#333333';
+            } catch (e) { return '#333333'; }
+        }
+        function setCssVariable(name, value) { document.documentElement.style.setProperty(name, value); }
+
+        // Colour state per position (hex). Includes 'fold' for the unfilled portion.
+        const COLOR_POSITIONS = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb', 'fold'];
+        const COLOR_LABELS = { ep1:'EP1', ep2:'EP2', ep3:'EP3', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB', fold:'Fold' };
+        const WHEEL_RADIUS = 90; // 180px canvas, centre 90,90
+        let positionColors = {};
+        let activeColorPos = null;
+        let wheelImageData = null;
+        let cwHue = 0, cwSat = 0, cwVal = 1; // current pick (h:0-360, s/v:0-1)
+
+        // --- Colour conversions ---
+        function hsvToRgb(h, s, v) {
+            const c = v * s, hp = h / 60, x = c * (1 - Math.abs(hp % 2 - 1));
+            let r = 0, g = 0, b = 0;
+            if (hp >= 0 && hp < 1) { r = c; g = x; }
+            else if (hp < 2) { r = x; g = c; }
+            else if (hp < 3) { g = c; b = x; }
+            else if (hp < 4) { g = x; b = c; }
+            else if (hp < 5) { r = x; b = c; }
+            else { r = c; b = x; }
+            const m = v - c;
+            return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
+        }
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+            let h = 0;
+            if (d !== 0) {
+                if (mx === r) h = ((g - b) / d) % 6;
+                else if (mx === g) h = (b - r) / d + 2;
+                else h = (r - g) / d + 4;
+                h *= 60; if (h < 0) h += 360;
+            }
+            return { h, s: mx === 0 ? 0 : d / mx, v: mx };
+        }
+        function hexToRgb(hex) {
+            if (!hex) return null;
+            hex = hex.trim().replace(/^#/, '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+            const n = parseInt(hex, 16);
+            return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+        }
+        function rgbToHex(r, g, b) { return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join(''); }
+        function hsvToHex(h, s, v) { const c = hsvToRgb(h, s, v); return rgbToHex(c.r, c.g, c.b); }
+
+        function defaultColorFor(pos) {
+            return getComputedStyle(document.documentElement).getPropertyValue(`--color-${pos}-bg`).trim();
         }
 
         function saveColorsToLocalStorage() {
-            const colors = {};
-            colorInputs.forEach(input => {
-                colors[input.dataset.position] = { bg: input.value, text: getTextColorForBackground(input.value) };
+            localStorage.setItem(LOCAL_STORAGE_COLORS_KEY, JSON.stringify(positionColors));
+        }
+
+        function applyColor(pos, hex, save) {
+            positionColors[pos] = hex;
+            setCssVariable(`--color-${pos}-bg`, hex);
+            setCssVariable(`--color-${pos}-text`, getTextColorForBackground(hex));
+            const sw = document.querySelector(`.color-swatch[data-position="${pos}"]`);
+            if (sw) sw.style.background = hex;
+            if (save) saveColorsToLocalStorage();
+            renderMatrix(); // tile fills read these colours live
+        }
+
+        function loadColors() {
+            let saved = null;
+            try { saved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_COLORS_KEY)); } catch (e) { saved = null; }
+            COLOR_POSITIONS.forEach(pos => {
+                let hex = null;
+                if (saved && saved[pos]) hex = typeof saved[pos] === 'string' ? saved[pos] : saved[pos].bg;
+                if (!hexToRgb(hex)) hex = defaultColorFor(pos);
+                applyColor(pos, hex, false);
             });
-            localStorage.setItem(LOCAL_STORAGE_COLORS_KEY, JSON.stringify(colors));
         }
 
-        function loadColorsFromLocalStorage() {
-            const savedColors = localStorage.getItem(LOCAL_STORAGE_COLORS_KEY);
-            if (savedColors) {
-                try {
-                    const colors = JSON.parse(savedColors);
-                    colorInputs.forEach(input => {
-                        const pos = input.dataset.position;
-                        if (colors[pos] && colors[pos].bg) {
-                            input.value = colors[pos].bg; // Set input value
-                            // Update CSS variables from saved data
-                            setCssVariable(`--color-${pos}-bg`, colors[pos].bg);
-                            // Use saved text color if available, otherwise recalculate
-                            setCssVariable(`--color-${pos}-text`, colors[pos].text || getTextColorForBackground(colors[pos].bg));
-                        } else {
-                            // If a specific color is missing in saved data, apply default for that one
-                            applyDefaultColorForPosition(input, pos);
-                        }
-                    });
-                     console.log("Custom colors loaded from localStorage.");
-                } catch (e) {
-                    console.error("Failed to parse saved colors from localStorage", e);
-                    applyDefaultColors(); // Apply all defaults if parsing fails
+        // --- Colour wheel ---
+        function buildWheel() {
+            const size = wheelCanvas.width, cx = size / 2, cy = size / 2, R = WHEEL_RADIUS;
+            const img = wheelCtx.createImageData(size, size);
+            const d = img.data;
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const dx = x - cx, dy = y - cy, dist = Math.sqrt(dx * dx + dy * dy), i = (y * size + x) * 4;
+                    if (dist <= R) {
+                        let ang = Math.atan2(dy, dx) * 180 / Math.PI; if (ang < 0) ang += 360;
+                        const { r, g, b } = hsvToRgb(ang, Math.min(1, dist / R), 1);
+                        d[i] = r; d[i + 1] = g; d[i + 2] = b; d[i + 3] = 255;
+                    } else { d[i + 3] = 0; }
                 }
-            } else {
-                 applyDefaultColors(); // Apply all defaults if nothing is saved
             }
+            wheelImageData = img;
         }
 
-        function applyDefaultColorForPosition(inputElement, positionName) {
-             const bgColorVar = `--color-${positionName}-bg`;
-             const textColorVar = `--color-${positionName}-text`;
-             // Get default value from computed style (which reads from :root)
-             const defaultBgColor = getComputedStyle(document.documentElement).getPropertyValue(bgColorVar).trim();
-             if (defaultBgColor) {
-                 inputElement.value = defaultBgColor; // Set input to default
-                 const defaultTextColor = getTextColorForBackground(defaultBgColor);
-                 // Set CSS variables to default (redundant if not changed, but safe)
-                 setCssVariable(bgColorVar, defaultBgColor);
-                 setCssVariable(textColorVar, defaultTextColor);
-             }
-        }
-
-         function applyDefaultColors() {
-             colorInputs.forEach(input => {
-                 applyDefaultColorForPosition(input, input.dataset.position);
-             });
-             console.log("Default colors applied.");
-             // Optionally clear local storage if applying defaults due to an error or explicitly
-             // localStorage.removeItem(LOCAL_STORAGE_COLORS_KEY);
-         }
-
-
-        // --- Core Logic Functions ---
-
-        function applyStyleToCell(cell) {
-            if (!cell || cell.tagName !== 'TD') return;
-            const handText = cell.querySelector('span')?.textContent || '';
-
-            if (!cell.classList.contains(currentPositionClass)) {
-                cell.classList.remove(...positionClasses);
-                cell.classList.add(currentPositionClass);
+        function renderWheel() {
+            const size = wheelCanvas.width, cx = size / 2, cy = size / 2, R = WHEEL_RADIUS;
+            wheelCtx.clearRect(0, 0, size, size);
+            wheelCtx.putImageData(wheelImageData, 0, 0);
+            if (cwVal < 1) {
+                wheelCtx.save();
+                wheelCtx.beginPath(); wheelCtx.arc(cx, cy, R, 0, 2 * Math.PI); wheelCtx.clip();
+                wheelCtx.fillStyle = `rgba(0,0,0,${(1 - cwVal).toFixed(3)})`;
+                wheelCtx.fillRect(0, 0, size, size);
+                wheelCtx.restore();
             }
-            cell.dataset.tooltip = `${handText} (${currentPositionName})`;
+            // Selection marker
+            const rad = cwSat * R, a = cwHue * Math.PI / 180;
+            const mx = cx + Math.cos(a) * rad, my = cy + Math.sin(a) * rad;
+            wheelCtx.beginPath(); wheelCtx.arc(mx, my, 6, 0, 2 * Math.PI);
+            wheelCtx.lineWidth = 2; wheelCtx.strokeStyle = '#fff'; wheelCtx.stroke();
+            wheelCtx.beginPath(); wheelCtx.arc(mx, my, 6, 0, 2 * Math.PI);
+            wheelCtx.lineWidth = 1; wheelCtx.strokeStyle = '#333'; wheelCtx.stroke();
         }
 
-        function generateConfigString() {
-            const config = [];
-            matrixCells.forEach(cell => {
-                let foundClass = 'fold';
-                for (const className of positionClasses) {
-                    if (cell.classList.contains(className)) {
-                        foundClass = className;
-                        break;
+        function updateWheelUI(commit) {
+            const hex = hsvToHex(cwHue, cwSat, cwVal);
+            renderWheel();
+            wheelPreview.style.background = hex;
+            wheelHex.value = hex;
+            if (commit && activeColorPos) applyColor(activeColorPos, hex, true);
+        }
+
+        function openWheel(pos, anchor) {
+            activeColorPos = pos;
+            cwTitle.textContent = `Pick colour: ${COLOR_LABELS[pos] || pos}`;
+            const rgb = hexToRgb(positionColors[pos] || defaultColorFor(pos)) || { r: 128, g: 128, b: 128 };
+            const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+            cwHue = hsv.h; cwSat = hsv.s; cwVal = hsv.v;
+            wheelValueInput.value = Math.round(cwVal * 100);
+            updateWheelUI(false);
+            // Position the popover just below the swatch, kept on-screen
+            const r = anchor.getBoundingClientRect();
+            const w = 236;
+            let left = window.scrollX + r.left;
+            const maxLeft = window.scrollX + document.documentElement.clientWidth - 8 - w;
+            if (left > maxLeft) left = maxLeft;
+            cwPopover.style.top = (window.scrollY + r.bottom + 8) + 'px';
+            cwPopover.style.left = Math.max(8, left) + 'px';
+            cwPopover.hidden = false;
+        }
+
+        function closeWheel() { cwPopover.hidden = true; activeColorPos = null; }
+
+        function pickFromEvent(e) {
+            const rect = wheelCanvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (wheelCanvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (wheelCanvas.height / rect.height);
+            const cx = wheelCanvas.width / 2, cy = wheelCanvas.height / 2;
+            const dx = x - cx, dy = y - cy;
+            let ang = Math.atan2(dy, dx) * 180 / Math.PI; if (ang < 0) ang += 360;
+            cwHue = ang;
+            cwSat = Math.min(1, Math.sqrt(dx * dx + dy * dy) / WHEEL_RADIUS);
+            updateWheelUI(true);
+        }
+
+        // --- Ranges persistence ---
+        function saveRangesToLocalStorage() {
+            try { localStorage.setItem(LOCAL_STORAGE_RANGES_KEY, JSON.stringify(ranges)); } catch (e) {}
+        }
+        function loadRangesFromLocalStorage() {
+            const saved = localStorage.getItem(LOCAL_STORAGE_RANGES_KEY);
+            if (!saved) return false;
+            try {
+                const parsed = JSON.parse(saved);
+                const merged = buildDefaultRanges();
+                POSITION_ORDER.forEach(p => {
+                    if (Array.isArray(parsed[p]) && parsed[p].length === NUM_HANDS) {
+                        merged[p] = parsed[p].map(clampPct);
                     }
+                });
+                ranges = merged;
+                return true;
+            } catch (e) { return false; }
+        }
+
+        function clampPct(v) {
+            let n = Math.round(Number(v));
+            if (isNaN(n)) n = 0;
+            return Math.max(0, Math.min(100, n));
+        }
+
+        // --- Matrix rendering ---
+        function buildMatrix() {
+            matrixBody.innerHTML = '';
+            cellsByIndex.length = 0;
+            let index = 0;
+            for (let i = 0; i < RANKS.length; i++) {
+                const row = matrixBody.insertRow();
+                for (let j = 0; j < RANKS.length; j++) {
+                    const cell = row.insertCell();
+                    const span = document.createElement('span');
+                    span.textContent = handNotations[index];
+                    cell.appendChild(span);
+                    cell.dataset.index = index;
+                    if (i === j) cell.classList.add('pair');
+                    cellsByIndex[index] = cell;
+                    index++;
                 }
-                config.push(foundClass);
+            }
+        }
+
+        function styleCell(index) {
+            const cell = cellsByIndex[index];
+            if (!cell) return;
+            const f = ranges[currentPosition][index];
+            const bg = `var(--color-${currentPosition}-bg)`;
+            const fold = `var(--color-fold-bg)`;
+            if (f <= 0) cell.style.background = fold;
+            else if (f >= 100) cell.style.background = bg;
+            else cell.style.background = `linear-gradient(to top, ${bg} ${f}%, ${fold} ${f}%)`;
+            cell.dataset.tooltip = `${handNotations[index]} — ${POSITION_NAMES[currentPosition]} ${f}% raise`;
+        }
+
+        function renderMatrix() {
+            for (let i = 0; i < NUM_HANDS; i++) styleCell(i);
+            editingPositionLabel.textContent = POSITION_NAMES[currentPosition];
+        }
+
+        function paintCell(cell) {
+            if (!cell || cell.tagName !== 'TD') return;
+            const index = parseInt(cell.dataset.index, 10);
+            if (isNaN(index)) return;
+            ranges[currentPosition][index] = brushValue;
+            styleCell(index);
+            saveRangesToLocalStorage();
+        }
+
+        // --- Brush UI ---
+        function setBrushValue(v) {
+            brushValue = clampPct(v);
+            brushSlider.value = brushValue;
+            brushInput.value = brushValue;
+            brushButtons.forEach(btn => {
+                btn.classList.toggle('active-brush', parseInt(btn.dataset.brush, 10) === brushValue);
             });
-            return config.join(',');
+        }
+
+        // --- Config import / export (v2 = per-position frequencies) ---
+        function generateConfigString() {
+            return JSON.stringify({ v: 2, ranges });
         }
 
         function applyConfig(configString, feedbackElement = ioFeedback) {
-             const importedClasses = configString.trim().split(',');
+            const raw = (configString || '').trim();
+            if (!raw) { setFeedback(feedbackElement, 'Import failed: empty configuration.', false); return false; }
 
-            // Validation
-            if (importedClasses.length !== 169) {
-                 feedbackElement.textContent = `Import failed: Expected 169 values, found ${importedClasses.length}.`;
-                 feedbackElement.className = feedbackElement.id + ' error';
-                 return false;
+            // Try v2 JSON first
+            let parsed = null;
+            try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
+
+            if (parsed && parsed.ranges) {
+                const next = buildDefaultRanges();
+                let found = 0;
+                POSITION_ORDER.forEach(p => {
+                    const arr = parsed.ranges[p];
+                    if (Array.isArray(arr) && arr.length === NUM_HANDS) { next[p] = arr.map(clampPct); found++; }
+                });
+                if (found === 0) { setFeedback(feedbackElement, 'Import failed: no valid position matrices found.', false); return false; }
+                ranges = next;
+                renderMatrix();
+                saveRangesToLocalStorage();
+                setFeedback(feedbackElement, 'Configuration applied successfully!', true);
+                return true;
             }
 
-            let invalidClassFound = null;
-            for (const cls of importedClasses) {
-                if (!positionClasses.includes(cls)) {
-                    invalidClassFound = cls;
-                    break;
-                }
+            // Fallback: legacy v1 single cumulative string of 169 class names
+            const classes = raw.split(',').map(s => s.trim());
+            if (classes.length === NUM_HANDS) {
+                const next = {};
+                POSITION_ORDER.forEach(p => { next[p] = new Array(NUM_HANDS).fill(0); });
+                let valid = true;
+                classes.forEach((cls, i) => {
+                    if (cls === 'fold') return;
+                    const earliest = POSITION_ORDER.indexOf(cls);
+                    if (earliest === -1) { valid = false; return; }
+                    for (let pi = earliest; pi < POSITION_ORDER.length; pi++) next[POSITION_ORDER[pi]][i] = 100;
+                });
+                if (!valid) { setFeedback(feedbackElement, 'Import failed: invalid position code in legacy string.', false); return false; }
+                ranges = next;
+                renderMatrix();
+                saveRangesToLocalStorage();
+                setFeedback(feedbackElement, 'Legacy configuration converted and applied!', true);
+                return true;
             }
-            if (invalidClassFound) {
-                 feedbackElement.textContent = `Import failed: Invalid class name "${invalidClassFound}" found.`;
-                 feedbackElement.className = feedbackElement.id + ' error';
-                 return false;
-             }
 
+            setFeedback(feedbackElement, 'Import failed: unrecognized configuration format.', false);
+            return false;
+        }
 
-            // Apply imported configuration
-            matrixCells.forEach((cell, index) => {
-                const newClass = importedClasses[index];
-                const newName = positionMap[newClass] || 'Unknown';
-                const handText = cell.querySelector('span')?.textContent || '';
-
-                cell.classList.remove(...positionClasses);
-                cell.classList.add(newClass);
-                cell.dataset.tooltip = `${handText} (${newName})`;
-            });
-
-            feedbackElement.textContent = 'Configuration applied successfully!';
-            feedbackElement.className = feedbackElement.id + ' success';
-            // Clear other feedback elements
-             if (feedbackElement !== ioFeedback) ioFeedback.textContent = '';
-             if (feedbackElement !== shareFeedback) shareFeedback.textContent = '';
-            return true;
+        function setFeedback(el, message, success) {
+            el.textContent = message;
+            el.className = (el.id === 'shareFeedback' ? 'share-feedback ' : 'io-feedback ') + (success ? 'success' : 'error');
         }
 
         function loadConfigFromURL() {
-             if (window.location.hash && window.location.hash.length > 1) {
-                 try {
-                    // # symbol is part of hash, remove it with substring(1)
+            if (window.location.hash && window.location.hash.length > 1) {
+                try {
                     const configString = decodeURIComponent(window.location.hash.substring(1));
-                    console.log("Loading config from URL hash...");
-                    const success = applyConfig(configString, ioFeedback);
-                    if (success) {
-                         // Optionally clear the hash after successful load
-                         // history.replaceState(null, document.title, window.location.pathname + window.location.search);
-                    }
-                 } catch(e) {
-                     console.error("Error decoding or applying config from URL hash:", e);
-                     ioFeedback.textContent = 'Failed to load configuration from URL.';
-                     ioFeedback.className = ioFeedback.id + ' error';
-                 }
-             }
+                    applyConfig(configString, ioFeedback);
+                } catch (e) {
+                    setFeedback(ioFeedback, 'Failed to load configuration from URL.', false);
+                }
+            }
         }
 
-
-        // --- Event Listeners ---
-
-        // Position Selection
+        // --- Event listeners ---
         controlsContainer.addEventListener('click', (event) => {
             const target = event.target;
             if (target.classList.contains('position-selector')) {
-                currentPositionClass = target.dataset.positionClass;
-                currentPositionName = target.dataset.positionName;
-                positionSelectors.forEach(button => button.classList.remove('active-position'));
+                currentPosition = target.dataset.position;
+                positionSelectors.forEach(b => b.classList.remove('active-position'));
                 target.classList.add('active-position');
+                renderMatrix();
             }
         });
 
-        // Matrix Click-and-Drag Painting
+        // Matrix click-and-drag painting
         matrix.addEventListener('mousedown', (event) => {
-            if (event.target.tagName === 'TD') {
-                isMouseDown = true;
-                applyStyleToCell(event.target);
-                event.preventDefault();
-            }
+            const cell = event.target.closest('td');
+            if (cell) { isMouseDown = true; paintCell(cell); event.preventDefault(); }
         });
         matrix.addEventListener('mouseover', (event) => {
-            if (isMouseDown && event.target.tagName === 'TD') {
-                applyStyleToCell(event.target);
-            }
+            if (!isMouseDown) return;
+            const cell = event.target.closest('td');
+            if (cell) paintCell(cell);
         });
         window.addEventListener('mouseup', () => { isMouseDown = false; });
-        matrix.addEventListener('dragstart', (event) => { event.preventDefault(); });
+        matrix.addEventListener('dragstart', (event) => event.preventDefault());
 
-        // Export Button
+        // Brush controls
+        brushButtonsContainer.addEventListener('click', (event) => {
+            const btn = event.target.closest('.brush-btn');
+            if (btn) setBrushValue(parseInt(btn.dataset.brush, 10));
+        });
+        brushSlider.addEventListener('input', () => setBrushValue(brushSlider.value));
+        brushInput.addEventListener('input', () => setBrushValue(brushInput.value));
+
+        // Matrix actions
+        fillAllBtn.addEventListener('click', () => {
+            ranges[currentPosition] = new Array(NUM_HANDS).fill(100);
+            renderMatrix(); saveRangesToLocalStorage();
+        });
+        clearBtn.addEventListener('click', () => {
+            ranges[currentPosition] = new Array(NUM_HANDS).fill(0);
+            renderMatrix(); saveRangesToLocalStorage();
+        });
+        resetBtn.addEventListener('click', () => {
+            ranges = buildDefaultRanges();
+            renderMatrix(); saveRangesToLocalStorage();
+            setFeedback(ioFeedback, 'All positions reset to default.', true);
+        });
+
+        // Export
         exportBtn.addEventListener('click', () => {
             const configString = generateConfigString();
+            configArea.value = configString;
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(configString).then(() => {
-                    configArea.value = configString;
-                    ioFeedback.textContent = 'Configuration copied to clipboard!';
-                    ioFeedback.className = 'io-feedback success';
-                }).catch(err => {
-                    console.error('Failed to copy to clipboard:', err);
-                    configArea.value = configString;
-                    ioFeedback.textContent = 'Could not copy. Config in text area.';
-                    ioFeedback.className = 'io-feedback error';
-                });
+                navigator.clipboard.writeText(configString)
+                    .then(() => setFeedback(ioFeedback, 'Configuration copied to clipboard!', true))
+                    .catch(() => setFeedback(ioFeedback, 'Could not copy. Config in text area.', false));
             } else {
-                configArea.value = configString;
-                ioFeedback.textContent = 'Clipboard unavailable. Config in text area.';
-                ioFeedback.className = 'io-feedback error';
+                setFeedback(ioFeedback, 'Clipboard unavailable. Config in text area.', false);
             }
         });
 
-        // Import Button
+        // Import
         importBtn.addEventListener('click', () => {
-            const configString = configArea.value;
-            if (!configString) {
-                 ioFeedback.textContent = 'Import failed: Text area is empty.';
-                 ioFeedback.className = 'io-feedback error';
-                 return;
-            }
-            applyConfig(configString, ioFeedback);
+            if (!configArea.value) { setFeedback(ioFeedback, 'Import failed: Text area is empty.', false); return; }
+            applyConfig(configArea.value, ioFeedback);
         });
 
-        // Share Button
+        // Share
         shareBtn.addEventListener('click', () => {
             try {
-                const configString = generateConfigString();
-                const encodedConfig = encodeURIComponent(configString);
-                // Construct URL carefully, ensuring no double hashes if one already exists from loading
-                const shareUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${encodedConfig}`;
+                const encoded = encodeURIComponent(generateConfigString());
+                const shareUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${encoded}`;
                 shareLinkInput.value = shareUrl;
-
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                     navigator.clipboard.writeText(shareUrl).then(() => {
-                         shareFeedback.textContent = 'Share link copied to clipboard!';
-                         shareFeedback.className = 'share-feedback success';
-                     }).catch(err => {
-                         console.error('Failed to copy share link:', err);
-                         shareFeedback.textContent = 'Could not copy link. Link shown above.';
-                         shareFeedback.className = 'share-feedback error';
-                     });
-                 } else {
-                     shareFeedback.textContent = 'Clipboard unavailable. Link shown above.';
-                     shareFeedback.className = 'share-feedback error';
-                 }
-
+                    navigator.clipboard.writeText(shareUrl)
+                        .then(() => setFeedback(shareFeedback, 'Share link copied to clipboard!', true))
+                        .catch(() => setFeedback(shareFeedback, 'Could not copy link. Link shown above.', false));
+                } else {
+                    setFeedback(shareFeedback, 'Clipboard unavailable. Link shown above.', false);
+                }
             } catch (e) {
-                 console.error("Error generating share link:", e);
-                 shareFeedback.textContent = 'Error generating share link.';
-                 shareFeedback.className = 'share-feedback error';
+                setFeedback(shareFeedback, 'Error generating share link.', false);
             }
         });
 
-        // Color Pickers
-        colorInputs.forEach(input => {
-            input.addEventListener('input', (event) => {
-                const position = event.target.dataset.position;
-                const newColor = event.target.value;
-                const bgColorVar = `--color-${position}-bg`;
-                const textColorVar = `--color-${position}-text`;
-
-                setCssVariable(bgColorVar, newColor);
-                setCssVariable(textColorVar, getTextColorForBackground(newColor));
-
-                saveColorsToLocalStorage(); // Save immediately on change
-            });
+        // Colour wheel
+        colorSwatches.forEach(sw => {
+            sw.addEventListener('click', (e) => { e.stopPropagation(); openWheel(sw.dataset.position, sw); });
+        });
+        let wheelDragging = false;
+        wheelCanvas.addEventListener('pointerdown', (e) => {
+            wheelDragging = true;
+            try { wheelCanvas.setPointerCapture(e.pointerId); } catch (err) {}
+            pickFromEvent(e); e.preventDefault();
+        });
+        wheelCanvas.addEventListener('pointermove', (e) => { if (wheelDragging) pickFromEvent(e); });
+        wheelCanvas.addEventListener('pointerup', () => { wheelDragging = false; });
+        wheelValueInput.addEventListener('input', () => { cwVal = parseInt(wheelValueInput.value, 10) / 100; updateWheelUI(true); });
+        wheelHex.addEventListener('change', () => {
+            const rgb = hexToRgb(wheelHex.value);
+            if (!rgb) { wheelHex.value = hsvToHex(cwHue, cwSat, cwVal); return; }
+            const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+            cwHue = hsv.h; cwSat = hsv.s; cwVal = hsv.v;
+            wheelValueInput.value = Math.round(cwVal * 100);
+            updateWheelUI(true);
+        });
+        wheelDone.addEventListener('click', closeWheel);
+        // Close when clicking outside the popover (but not on a swatch, which opens it)
+        document.addEventListener('mousedown', (e) => {
+            if (cwPopover.hidden) return;
+            if (cwPopover.contains(e.target)) return;
+            if (e.target.classList && e.target.classList.contains('color-swatch')) return;
+            closeWheel();
         });
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            loadColorsFromLocalStorage(); // Load custom/default colors first
-            loadConfigFromURL(); // Then load matrix config from URL if present (overrides HTML default)
+            handNotations = generateHandNotations();
+            if (!loadRangesFromLocalStorage()) ranges = buildDefaultRanges();
+            buildMatrix();
+            buildWheel();
+            loadColors();        // sets CSS vars + swatches (and renders the matrix)
+            setBrushValue(100);
+            renderMatrix();
+            loadConfigFromURL(); // overrides if a share link is present
         });
-
     </script>
 
 </body>

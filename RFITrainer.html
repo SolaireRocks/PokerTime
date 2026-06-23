@@ -14,104 +14,67 @@
             --color-hj-bg: #f0ad4e;  --color-hj-text: #fff;
             --color-co-bg: #5bc0de;  --color-co-text: #fff;
             --color-btn-bg: #0275d8; --color-btn-text: #fff;
-             /* SB is not used in RFI Trainer directly but kept for potential reuse/consistency */
             --color-sb-bg: #5cb85c;  --color-sb-text: #fff;
             --color-fold-bg: #e9ecef; --color-fold-text: #495057;
             --color-card-red: #D90000;
             --color-card-black: #333;
-            --color-correct: #28a745; /* Green */
-            --color-incorrect: #dc3545; /* Red */
-            --color-warning: #f0ad4e; /* Orange */
+            --color-correct: #28a745;
+            --color-incorrect: #dc3545;
+            --color-warning: #f0ad4e;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Removed flexbox centering to allow normal top-down flow with nav */
-            /* display: flex; justify-content: center; align-items: flex-start; */
             min-height: 100vh;
             background-color: #f0f2f5;
             color: #333;
             margin: 0;
-            padding: 0 20px 20px 20px; /* Match nav bar example padding */
+            padding: 0 20px 20px 20px;
             line-height: 1.4;
         }
 
-        /* --- START: Styles copied for Top Navigation Bar --- */
-         .top-nav {
-            background-color: #e9ecef; /* Light background */
-            width: 35%;             /* Slightly wider to accommodate two links */
-            min-width: 250px;       /* Adjust min-width */
-            margin: 0 auto;         /* Center the container horizontally */
-            margin-bottom: 20px;    /* Keep the space below nav */
-            padding: 10px 15px;     /* Adjust padding slightly */
-            text-align: center;     /* Keep the link text centered */
-            border-radius: 5px;     /* Optional: Soften the corners */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Optional: Subtle shadow */
-         }
-         .top-nav a {
-            color: #333;         /* Dark text for light background */
-            text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 500;
-            transition: color 0.2s ease;
-            margin: 0 10px; /* Add space between links */
-         }
-         .top-nav a:hover {
-            color: #0056b3; /* Slightly darker blue on hover */
-         }
-        /* --- END: Styles copied for Top Navigation Bar --- */
-
+        .top-nav {
+            background-color: #e9ecef;
+            width: 35%;
+            min-width: 250px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .top-nav a {
+            color: #333; text-decoration: none; font-size: 1.1em;
+            font-weight: 500; transition: color 0.2s ease; margin: 0 10px;
+        }
+        .top-nav a:hover { color: #0056b3; }
 
         #trainer-container {
             background-color: #fff; padding: 30px; border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;
             width: 90%; max-width: 650px;
-            margin: 0 auto 20px auto; /* Center container below nav bar */
+            margin: 0 auto 20px auto;
         }
 
-        h1 {
-            color: #1d2129; margin-top: 0; margin-bottom: 15px; font-weight: 400;
-        }
+        h1 { color: #1d2129; margin-top: 0; margin-bottom: 15px; font-weight: 400; }
 
-        /* --- Controls & Display --- */
         .control-group {
             margin-bottom: 20px; display: flex; justify-content: center;
             align-items: center; gap: 15px; flex-wrap: wrap;
         }
 
-         /* --- START: Modified Edge Case Controls --- */
         .edge-case-controls {
-             margin-bottom: 20px;
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             gap: 8px; /* Spacing between elements */
-             font-size: 0.9em;
-             color: #555;
-             flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            margin-bottom: 20px; display: flex; justify-content: center; align-items: center;
+            gap: 8px; font-size: 0.9em; color: #555; flex-wrap: wrap;
         }
-         .edge-case-controls input[type="checkbox"] {
-             margin-right: 3px;
-             cursor: pointer;
-         }
-         .edge-case-controls label {
-             cursor: pointer;
-             user-select: none;
-             margin-right: 5px; /* Space after checkbox label */
-         }
-         .edge-case-controls label[for="edge-distance-select"] {
-             margin-left: 5px; /* Space before distance label */
-             font-weight: normal;
-         }
-         .edge-case-controls select {
-             padding: 4px 8px; /* Smaller padding */
-             border-radius: 4px;
-             border: 1px solid #ccc;
-             font-size: 0.9em; /* Match surrounding text */
-             background-color: #fff;
-             /* Initially hidden/disabled appearance handled by JS */
-         }
-         /* --- END: Modified Edge Case Controls --- */
+        .edge-case-controls input[type="checkbox"] { margin-right: 3px; cursor: pointer; }
+        .edge-case-controls label { cursor: pointer; user-select: none; margin-right: 5px; }
+        .edge-case-controls label[for="edge-distance-select"] { margin-left: 5px; font-weight: normal; }
+        .edge-case-controls select {
+            padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;
+            font-size: 0.9em; background-color: #fff;
+        }
 
         #position-selector label { margin: 0; font-weight: 500; color: #333; }
         #position-selector select {
@@ -150,7 +113,6 @@
         .incorrect { color: var(--color-incorrect); }
         .warning { color: var(--color-warning); font-weight: bold;}
 
-        /* --- Session Stats --- */
         #session-stats {
             margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;
             font-size: 0.95em; color: #666;
@@ -160,7 +122,6 @@
         #stats-incorrect { color: var(--color-incorrect); }
         #stats-percentage { color: #333; }
 
-        /* --- Import Section --- */
         #import-section {
             margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; text-align: left;
         }
@@ -179,13 +140,10 @@
             font-size: 0.9em; display: block;
         }
         #import-section button:hover { background-color: #0056b3; }
-        #importFeedback {
-            font-size: 0.85em; margin-top: 10px; min-height: 1.2em; text-align: center;
-        }
+        #importFeedback { font-size: 0.85em; margin-top: 10px; min-height: 1.2em; text-align: center; }
         #importFeedback.success { color: var(--color-correct); }
         #importFeedback.error { color: var(--color-incorrect); }
 
-        /* --- Grid Overlay --- */
         #grid-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.75); display: none;
@@ -201,68 +159,43 @@
         }
         .hand-matrix td {
             border: 1px solid #ddd; padding: 4px 7px; text-align: center;
-            min-width: 40px; position: relative; transition: background-color 0.1s ease;
+            min-width: 40px; position: relative; transition: background 0.1s ease;
+            background-color: var(--color-fold-bg);
         }
-         .hand-matrix td span { display: block; font-weight: 500; }
-
-        /* Grid colors using Variables */
-        .hand-matrix .ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); }
-        .hand-matrix .ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); }
-        .hand-matrix .ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); }
-        .hand-matrix .lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text); }
-        .hand-matrix .hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text); }
-        .hand-matrix .co  { background-color: var(--color-co-bg);  color: var(--color-co-text); }
-        .hand-matrix .btn { background-color: var(--color-btn-bg); color: var(--color-btn-text); }
-        /* SB not used directly in RFI Trainer Grid */
-        .hand-matrix .fold{ background-color: var(--color-fold-bg);color: var(--color-fold-text); }
+        .hand-matrix td span {
+            display: block; font-weight: 500; color: #1a1a1a;
+            text-shadow: 0 0 3px #fff, 0 0 2px #fff, 0 0 1px #fff;
+        }
         .hand-matrix .pair span { font-weight: bold; }
 
-        /* Trainer overlay view: highlight only the hands in the trained position's range */
-        .hand-matrix .in-range { background-color: var(--color-correct); color: #fff; }
-        .hand-matrix .out-of-range { background-color: var(--color-fold-bg); color: #adb5bd; }
-
-        /* Header + legend shown above the matrix on a failed answer */
         #training-position-header {
             text-align: center; margin: 5px 0 4px 0;
             font-weight: bold; font-size: 1.1em; color: #1d2129;
         }
-        #grid-legend {
-            text-align: center; margin: 0 0 12px 0; font-size: 0.85em; color: #555;
-        }
-        #grid-legend .swatch {
-            display: inline-block; width: 12px; height: 12px;
-            border-radius: 2px; vertical-align: middle; margin: 0 4px 0 10px;
-        }
-        #grid-legend .swatch-raise { background-color: var(--color-correct); }
-        #grid-legend .swatch-fold { background-color: var(--color-fold-bg); border: 1px solid #ccc; }
+        #grid-legend { text-align: center; margin: 0 0 12px 0; font-size: 0.85em; color: #555; }
 
         .hand-matrix .highlight-error {
-             outline: 4px solid var(--color-incorrect) !important; outline-offset: -2px;
-             filter: brightness(1.1); z-index: 1;
+            outline: 4px solid var(--color-incorrect) !important; outline-offset: -2px;
+            filter: brightness(1.1); z-index: 1;
         }
 
-        /* Tooltips */
         [data-tooltip] { position: relative; }
         [data-tooltip]:hover::after {
             content: attr(data-tooltip); position: absolute; bottom: 105%; left: 50%;
             transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.8); color: white;
             padding: 4px 8px; border-radius: 4px; font-size: 0.9em; white-space: nowrap;
             z-index: 10; pointer-events: none; opacity: 0; visibility: hidden;
-             transition: opacity 0.2s, visibility 0.2s;
+            transition: opacity 0.2s, visibility 0.2s;
         }
         [data-tooltip]:hover::after { opacity: 1; visibility: visible; }
-
     </style>
 </head>
 <body>
 
-<!-- ===== START: Added Top Navigation Bar ===== -->
 <div class="top-nav">
     <a href="index.html">Range Selector</a>
     <a href="RFITrainer.html">RFI Trainer</a>
 </div>
-<!-- ===== END: Added Top Navigation Bar ===== -->
-
 
 <div id="trainer-container">
     <h1>RFI Range Trainer</h1>
@@ -274,26 +207,27 @@
             <select id="position">
                 <option value="ep1">EP1 (UTG)</option>
                 <option value="ep2">EP2 (UTG+1)</option>
-                <option value="ep3">EP3 (LJ)</option>
-                <option value="lj" selected>LJ (Actual 6-Max LJ)</option>
+                <option value="ep3">EP3 (LJ-1)</option>
+                <option value="lj" selected>LJ (Lojack)</option>
                 <option value="hj">HJ (Hijack)</option>
                 <option value="co">CO (Cutoff)</option>
                 <option value="btn">BTN (Button)</option>
+                <option value="sb">SB (Small Blind)</option>
             </select>
         </div>
     </div>
-     <!-- Edge Case Controls -->
-     <div class="edge-case-controls">
-         <input type="checkbox" id="edge-cases-only">
-         <label for="edge-cases-only">Train Edge Cases Only</label>
-         <label for="edge-distance-select" id="edge-distance-label">Distance:</label>
-         <select id="edge-distance-select">
-             <option value="1">±1</option>
-             <option value="2">±2</option>
-             <option value="3" selected>±3</option>
-             <option value="4">±4</option>
-             <option value="5">±5</option>
-         </select>
+    <!-- Edge Case Controls -->
+    <div class="edge-case-controls">
+        <input type="checkbox" id="edge-cases-only">
+        <label for="edge-cases-only">Train Edge Cases Only</label>
+        <label for="edge-distance-select" id="edge-distance-label">Distance:</label>
+        <select id="edge-distance-select">
+            <option value="1">±1</option>
+            <option value="2">±2</option>
+            <option value="3" selected>±3</option>
+            <option value="4">±4</option>
+            <option value="5">±5</option>
+        </select>
     </div>
 
     <!-- Hand Display -->
@@ -315,11 +249,10 @@
         (<span id="stats-percentage">N/A</span>)
     </div>
 
-
     <!-- Import Section -->
     <div id="import-section">
         <h2>Import Custom Range</h2>
-        <textarea id="configArea" placeholder="Paste configuration string..."></textarea>
+        <textarea id="configArea" placeholder="Paste configuration string from the Range Selector..."></textarea>
         <button id="importBtn">Import and Use This Range</button>
         <div id="importFeedback"></div>
     </div>
@@ -328,18 +261,12 @@
 <!-- Grid Overlay -->
 <div id="grid-overlay">
     <div id="grid-container">
-         <p style="text-align: center; margin-top: 0; margin-bottom: 10px; font-weight: bold; color: var(--color-incorrect);">Incorrect!</p>
+        <p style="text-align: center; margin-top: 0; margin-bottom: 10px; font-weight: bold; color: var(--color-incorrect);">Incorrect!</p>
         <p style="text-align: center; margin-top: 0; margin-bottom: 12px; font-size: 0.9em;">The correct action for <span id="error-hand-notation" style="font-weight: bold;"></span> from <span id="error-position" style="font-weight: bold;"></span> is highlighted below. Click background to continue.</p>
         <p id="training-position-header">Training: <span id="training-position-name"></span></p>
-        <p id="grid-legend">
-            <span class="swatch swatch-raise"></span>Raise (in range)
-            <span class="swatch swatch-fold"></span>Fold
-        </p>
+        <p id="grid-legend">Each tile is shaded by its raise % for this position (full colour = always raise, empty = always fold).</p>
         <table class="hand-matrix" id="handMatrix">
-             <!-- Grid content remains the same - populated by JS now -->
-             <tbody>
-                <!-- Rows will be generated/updated by JS during parsing -->
-             </tbody>
+            <tbody><!-- Populated by JS --></tbody>
         </table>
     </div>
 </div>
@@ -349,16 +276,14 @@
         // --- DOM Elements ---
         const positionSelect = document.getElementById('position');
         const edgeCasesCheckbox = document.getElementById('edge-cases-only');
-        const edgeDistanceSelect = document.getElementById('edge-distance-select'); // New
-        const edgeDistanceLabel = document.getElementById('edge-distance-label'); // New
+        const edgeDistanceSelect = document.getElementById('edge-distance-select');
+        const edgeDistanceLabel = document.getElementById('edge-distance-label');
         const handDisplay = document.getElementById('hand-display');
         const raiseButton = document.getElementById('raise-button');
         const foldButton = document.getElementById('fold-button');
         const feedbackDiv = document.getElementById('feedback');
         const gridOverlay = document.getElementById('grid-overlay');
-        const handMatrixBody = document.getElementById('handMatrix').querySelector('tbody'); // Target tbody for population
-        // const handMatrix = document.getElementById('handMatrix'); // Keep reference if needed elsewhere
-        // const gridCells = Array.from(handMatrix.getElementsByTagName('td')); // Cells populated later
+        const handMatrixBody = document.getElementById('handMatrix').querySelector('tbody');
         const configArea = document.getElementById('configArea');
         const importBtn = document.getElementById('importBtn');
         const importFeedback = document.getElementById('importFeedback');
@@ -369,231 +294,192 @@
         const statsIncorrectSpan = document.getElementById('stats-incorrect');
         const statsPercentageSpan = document.getElementById('stats-percentage');
 
-
         // --- Configuration & State ---
         const RANKS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
         const SUITS_UNICODE = { h: '♥', d: '♦', c: '♣', s: '♠' };
         const SUIT_CLASSES = { h: 'suit-h', d: 'suit-d', c: 'suit-c', s: 'suit-s' };
         const ALL_SUITS = ['h', 'd', 'c', 's'];
-        const POSITION_ORDER = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn'];
-        const VALID_POSITION_CLASSES = [...POSITION_ORDER, 'fold'];
-        // const EDGE_DISTANCE = 3; // Replaced by dropdown selection
+        const POSITION_ORDER = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb'];
+        const POSITION_NAMES = { ep1:'EP1', ep2:'EP2', ep3:'EP3', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB' };
+        const NUM_HANDS = 169;
 
         let currentHandNotation = null;
         let currentPosition = 'lj';
         let trainEdgeCasesOnly = false;
-        let handData = {}; // Stores { handNotation: positionClass }
-        let allHandsNotations = []; // Stores all 169 notations in grid order
-        let cellMap = {}; // Stores { handNotation: cellElement }
-        let isEpCheckPassed = true;
+        let ranges = {};            // { positionClass: number[169] } raise % 0-100
+        let allHandsNotations = []; // 169 notations in grid order
+        let handIndex = {};         // { notation: index }
+        let cellMap = {};           // { notation: cellElement }
+        let positionHasHands = true;
         let sessionCorrect = 0;
         let sessionIncorrect = 0;
-        let pendingWarning = ''; // Non-blocking message to show with the next hand (e.g. edge-case fallback)
+        let pendingWarning = '';
 
-        // Default Range String (example, replace with your actual default if different)
-        // Default Range String (Corrected to user-provided default)
+        // Legacy single-matrix default (earliest opener per hand). Converted into
+        // independent per-position frequency matrices below.
         const DEFAULT_RANGE_STRING = "lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,co,co,btn,btn,lj,lj,lj,lj,lj,lj,hj,co,co,co,btn,btn,btn,lj,lj,lj,lj,lj,hj,co,co,btn,btn,btn,fold,fold,lj,hj,hj,co,lj,lj,co,btn,btn,fold,fold,fold,fold,hj,co,btn,btn,btn,lj,co,btn,btn,fold,fold,fold,fold,co,btn,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,hj,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,co,btn,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co";
 
-        // --- Utility Functions ---
+        // --- Utility ---
         function getRandomElement(arr) {
-             if (!arr || arr.length === 0) return null;
-             return arr[Math.floor(Math.random() * arr.length)];
+            if (!arr || arr.length === 0) return null;
+            return arr[Math.floor(Math.random() * arr.length)];
         }
-
+        function clampPct(v) {
+            let n = Math.round(Number(v));
+            if (isNaN(n)) n = 0;
+            return Math.max(0, Math.min(100, n));
+        }
         function createCardHtml(rank, suit) {
-             const suitChar = SUITS_UNICODE[suit];
-             const suitClass = SUIT_CLASSES[suit];
-             return `<span class="card-char ${suitClass}">${rank}${suitChar}</span>`;
+            return `<span class="card-char ${SUIT_CLASSES[suit]}">${rank}${SUITS_UNICODE[suit]}</span>`;
         }
-
         function generateUnicodeHand(notation) {
             if (!notation || notation.length < 2 || notation.length > 3) return '--';
-
-            let r1 = notation[0];
-            let r2 = notation[1];
-            const type = notation.length === 3 ? notation[2] : (r1 === r2 ? 'p' : ''); // 's', 'o', or 'p' (pair)
-
+            let r1 = notation[0], r2 = notation[1];
+            const type = notation.length === 3 ? notation[2] : (r1 === r2 ? 'p' : '');
             let s1, s2;
-            if (type === 's') { // Suited
-                s1 = s2 = getRandomElement(ALL_SUITS);
-            } else if (type === 'o') { // Offsuit
-                s1 = getRandomElement(ALL_SUITS);
-                do { s2 = getRandomElement(ALL_SUITS); } while (s1 === s2);
-            } else { // Pair
-                s1 = getRandomElement(ALL_SUITS);
-                 do { s2 = getRandomElement(ALL_SUITS); } while (s1 === s2);
-            }
-
+            if (type === 's') { s1 = s2 = getRandomElement(ALL_SUITS); }
+            else { s1 = getRandomElement(ALL_SUITS); do { s2 = getRandomElement(ALL_SUITS); } while (s1 === s2); }
             const rankOrder = RANKS;
             if (type !== 'p' && rankOrder.indexOf(r1) > rankOrder.indexOf(r2)) {
-                [r1, r2] = [r2, r1];
-                [s1, s2] = [s2, s1];
+                [r1, r2] = [r2, r1]; [s1, s2] = [s2, s1];
             }
-
             return createCardHtml(r1, s1) + createCardHtml(r2, s2);
         }
 
-
-        // --- Data Parsing and Handling ---
-
-        // Generates the 169 hand notations in the standard grid order
+        // --- Data ---
         function generateHandNotations() {
             const notations = [];
             for (let i = 0; i < RANKS.length; i++) {
                 for (let j = 0; j < RANKS.length; j++) {
-                    const r1 = RANKS[i];
-                    const r2 = RANKS[j];
-                    if (i === j) {
-                        notations.push(`${r1}${r2}`); // Pair
-                    } else if (i < j) {
-                        notations.push(`${r1}${r2}s`); // Suited
-                    } else {
-                        notations.push(`${r2}${r1}o`); // Offsuit
-                    }
+                    const r1 = RANKS[i], r2 = RANKS[j];
+                    if (i === j) notations.push(`${r1}${r2}`);
+                    else if (i < j) notations.push(`${r1}${r2}s`);
+                    else notations.push(`${r2}${r1}o`);
                 }
             }
             return notations;
         }
 
-        // Builds the HTML grid in the overlay and populates cellMap
-        function buildGridOverlay() {
-            handMatrixBody.innerHTML = ''; // Clear existing rows
-            cellMap = {}; // Reset map
-            let cellIndex = 0;
+        function buildDefaultRanges() {
+            const classes = DEFAULT_RANGE_STRING.split(',');
+            const result = {};
+            POSITION_ORDER.forEach(p => { result[p] = new Array(NUM_HANDS).fill(0); });
+            classes.forEach((cls, i) => {
+                const earliest = POSITION_ORDER.indexOf(cls.trim());
+                if (earliest === -1) return;
+                for (let pi = earliest; pi < POSITION_ORDER.length; pi++) {
+                    result[POSITION_ORDER[pi]][i] = 100;
+                }
+            });
+            return result;
+        }
 
+        function buildGridOverlay() {
+            handMatrixBody.innerHTML = '';
+            cellMap = {};
+            let cellIndex = 0;
             for (let i = 0; i < RANKS.length; i++) {
                 const row = handMatrixBody.insertRow();
                 for (let j = 0; j < RANKS.length; j++) {
                     const cell = row.insertCell();
-                    const handNotation = allHandsNotations[cellIndex]; // Get notation based on index
+                    const handNotation = allHandsNotations[cellIndex];
                     const span = document.createElement('span');
                     span.textContent = handNotation;
                     cell.appendChild(span);
-                    cell.dataset.hand = handNotation; // Store hand in data attribute for easy access
-                     if (i === j) {
-                         cell.classList.add('pair'); // Add pair class for potential styling
-                     }
-                    cellMap[handNotation] = cell; // Map notation to the created cell
+                    cell.dataset.hand = handNotation;
+                    if (i === j) cell.classList.add('pair');
+                    cellMap[handNotation] = cell;
                     cellIndex++;
                 }
             }
-            console.log("Grid overlay built and cellMap populated.");
         }
 
-
+        // Accepts v2 JSON ({v:2, ranges:{pos:[169]}}) or a legacy v1 cumulative string.
         function applyRangeConfig(configString) {
             importFeedback.textContent = '';
             importFeedback.className = '';
-            const importedClasses = configString.trim().split(',');
+            const raw = (configString || '').trim();
+            if (!raw) { importFeedback.textContent = 'Import failed: empty configuration.'; importFeedback.className = 'error'; return false; }
 
-            if (importedClasses.length !== 169) {
-                importFeedback.textContent = `Import failed: Expected 169 values, found ${importedClasses.length}.`;
-                importFeedback.className = 'error';
-                return false;
+            let next = null;
+
+            let parsed = null;
+            try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
+
+            if (parsed && parsed.ranges) {
+                next = buildDefaultRanges();
+                let found = 0;
+                POSITION_ORDER.forEach(p => {
+                    const arr = parsed.ranges[p];
+                    if (Array.isArray(arr) && arr.length === NUM_HANDS) { next[p] = arr.map(clampPct); found++; }
+                });
+                if (found === 0) { importFeedback.textContent = 'Import failed: no valid position matrices found.'; importFeedback.className = 'error'; return false; }
+            } else {
+                // Legacy v1: 169 comma-separated class names (cumulative).
+                const classes = raw.split(',').map(s => s.trim());
+                if (classes.length !== NUM_HANDS) {
+                    importFeedback.textContent = `Import failed: unrecognized format (expected v2 JSON or ${NUM_HANDS} legacy values).`;
+                    importFeedback.className = 'error';
+                    return false;
+                }
+                next = {};
+                POSITION_ORDER.forEach(p => { next[p] = new Array(NUM_HANDS).fill(0); });
+                let invalid = null;
+                classes.forEach((cls, i) => {
+                    if (cls === 'fold') return;
+                    const earliest = POSITION_ORDER.indexOf(cls);
+                    if (earliest === -1) { invalid = cls; return; }
+                    for (let pi = earliest; pi < POSITION_ORDER.length; pi++) next[POSITION_ORDER[pi]][i] = 100;
+                });
+                if (invalid) { importFeedback.textContent = `Import failed: invalid position code "${invalid}".`; importFeedback.className = 'error'; return false; }
             }
-            const invalidClass = importedClasses.find(cls => !VALID_POSITION_CLASSES.includes(cls.trim()));
-            if (invalidClass) {
-                importFeedback.textContent = `Import failed: Invalid position code "${invalidClass}". Valid: ${VALID_POSITION_CLASSES.join(', ')}.`;
-                importFeedback.className = 'error';
-                return false;
-            }
 
-            const newHandData = {};
-            if (allHandsNotations.length !== 169) {
-                importFeedback.textContent = `Import failed: Internal error - hand notations not generated correctly.`;
-                importFeedback.className = 'error';
-                 console.error("allHandsNotations array doesn't have 169 elements.", allHandsNotations);
-                return false;
-            }
-
-            // Iterate through allHandNotations which is guaranteed to be in grid order
-            allHandsNotations.forEach((handNotation, index) => {
-                const newClass = importedClasses[index].trim();
-                newHandData[handNotation] = newClass;
-
-                // Update the corresponding cell in the overlay grid
-                const cell = cellMap[handNotation];
-                if (cell) {
-                    const positionName = newClass === 'fold' ? 'Fold' : newClass.toUpperCase();
-                    // Remove all potentially existing position classes before adding the new one
-                    cell.classList.remove(...VALID_POSITION_CLASSES);
-                    cell.classList.add(newClass);
-                    cell.dataset.tooltip = `${handNotation} (${positionName})`;
-                 } else {
-                     console.warn(`Cell not found in cellMap for hand: ${handNotation}`);
-                 }
-            });
-
-            handData = newHandData;
-            console.log("Applied Range Config Data:", handData);
+            ranges = next;
             importFeedback.textContent = 'Range applied successfully!';
             importFeedback.className = 'success';
-             setTimeout(() => { importFeedback.textContent = ''; importFeedback.className = ''; }, 3000); // Clear feedback
+            setTimeout(() => { importFeedback.textContent = ''; importFeedback.className = ''; }, 3000);
 
-            // Re-check EP availability for the current position after applying the new range
-            isEpCheckPassed = checkEpAvailability(currentPosition);
-             if (!isEpCheckPassed) {
-                 disableButtons();
-                 handDisplay.textContent = '--';
-             } else {
-                 // If check passes, display a new hand immediately using the new range
-                 displayNewHand();
-             }
+            styleGridForCurrentPosition();
+            positionHasHands = checkPositionHasHands(currentPosition);
+            if (!positionHasHands) { disableButtons(); handDisplay.textContent = '--'; }
+            else { displayNewHand(); }
             return true;
         }
 
+        // --- Frequency helpers ---
+        function getFreq(handNotation, position) {
+            const arr = ranges[position];
+            const idx = handIndex[handNotation];
+            if (!arr || idx === undefined) return 0;
+            return arr[idx];
+        }
+        // True if the position opens this hand at all (used for edge-case detection).
+        function isHandInRfiRange(handNotation, position) {
+            return getFreq(handNotation, position) > 0;
+        }
 
-        // --- Game Logic ---
-        function checkEpAvailability(positionToCheck) {
-            const checkPositions = ['ep1', 'ep2', 'ep3'];
-            if (!checkPositions.includes(positionToCheck)) {
-                feedbackDiv.classList.remove('warning'); // Clear potential warning
-                return true; // Not an EP position, always available
-            }
-
-            const targetIndex = POSITION_ORDER.indexOf(positionToCheck);
-            if (targetIndex === -1) return true; // Should not happen
-
-            for (const hand in handData) {
-                const assignedPos = handData[hand];
-                if (assignedPos === 'fold') continue;
-                const assignedIndex = POSITION_ORDER.indexOf(assignedPos);
-                if (assignedIndex !== -1 && assignedIndex <= targetIndex) {
-                     feedbackDiv.classList.remove('warning'); // Clear potential warning
-                    return true; // Found at least one hand defined for this position or earlier
-                }
-            }
-
-            // If loop finishes, no hands are defined for this EP position or earlier
+        function checkPositionHasHands(position) {
+            const arr = ranges[position];
+            const hasHands = Array.isArray(arr) && arr.some(f => f > 0);
+            if (hasHands) { feedbackDiv.classList.remove('warning'); return true; }
             const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
-            feedbackDiv.textContent = `The current range has no hands defined for ${positionDisplay}. Select a later position or import a range that includes ${positionDisplay}.`;
+            feedbackDiv.textContent = `The current range has no hands defined for ${positionDisplay}. Select another position or import a range that opens hands from ${positionDisplay}.`;
             feedbackDiv.className = 'warning';
             return false;
         }
 
-        // Edge cases = hands near the raise/fold border for the position being trained.
-        // The matrix layout itself is used as a strength proxy: neighbouring cells are
-        // similar hands, and the open range is a contiguous region, so "within +/-N of
-        // the edge" means within N grid steps of the nearest cell whose decision (raise
-        // vs fold) differs. This drills both the loosest opens and the strongest folds
-        // while keeping obvious trash (e.g. 72s) out of the tight settings.
+        // --- Edge cases ---
         function getEdgeCaseHands(edgeDistance) {
-            const size = RANKS.length; // 13x13 grid; allHandsNotations is in row-major order
+            const size = RANKS.length;
             const total = allHandsNotations.length;
-            if (POSITION_ORDER.indexOf(currentPosition) === -1) {
-                console.error("Cannot determine index for current position:", currentPosition);
-                return [];
-            }
-            // Raise/fold decision for every cell at the current position.
+            if (POSITION_ORDER.indexOf(currentPosition) === -1) return [];
             const isRaise = allHandsNotations.map(hand => isHandInRfiRange(hand, currentPosition));
-
             const edgeHands = [];
             for (let i = 0; i < total; i++) {
-                const ri = Math.floor(i / size);
-                const ci = i % size;
+                const ri = Math.floor(i / size), ci = i % size;
                 let minDist = Infinity;
                 for (let j = 0; j < total && minDist > 1; j++) {
-                    if (isRaise[j] === isRaise[i]) continue; // same decision -> not across the border
+                    if (isRaise[j] === isRaise[i]) continue;
                     const dist = Math.abs(ri - Math.floor(j / size)) + Math.abs(ci - (j % size));
                     if (dist < minDist) minDist = dist;
                 }
@@ -603,89 +489,65 @@
         }
 
         function getRandomHandNotation() {
-            if (!trainEdgeCasesOnly) {
-                return getRandomElement(allHandsNotations); // Train the full range
-            }
-
+            if (!trainEdgeCasesOnly) return getRandomElement(allHandsNotations);
             const edgeDistance = parseInt(edgeDistanceSelect.value, 10);
             const edgeHands = getEdgeCaseHands(edgeDistance);
-
-            if (edgeHands.length > 0) {
-                return getRandomElement(edgeHands);
-            }
-
-            // No hands fall within the chosen distance for this range/position.
-            // Fall back to a random hand and surface a non-blocking warning.
+            if (edgeHands.length > 0) return getRandomElement(edgeHands);
             const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
             pendingWarning = `No edge-case hands within ±${edgeDistance} of ${positionDisplay} in this range. Showing a random hand.`;
             return getRandomElement(allHandsNotations);
         }
 
         function updateStatsDisplay() {
-             const total = sessionCorrect + sessionIncorrect;
-             let percentage = "N/A";
-             if (total > 0) {
-                 percentage = ((sessionCorrect / total) * 100).toFixed(1) + "%";
-             }
-             statsCorrectSpan.textContent = sessionCorrect;
-             statsIncorrectSpan.textContent = sessionIncorrect;
-             statsPercentageSpan.textContent = percentage;
-         }
-
-        function displayNewHand() {
-             if (!isEpCheckPassed) {
-                 console.log("EP Check failed, not displaying new hand.");
-                 handDisplay.textContent = '--';
-                 disableButtons();
-                 return;
-             }
-
-             pendingWarning = ''; // Reset; getRandomHandNotation may set it for this hand
-             currentHandNotation = getRandomHandNotation();
-             if (currentHandNotation) {
-                 handDisplay.innerHTML = generateUnicodeHand(currentHandNotation);
-                 // Show a fresh warning if one was raised, otherwise clear old feedback.
-                 if (pendingWarning) {
-                     feedbackDiv.textContent = pendingWarning;
-                     feedbackDiv.className = 'warning';
-                 } else {
-                     feedbackDiv.textContent = '';
-                     feedbackDiv.className = '';
-                 }
-                 enableButtons();
-             } else {
-                 handDisplay.textContent = '??';
-                 feedbackDiv.textContent = 'No suitable hands found for criteria.';
-                 feedbackDiv.className = 'warning';
-                 disableButtons();
-             }
+            const total = sessionCorrect + sessionIncorrect;
+            let percentage = "N/A";
+            if (total > 0) percentage = ((sessionCorrect / total) * 100).toFixed(1) + "%";
+            statsCorrectSpan.textContent = sessionCorrect;
+            statsIncorrectSpan.textContent = sessionIncorrect;
+            statsPercentageSpan.textContent = percentage;
         }
 
-        function isHandInRfiRange(handNotationToCheck, selectedPosition) {
-            const assignedPosition = handData[handNotationToCheck];
-            if (!assignedPosition || assignedPosition === 'fold') {
-                return false;
+        function displayNewHand() {
+            if (!positionHasHands) { handDisplay.textContent = '--'; disableButtons(); return; }
+            pendingWarning = '';
+            currentHandNotation = getRandomHandNotation();
+            if (currentHandNotation) {
+                handDisplay.innerHTML = generateUnicodeHand(currentHandNotation);
+                if (pendingWarning) { feedbackDiv.textContent = pendingWarning; feedbackDiv.className = 'warning'; }
+                else { feedbackDiv.textContent = ''; feedbackDiv.className = ''; }
+                enableButtons();
+            } else {
+                handDisplay.textContent = '??';
+                feedbackDiv.textContent = 'No suitable hands found for criteria.';
+                feedbackDiv.className = 'warning';
+                disableButtons();
             }
-            const assignedPositionIndex = POSITION_ORDER.indexOf(assignedPosition);
-            const selectedPositionIndex = POSITION_ORDER.indexOf(selectedPosition);
-             if (assignedPositionIndex === -1 || selectedPositionIndex === -1) return false; // Safety check
-            return selectedPositionIndex >= assignedPositionIndex;
         }
 
         function checkAnswer(userAction) {
-            if (!currentHandNotation || !isEpCheckPassed) return;
+            if (!currentHandNotation || !positionHasHands) return;
             disableButtons();
 
-            const shouldRaise = isHandInRfiRange(currentHandNotation, currentPosition);
-            const correctAction = shouldRaise ? 'raise' : 'fold';
+            const freq = getFreq(currentHandNotation, currentPosition);
+            const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
 
+            if (freq > 0 && freq < 100) {
+                // Mixed strategy: either action is acceptable.
+                feedbackDiv.innerHTML = `Mixed hand! <span style="font-weight:bold;">${currentHandNotation}</span> is a <span style="font-weight:bold;">${freq}% raise</span> from ${positionDisplay}. Either play is fine.`;
+                feedbackDiv.className = 'correct';
+                sessionCorrect++;
+                updateStatsDisplay();
+                setTimeout(displayNewHand, 1100);
+                return;
+            }
+
+            const correctAction = freq >= 100 ? 'raise' : 'fold';
             if (userAction === correctAction) {
                 feedbackDiv.textContent = 'Correct!';
                 feedbackDiv.className = 'correct';
                 sessionCorrect++;
                 setTimeout(displayNewHand, 600);
             } else {
-                const positionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
                 feedbackDiv.innerHTML = `Incorrect! <span style="font-weight:bold;">${currentHandNotation}</span> is a <span style="font-weight:bold;">${correctAction.toUpperCase()}</span> from ${positionDisplay}.`;
                 feedbackDiv.className = 'incorrect';
                 sessionIncorrect++;
@@ -694,171 +556,127 @@
             updateStatsDisplay();
         }
 
-        // Recolour the overlay grid to a simple two-state view for the trained position:
-        // hands in the RFI range (raise) are highlighted, everything else is a muted fold.
+        // Shade each cell by its raise % for the position being trained.
         function styleGridForCurrentPosition() {
+            const bg = `var(--color-${currentPosition}-bg)`;
+            const fold = `var(--color-fold-bg)`;
             allHandsNotations.forEach(hand => {
                 const cell = cellMap[hand];
                 if (!cell) return;
-                const shouldRaise = isHandInRfiRange(hand, currentPosition);
-                cell.classList.remove(...VALID_POSITION_CLASSES, 'in-range', 'out-of-range');
-                cell.classList.add(shouldRaise ? 'in-range' : 'out-of-range');
-                cell.dataset.tooltip = `${hand} (${shouldRaise ? 'Raise' : 'Fold'})`;
+                const f = getFreq(hand, currentPosition);
+                if (f <= 0) cell.style.background = fold;
+                else if (f >= 100) cell.style.background = bg;
+                else cell.style.background = `linear-gradient(to top, ${bg} ${f}%, ${fold} ${f}%)`;
+                const label = f <= 0 ? 'Fold' : (f >= 100 ? 'Raise' : `${f}% raise`);
+                cell.dataset.tooltip = `${hand} (${label})`;
             });
         }
 
         function showGridError(handToShow, positionName) {
-            const highlighted = handMatrixBody.querySelector('.highlight-error'); // Search within tbody
+            const highlighted = handMatrixBody.querySelector('.highlight-error');
             if (highlighted) highlighted.classList.remove('highlight-error');
-
-            styleGridForCurrentPosition(); // Show in-range vs fold for the position being trained
+            styleGridForCurrentPosition();
             trainingPositionNameSpan.textContent = positionName;
             errorHandNotationSpan.textContent = handToShow;
             errorPositionSpan.textContent = positionName;
             const cellToHighlight = cellMap[handToShow];
-             if (cellToHighlight) {
-                 cellToHighlight.classList.add('highlight-error');
-                 // Scrolling into view might need adjustment if grid is large
-                 cellToHighlight.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-             } else {
-                 console.error("Cell to highlight not found in map for:", handToShow);
-             }
+            if (cellToHighlight) {
+                cellToHighlight.classList.add('highlight-error');
+                cellToHighlight.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            }
             gridOverlay.style.display = 'flex';
         }
 
         function hideGridAndContinue() {
             gridOverlay.style.display = 'none';
-            const highlighted = handMatrixBody.querySelector('.highlight-error'); // Search within tbody
+            const highlighted = handMatrixBody.querySelector('.highlight-error');
             if (highlighted) highlighted.classList.remove('highlight-error');
-            if (isEpCheckPassed) {
-                 // Delay slightly to allow overlay to fully disappear before next hand appears
-                 setTimeout(displayNewHand, 150);
-            }
+            if (positionHasHands) setTimeout(displayNewHand, 150);
         }
 
-        function disableButtons() {
-            raiseButton.disabled = true;
-            foldButton.disabled = true;
-        }
-
+        function disableButtons() { raiseButton.disabled = true; foldButton.disabled = true; }
         function enableButtons() {
-            if (isEpCheckPassed) {
-                raiseButton.disabled = false;
-                foldButton.disabled = false;
-            } else {
-                 disableButtons();
-            }
+            if (positionHasHands) { raiseButton.disabled = false; foldButton.disabled = false; }
+            else disableButtons();
         }
 
-         // --- START: New function to handle edge case UI ---
-         function updateEdgeCaseUI() {
-             trainEdgeCasesOnly = edgeCasesCheckbox.checked;
-             if (trainEdgeCasesOnly) {
-                 edgeDistanceLabel.style.display = 'inline'; // Show label
-                 edgeDistanceSelect.style.display = 'inline-block'; // Show select
-                 edgeDistanceSelect.disabled = false;
-             } else {
-                 edgeDistanceLabel.style.display = 'none'; // Hide label
-                 edgeDistanceSelect.style.display = 'none'; // Hide select
-                 edgeDistanceSelect.disabled = true;
-             }
-             console.log("Train Edge Cases Only:", trainEdgeCasesOnly, "Distance:", edgeDistanceSelect.value);
-             // Display a new hand respecting the new setting if training is active
-             if (isEpCheckPassed && currentHandNotation) {
-                 displayNewHand();
-             }
-         }
-         // --- END: New function ---
+        function updateEdgeCaseUI() {
+            trainEdgeCasesOnly = edgeCasesCheckbox.checked;
+            if (trainEdgeCasesOnly) {
+                edgeDistanceLabel.style.display = 'inline';
+                edgeDistanceSelect.style.display = 'inline-block';
+                edgeDistanceSelect.disabled = false;
+            } else {
+                edgeDistanceLabel.style.display = 'none';
+                edgeDistanceSelect.style.display = 'none';
+                edgeDistanceSelect.disabled = true;
+            }
+            if (positionHasHands && currentHandNotation) displayNewHand();
+        }
 
         // --- Event Listeners ---
         positionSelect.addEventListener('change', (e) => {
             currentPosition = e.target.value;
             const positionDisplay = e.target.options[e.target.selectedIndex].text;
-            feedbackDiv.className = ''; // Clear previous feedback/warnings
-            isEpCheckPassed = checkEpAvailability(currentPosition); // Re-check availability
-            if (isEpCheckPassed) {
+            feedbackDiv.className = '';
+            styleGridForCurrentPosition();
+            positionHasHands = checkPositionHasHands(currentPosition);
+            if (positionHasHands) {
                 feedbackDiv.textContent = `Training for ${positionDisplay}...`;
-                disableButtons(); // Disable while loading new hand
-                setTimeout(() => { displayNewHand(); }, 200); // Shorter delay maybe
+                disableButtons();
+                setTimeout(() => { displayNewHand(); }, 200);
             } else {
-                 // checkEpAvailability already set the warning message
-                 handDisplay.textContent = '--';
-                 disableButtons();
+                handDisplay.textContent = '--';
+                disableButtons();
             }
         });
 
-        // --- START: Modified/New Edge Case Listeners ---
         edgeCasesCheckbox.addEventListener('change', updateEdgeCaseUI);
         edgeDistanceSelect.addEventListener('change', () => {
-            // Only trigger a new hand if the checkbox is actually checked
-            if (trainEdgeCasesOnly && isEpCheckPassed && currentHandNotation) {
-                console.log("Edge distance changed to:", edgeDistanceSelect.value);
-                displayNewHand();
-            }
+            if (trainEdgeCasesOnly && positionHasHands && currentHandNotation) displayNewHand();
         });
-        // --- END: Modified/New Edge Case Listeners ---
-
 
         raiseButton.addEventListener('click', () => checkAnswer('raise'));
         foldButton.addEventListener('click', () => checkAnswer('fold'));
 
         importBtn.addEventListener('click', () => {
-             const configString = configArea.value;
-             if (configString) {
-                if(applyRangeConfig(configString)) {
-                    configArea.value = ''; // Clear textarea on successful import
-                }
-             } else {
-                 importFeedback.textContent = 'Textarea is empty. Paste a configuration string.';
-                 importFeedback.className = 'error';
-             }
+            const configString = configArea.value;
+            if (configString) { if (applyRangeConfig(configString)) configArea.value = ''; }
+            else { importFeedback.textContent = 'Textarea is empty. Paste a configuration string.'; importFeedback.className = 'error'; }
         });
 
-        gridOverlay.addEventListener('click', (e) => {
-             // Only hide if clicking the dark background, not the grid container itself
-             if (e.target === gridOverlay) {
-                hideGridAndContinue();
-             }
+        gridOverlay.addEventListener('click', (e) => { if (e.target === gridOverlay) hideGridAndContinue(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (gridOverlay.style.display === 'flex' || raiseButton.disabled) return;
+            if (e.key === 'r' || e.key === 'R' || e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+                e.preventDefault(); checkAnswer('raise');
+            } else if (e.key === 'f' || e.key === 'F' || e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+                e.preventDefault(); checkAnswer('fold');
+            }
         });
-
-        // Keyboard listeners (Optional but good UX)
-         document.addEventListener('keydown', (e) => {
-             // Allow keyboard actions only when overlay is hidden and buttons are enabled
-             if (gridOverlay.style.display === 'flex' || raiseButton.disabled) {
-                 return;
-             }
-             if (e.key === 'r' || e.key === 'R' || e.key === 'ArrowUp' || e.key === 'ArrowRight') {
-                 e.preventDefault(); // Prevent default browser actions (like scrolling)
-                 checkAnswer('raise');
-             } else if (e.key === 'f' || e.key === 'F' || e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
-                 e.preventDefault();
-                 checkAnswer('fold');
-             }
-         });
-
 
         // --- Initialization ---
-        console.log("Initializing Trainer...");
-        allHandsNotations = generateHandNotations(); // Generate standard notation order
-        buildGridOverlay(); // Build the HTML for the overlay grid
-        applyRangeConfig(DEFAULT_RANGE_STRING); // Apply the default range initially
+        allHandsNotations = generateHandNotations();
+        allHandsNotations.forEach((h, i) => { handIndex[h] = i; });
+        buildGridOverlay();
+        ranges = buildDefaultRanges();
+        styleGridForCurrentPosition();
 
         currentPosition = positionSelect.value;
-        // trainEdgeCasesOnly = edgeCasesCheckbox.checked; // State set by updateEdgeCaseUI
-        updateEdgeCaseUI(); // Set initial visibility/state of edge case controls
-        updateStatsDisplay(); // Initialize stats display
+        updateEdgeCaseUI();
+        updateStatsDisplay();
 
-        isEpCheckPassed = checkEpAvailability(currentPosition);
-         if (isEpCheckPassed) {
-             const initialPositionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
-             feedbackDiv.textContent = `Training for ${initialPositionDisplay}. Press Raise or Fold.`;
-             feedbackDiv.className = ''; // Ensure no leftover warning class
-             displayNewHand(); // Display the first hand
-         } else {
-             // checkEpAvailability already set the warning message
-             handDisplay.textContent = '--';
-             disableButtons();
-         }
+        positionHasHands = checkPositionHasHands(currentPosition);
+        if (positionHasHands) {
+            const initialPositionDisplay = positionSelect.options[positionSelect.selectedIndex].text;
+            feedbackDiv.textContent = `Training for ${initialPositionDisplay}. Press Raise or Fold.`;
+            feedbackDiv.className = '';
+            displayNewHand();
+        } else {
+            handDisplay.textContent = '--';
+            disableButtons();
+        }
     });
 </script>
 </body>
