@@ -6,105 +6,186 @@
     <title>Customizable 8-Max RFI Preflop Chart</title>
     <style>
         :root {
-            /* Default Color Definitions - CSS Variables (BTN/SB Swapped) */
-            --color-ep1-bg: #a46ab5; --color-ep1-text: #fff; /* Purple */
-            --color-ep2-bg: #8a7e77; --color-ep2-text: #fff; /* Taupe */
-            --color-ep3-bg: #7e9aa8; --color-ep3-text: #fff; /* Slate */
-            --color-lj-bg: #d9534f;  --color-lj-text: #fff; /* Red */
-            --color-hj-bg: #f0ad4e;  --color-hj-text: #fff; /* Orange */
-            --color-co-bg: #5bc0de;  --color-co-text: #fff; /* Info Blue */
-            --color-btn-bg: #0275d8; --color-btn-text: #fff; /* Primary Blue (WAS SB) */
-            --color-sb-bg: #5cb85c;  --color-sb-text: #fff; /* Green (WAS BTN) */
-            --color-fold-bg: #e9ecef; --color-fold-text: #495057; /* Light Gray */
+            /* Position identity colours */
+            --color-utg-bg: #a46ab5;  --color-utg-text: #fff;
+            --color-utg1-bg: #8a7e77; --color-utg1-text: #fff;
+            --color-lj-bg: #d9534f;  --color-lj-text: #fff;
+            --color-hj-bg: #f0ad4e;  --color-hj-text: #fff;
+            --color-co-bg: #5bc0de;  --color-co-text: #fff;
+            --color-btn-bg: #0275d8; --color-btn-text: #fff;
+            --color-sb-bg: #5cb85c;  --color-sb-text: #fff;
+            --color-fold-bg: #e9ecef; --color-fold-text: #495057;
+
+            /* UI design tokens */
+            --bg: #eceff5;
+            --surface: #ffffff;
+            --surface-2: #f5f7fb;
+            --border: #e4e8f0;
+            --text: #1d2433;
+            --text-muted: #66707f;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --radius-lg: 16px;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 2px rgba(16,24,40,0.06);
+            --shadow: 0 6px 20px rgba(16,24,40,0.08);
+            --shadow-lg: 0 16px 40px rgba(16,24,40,0.16);
         }
+
+        /* ---- Dark theme ---- */
+        :root[data-theme="dark"] {
+            --bg: #11151c;
+            --surface: #1a1f29;
+            --surface-2: #222a36;
+            --border: #2e3744;
+            --text: #e6e9ef;
+            --text-muted: #9aa3b2;
+            --primary: #3b82f6;
+            --primary-hover: #2f6fe0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
+            --shadow: 0 6px 20px rgba(0,0,0,0.45);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.55);
+            /* !important beats the inline value JS sets for the customisable fold colour,
+               so empty matrix tiles go dark in dark mode. */
+            --color-fold-bg: #2a3240 !important;
+            --color-fold-text: #c4cad6;
+        }
+        :root[data-theme="dark"] .hand-matrix td { border-color: rgba(255,255,255,0.10); }
+        :root[data-theme="dark"] .hand-matrix td.fill-none span,
+        :root[data-theme="dark"] .hand-matrix td.fill-low span {
+            color: #e6e9ef; text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+        }
+        :root[data-theme="dark"] textarea,
+        :root[data-theme="dark"] input[type="text"],
+        :root[data-theme="dark"] input[type="number"] {
+            background: var(--surface-2); color: var(--text); border-color: var(--border);
+        }
+        :root[data-theme="dark"] .brush-btn:hover,
+        :root[data-theme="dark"] .matrix-actions button:hover { background: #2b3340; }
+        :root[data-theme="dark"] .brush-btn.active-brush { background: var(--text); color: #11151c; border-color: var(--text); }
+        :root[data-theme="dark"] .success { color: #4ade80; }
+        :root[data-theme="dark"] .error { color: #f87171; }
+
+        /* Theme toggle (sits inside the nav pill) */
+        .theme-toggle {
+            border: none; background: transparent; cursor: pointer;
+            font-size: 1.05rem; line-height: 1; padding: 8px 12px;
+            border-radius: 999px; color: var(--text-muted);
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .theme-toggle:hover { background: var(--surface-2); color: var(--text); }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 0 20px 20px 20px;
-            line-height: 1.4;
+            padding: 0 16px 40px;
+            line-height: 1.45;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Style for the top navigation link */
         .top-nav {
-            background-color: #e9ecef;
-            width: 25%;
-            min-width: 180px;
-            margin: 0 auto;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            text-align: center;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            max-width: max-content;
+            margin: 16px auto 24px;
+            padding: 6px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            box-shadow: var(--shadow-sm);
         }
         .top-nav a {
-            color: #333;
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 500;
-            transition: color 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 999px;
+            transition: color 0.15s ease, background 0.15s ease;
         }
-        .top-nav a:hover { color: #0056b3; }
+        .top-nav a:hover { color: var(--text); background: var(--surface-2); }
 
         h1 {
             text-align: center;
-            color: #1d2129;
-            margin-bottom: 20px;
-            font-weight: 400;
+            color: var(--text);
+            font-size: clamp(1.4rem, 4.5vw, 2rem);
+            margin: 8px 0 24px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
         }
 
         .matrix-container, .controls, .io-container, .color-picker-container {
             max-width: 700px;
-            margin: 20px auto;
-            background-color: #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            padding: 20px;
-            overflow-x: auto;
+            margin: 16px auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius-lg);
+            padding: 22px;
         }
+        .matrix-container { padding: 14px; }
 
         .hand-matrix {
             border-collapse: collapse;
             width: 100%;
             table-layout: fixed;
-            border: 1px solid #ccc;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
             user-select: none;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
+            touch-action: none; /* let drag-paint work without scrolling the page */
         }
 
         .hand-matrix td {
-            border: 1px solid #ddd;
+            border: 1px solid rgba(255,255,255,0.7);
             width: calc(100% / 13);
             height: 0;
-            padding-bottom: calc(100% / 13 - 2px);
+            padding-bottom: calc(100% / 13);
             text-align: center;
             position: relative;
-            font-size: clamp(8px, 1.8vw, 12px);
-            font-weight: 500;
+            font-size: clamp(8px, 2.1vw, 13px);
             cursor: pointer;
             background-color: var(--color-fold-bg);
-            transition: background 0.05s ease-in-out;
+            transition: background 0.05s ease-in-out, box-shadow 0.05s ease;
         }
+        .hand-matrix td:hover { box-shadow: inset 0 0 0 2px rgba(37,99,235,0.55); z-index: 1; }
 
         .hand-matrix td span {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            color: #1a1a1a;
-            /* Solid label chip keeps text crisp over any partial fill (no glow) */
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 3px;
-            padding: 1px 3px;
             white-space: nowrap;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            /* Label colour adapts to the tile fill (set per-cell in JS) so it stays
+               legible on both the light fold tiles and the saturated in-range tiles,
+               with only a soft drop-shadow — no chip box, no glow. */
+            color: #2b2b2b;
+            transition: color 0.05s ease-in-out;
         }
-        .hand-matrix td.pair span { font-weight: 700; }
+        /* Mostly/fully filled tiles: light label on the saturated colour. */
+        .hand-matrix td.fill-full span,
+        .hand-matrix td.fill-high span {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+        }
+        /* Mostly-empty tiles: dark label on the light fold colour. */
+        .hand-matrix td.fill-low span {
+            color: #2b2b2b;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+        }
+        .hand-matrix td.pair span { font-weight: 800; }
 
         /* Selector Button Colors - Use CSS Variables */
-        .pos-ep1 { background-color: var(--color-ep1-bg); color: var(--color-ep1-text); border: 2px solid var(--color-ep1-bg); }
-        .pos-ep2 { background-color: var(--color-ep2-bg); color: var(--color-ep2-text); border: 2px solid var(--color-ep2-bg); }
-        .pos-ep3 { background-color: var(--color-ep3-bg); color: var(--color-ep3-text); border: 2px solid var(--color-ep3-bg); }
+        .pos-utg  { background-color: var(--color-utg-bg);  color: var(--color-utg-text);  border: 2px solid var(--color-utg-bg); }
+        .pos-utg1 { background-color: var(--color-utg1-bg); color: var(--color-utg1-text); border: 2px solid var(--color-utg1-bg); }
         .pos-lj  { background-color: var(--color-lj-bg);  color: var(--color-lj-text);  border: 2px solid var(--color-lj-bg); }
         .pos-hj  { background-color: var(--color-hj-bg);  color: var(--color-hj-text);  border: 2px solid var(--color-hj-bg); }
         .pos-co  { background-color: var(--color-co-bg);  color: var(--color-co-text);  border: 2px solid var(--color-co-bg); }
@@ -113,140 +194,206 @@
 
         /* Controls Section */
         .controls h2, .io-container h2, .color-picker-container h2 {
-            margin-top: 0; margin-bottom: 15px;
-            font-weight: 400; font-size: 1.2em; color: #1d2129;
+            margin-top: 0; margin-bottom: 14px;
+            font-weight: 600; font-size: 1.05rem; color: var(--text);
         }
         .controls { text-align: center; }
 
+        .position-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+        }
         .position-selector {
-            display: inline-block;
-            margin: 3px; padding: 8px 10px;
-            font-size: 0.85em;
-            border-radius: 5px; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 14px; min-width: 52px; min-height: 40px;
+            font-size: 0.9rem; font-weight: 600;
+            border-radius: 10px; cursor: pointer;
             /* Border is always 2px so the active state changes colour only — no reflow/shake */
             border: 2px solid transparent;
-            transition: border-color 0.15s ease;
-            min-width: 50px;
-            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
         }
-        .position-selector:hover { opacity: 0.92; }
+        .position-selector:hover { transform: translateY(-1px); }
+        .position-selector:active { transform: translateY(0); }
         .position-selector.active-position {
-            border-color: #1d2129 !important;
+            border-color: var(--text) !important;
+            box-shadow: 0 0 0 3px rgba(29,36,51,0.12);
         }
 
         /* Brush (raise %) controls */
         .brush-controls {
-            margin-top: 18px; padding-top: 15px; border-top: 1px solid #eee;
+            margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
         }
-        .brush-controls h2 { font-size: 1.05em; margin-bottom: 10px; }
-        .brush-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .brush-controls h2 { font-size: 1rem; margin-bottom: 12px; }
+        .brush-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
         .brush-btn {
-            padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.85em;
-            border: 1px solid #ccc; background-color: #f8f9fa; color: #333;
+            padding: 9px 14px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+            min-height: 40px;
             transition: all 0.15s ease;
         }
-        .brush-btn:hover { background-color: #e9ecef; }
+        .brush-btn:hover { background: #eceff5; }
         .brush-btn.active-brush {
-            border-color: #333; background-color: #343a40; color: #fff; font-weight: bold;
+            border-color: var(--text); background: var(--text); color: #fff;
         }
         .brush-slider-row {
-            display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+            display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
         }
-        .brush-slider-row input[type="range"] { width: 220px; max-width: 60vw; cursor: pointer; }
+        .brush-slider-row input[type="range"] { width: 240px; max-width: 70vw; cursor: pointer; accent-color: var(--primary); }
         .brush-slider-row input[type="number"] {
-            width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em;
+            width: 64px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;
         }
         .editing-label {
-            font-size: 0.95em; margin: 14px 0 4px 0; color: #1d2129;
+            font-size: 0.95rem; margin: 16px 0 4px 0; color: var(--text);
         }
         .editing-label strong { font-size: 1.05em; }
-        .matrix-actions { margin-top: 14px; }
+        .matrix-actions { margin-top: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
         .matrix-actions button {
-            padding: 6px 12px; margin: 3px; border: 1px solid #ccc; border-radius: 4px;
-            background-color: #f8f9fa; color: #333; cursor: pointer; font-size: 0.85em;
+            padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px;
+            background: var(--surface-2); color: var(--text); cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            min-height: 42px;
+            transition: background 0.15s ease;
         }
-        .matrix-actions button:hover { background-color: #e9ecef; }
+        .matrix-actions button:hover { background: #eceff5; }
 
         /* IO Container */
         .io-container textarea {
-            width: 95%; min-height: 60px;
-            margin: 10px 0; padding: 8px;
-            border: 1px solid #ccc; border-radius: 4px;
-            font-family: monospace; font-size: 0.9em; resize: vertical;
+            width: 100%; min-height: 64px;
+            margin: 8px 0; padding: 10px;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85rem; resize: vertical;
         }
         .io-container button, .share-container button {
-            padding: 8px 15px; margin: 5px; border: none; border-radius: 4px;
-            background-color: #007bff; color: white; cursor: pointer; font-size: 0.9em;
+            padding: 11px 18px; margin: 5px; border: none; border-radius: 10px;
+            background: var(--primary); color: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            min-height: 44px;
+            transition: background 0.15s ease;
         }
-        .io-container button:hover, .share-container button:hover { background-color: #0056b3; }
+        .io-container button:hover, .share-container button:hover { background: var(--primary-hover); }
         .io-feedback, .share-feedback {
-            font-size: 0.85em; margin-top: 10px; min-height: 1.2em;
+            font-size: 0.85rem; margin-top: 10px; min-height: 1.2em;
         }
-        .success { color: green; } .error { color: red; }
+        .success { color: #1a7f37; } .error { color: #d1242f; }
 
         /* Share Container */
-        .share-container { text-align: center; padding-top: 0;}
-        .share-container input {
-            width: calc(95% - 90px);
-            padding: 8px; margin: 5px 0 5px 5px;
-            border: 1px solid #ccc; border-radius: 4px;
-            font-size: 0.9em;
+        .share-container {
+            text-align: center; padding-top: 0;
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center;
         }
+        .share-container input {
+            flex: 1 1 220px; min-width: 0;
+            padding: 11px;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-size: 0.85rem;
+        }
+        .share-feedback { flex-basis: 100%; }
+
+        /* Saved ranges panel */
+        .saves-hint { font-size: 0.85rem; color: var(--text-muted); margin: -4px 0 14px; }
+        .save-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .save-row input {
+            flex: 1 1 200px; min-width: 0; padding: 11px;
+            border: 1px solid var(--border); border-radius: 10px;
+            font-size: 0.9rem; background: var(--surface); color: var(--text);
+        }
+        .saves-container .save-row button { margin: 0; flex: 0 0 auto; }
+        .saves-list { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .saves-empty { color: var(--text-muted); font-size: 0.88rem; text-align: center; padding: 12px; }
+        .save-item {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2);
+        }
+        .save-name { font-weight: 600; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .save-meta { font-size: 0.78rem; color: var(--text-muted); flex: 0 0 auto; }
+        .save-actions { display: flex; gap: 6px; flex: 0 0 auto; margin-left: auto; }
+        .saves-container .save-actions button { margin: 0; min-height: 0; padding: 7px 12px; font-size: 0.8rem; border-radius: 8px; }
+        .saves-container .save-load { background: var(--primary); color: #fff; }
+        .saves-container .save-del { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .saves-container .save-del:hover { background: #e23b3b; color: #fff; border-color: #e23b3b; }
 
         /* Color Picker */
         .color-picker-container h2 { margin-bottom: 10px; }
         .color-picker-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
         }
         .color-swatch-item { display: flex; align-items: center; gap: 10px; }
-        .color-swatch-item span { font-size: 0.9em; }
+        .color-swatch-item span { font-size: 0.9rem; font-weight: 500; }
         .color-swatch {
-            width: 34px; height: 34px; border-radius: 50%;
-            border: 2px solid #ccc; cursor: pointer; padding: 0; flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 2px solid var(--border); cursor: pointer; padding: 0; flex-shrink: 0;
             box-shadow: inset 0 0 0 2px #fff;
+            transition: transform 0.1s ease, border-color 0.15s ease;
         }
-        .color-swatch:hover { border-color: #888; }
+        .color-swatch:hover { border-color: #9aa3b2; transform: scale(1.08); }
 
         /* Inline color wheel popover */
         .color-wheel-popover {
             position: absolute; z-index: 50;
-            background: #fff; border: 1px solid #ccc; border-radius: 8px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.18);
-            padding: 14px; width: 208px; text-align: center;
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 16px; width: 208px; text-align: center;
         }
         .color-wheel-popover[hidden] { display: none; }
-        .cw-title { font-size: 0.95em; margin-bottom: 8px; color: #1d2129; }
+        .cw-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 10px; color: var(--text); }
         #wheelCanvas { cursor: crosshair; touch-action: none; border-radius: 50%; }
-        .cw-bright { display: block; font-size: 0.8em; color: #555; margin: 10px 0 4px; }
-        .cw-bright input { width: 100%; }
-        .cw-foot { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
-        .wheel-preview { width: 26px; height: 26px; border-radius: 4px; border: 1px solid #ccc; flex-shrink: 0; }
-        .cw-foot input[type="text"] { flex: 1; min-width: 0; padding: 5px 6px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 0.85em; }
-        .cw-foot button { padding: 5px 10px; border: none; border-radius: 4px; background: #007bff; color: #fff; cursor: pointer; font-size: 0.85em; }
-        .cw-foot button:hover { background: #0056b3; }
+        .cw-bright { display: block; font-size: 0.8rem; color: var(--text-muted); margin: 12px 0 4px; }
+        .cw-bright input { width: 100%; accent-color: var(--primary); }
+        .cw-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .wheel-preview { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; }
+        .cw-foot input[type="text"] { flex: 1; min-width: 0; padding: 8px; border: 1px solid var(--border); border-radius: 8px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; }
+        .cw-foot button { padding: 8px 12px; border: none; border-radius: 8px; background: var(--primary); color: #fff; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .cw-foot button:hover { background: var(--primary-hover); }
 
         .notes {
-            max-width: 700px; margin: 30px auto; font-size: 0.9em;
-            color: #6c757d; text-align: center; padding: 0 20px;
+            max-width: 700px; margin: 28px auto; font-size: 0.875rem;
+            color: var(--text-muted); text-align: center; padding: 0 12px;
         }
-        .notes p { margin-bottom: 5px; }
+        .notes p { margin-bottom: 6px; }
 
         /* Tooltip */
         [data-tooltip] { position: relative; }
         [data-tooltip]:hover::after {
             content: attr(data-tooltip); position: absolute; bottom: 105%; left: 50%;
-            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.8); color: white;
-            padding: 4px 8px; border-radius: 4px; font-size: 0.8em; white-space: nowrap;
+            transform: translateX(-50%); background: rgba(20,26,38,0.92); color: #fff;
+            padding: 5px 9px; border-radius: 6px; font-size: 0.78rem; white-space: nowrap;
             z-index: 10; pointer-events: none;
         }
+
+        /* On touch devices, hover tooltips/highlights get "stuck" — suppress them. */
+        @media (hover: none) {
+            [data-tooltip]:hover::after { display: none; }
+            .hand-matrix td:hover { box-shadow: none; }
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            body { padding: 0 10px 32px; }
+            .matrix-container, .controls, .io-container, .color-picker-container { padding: 14px; border-radius: var(--radius); }
+            .matrix-container { padding: 8px; }
+            .controls h2, .io-container h2, .color-picker-container h2 { font-size: 0.98rem; }
+            .position-selector { padding: 9px 11px; min-width: 46px; font-size: 0.85rem; }
+            .brush-slider-row input[type="range"] { max-width: 100%; flex: 1 1 100%; }
+            .matrix-actions button { flex: 1 1 100%; }
+            .top-nav { width: 100%; max-width: none; }
+        }
     </style>
+    <script>
+      /* Apply saved/OS theme before paint to avoid a flash of the wrong theme. */
+      (function () {
+        try {
+          var t = localStorage.getItem('pokertrainer_theme');
+          if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
 </head>
 <body>
 
     <div class="top-nav">
         <a href="RFITrainer.html">RFI Trainer</a>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
     </div>
 
     <h1>Customizable 8-Max RFI Preflop Chart</h1>
@@ -254,10 +401,9 @@
     <!-- Position Selection Controls -->
     <div class="controls">
         <h2>Select Position to Edit:</h2>
-        <div>
-            <div class="position-selector pos-ep1" data-position="ep1">EP1</div>
-            <div class="position-selector pos-ep2" data-position="ep2">EP2</div>
-            <div class="position-selector pos-ep3" data-position="ep3">EP3</div>
+        <div class="position-grid">
+            <div class="position-selector pos-utg" data-position="utg">UTG</div>
+            <div class="position-selector pos-utg1" data-position="utg1">UTG+1</div>
             <div class="position-selector pos-lj active-position" data-position="lj">LJ</div>
             <div class="position-selector pos-hj" data-position="hj">HJ</div>
             <div class="position-selector pos-co" data-position="co">CO</div>
@@ -299,19 +445,16 @@
         </table>
     </div>
 
-    <!-- Import / Export / Share -->
-    <div class="io-container">
-        <h2>Save / Load / Share Matrix</h2>
-        <textarea id="configArea" placeholder="Paste configuration string here to import..."></textarea>
-        <button id="exportBtn">Export to Clipboard</button>
-        <button id="importBtn">Import from Text Area</button>
-        <div id="ioFeedback" class="io-feedback"></div>
-
-        <div class="share-container" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-            <input type="text" id="shareLinkInput" placeholder="Click 'Generate Share Link'" readonly>
-            <button id="shareBtn">Generate Share Link</button>
-            <div id="shareFeedback" class="share-feedback"></div>
+    <!-- Saved Ranges -->
+    <div class="io-container saves-container">
+        <h2>Saved Ranges</h2>
+        <p class="saves-hint">Save this full set of position ranges under a name. Saved sets can be loaded back here and trained against in the RFI Trainer.</p>
+        <div class="save-row">
+            <input type="text" id="saveNameInput" maxlength="40" placeholder="Name this range set (e.g. &quot;My 8-max&quot;)">
+            <button id="saveBtn">Save</button>
         </div>
+        <div id="saveStatus" class="io-feedback"></div>
+        <ul id="savesList" class="saves-list"><!-- populated by JS --></ul>
     </div>
 
     <!-- Color Customization -->
@@ -319,9 +462,8 @@
         <h2>Customize Colors</h2>
         <p style="font-size: 0.85em; margin-top: -6px; margin-bottom: 14px; color: #6c757d;">Click a position's swatch to pick its colour from the wheel.</p>
         <div class="color-picker-grid">
-            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="ep1"></button><span>EP1</span></div>
-            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="ep2"></button><span>EP2</span></div>
-            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="ep3"></button><span>EP3</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="utg"></button><span>UTG</span></div>
+            <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="utg1"></button><span>UTG+1</span></div>
             <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="lj"></button><span>LJ</span></div>
             <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="hj"></button><span>HJ</span></div>
             <div class="color-swatch-item"><button type="button" class="color-swatch" data-position="co"></button><span>CO</span></div>
@@ -347,23 +489,69 @@
     </div>
 
     <div class="notes">
-        <p><strong>Note:</strong> Every position has its own independent matrix. The shaded portion of each tile = your chance to raise (open) that hand. Use Export/Import/Share to move full configurations between this chart and the RFI Trainer.</p>
+        <p><strong>Note:</strong> Every position has its own independent matrix. The shaded portion of each tile = your chance to raise (open) that hand. Save a named range set to train against it in the RFI Trainer.</p>
         <p>Diagonal cells are pocket pairs. Cells above are suited hands. Cells below are offsuit hands.</p>
     </div>
 
     <script>
         // --- Shared configuration ---
         const RANKS = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
-        const POSITION_ORDER = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb'];
-        const POSITION_NAMES = { ep1:'EP1', ep2:'EP2', ep3:'EP3', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB' };
+        const POSITION_ORDER = ['utg', 'utg1', 'lj', 'hj', 'co', 'btn', 'sb'];
+        const POSITION_NAMES = { utg:'UTG', utg1:'UTG+1', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB' };
         const NUM_HANDS = 169;
 
-        // Legacy single-matrix default (earliest position that opens each hand), used to
-        // seed sensible per-position defaults so the chart matches the previous version.
-        const DEFAULT_RANGE_STRING = "lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,co,co,btn,btn,lj,lj,lj,lj,lj,lj,hj,co,co,co,btn,btn,btn,lj,lj,lj,lj,lj,hj,co,co,btn,btn,btn,fold,fold,lj,hj,hj,co,lj,lj,co,btn,btn,fold,fold,fold,fold,hj,co,btn,btn,btn,lj,co,btn,btn,fold,fold,fold,fold,co,btn,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,hj,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,co,btn,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co";
+        // Per-position default opening ranges in standard hand notation, expanded into
+        // independent 169-cell matrices below. Each position stands alone, so SB can be
+        // tighter than BTN where it should be (A5o+ vs A2o+, no 98o, etc.).
+        const DEFAULT_RANGE_TOKENS = {
+            utg:  "77+, A2s-A5s, ATs+, KJs+, QJs, JTs, T9s, AQo+",
+            utg1: "66+, A2s+, KTs+, QTs+, J9s+, T9s, 98s, AJo+, KQo",
+            lj:   "55+, A2s+, K9s+, Q9s+, J9s+, T9s, 98s, 87s, 76s, ATo+, KJo+, QJo",
+            hj:   "44+, A2s+, K7s+, Q9s+, J9s+, T8s+, 98s, 87s, 76s, 65s, 54s, ATo+, KTo+, QTo+, JTo",
+            co:   "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 97s+, 87s, 76s, 65s, 54s, A8o+, KTo+, QTo+, JTo",
+            btn:  "22+, A2s+, K2s+, Q2s+, J5s+, T6s+, 96s+, 85s+, 75s+, 64s+, 53s+, 43s, A2o+, K9o+, Q9o+, J9o+, T9o, 98o",
+            sb:   "22+, A2s+, K2s+, Q4s+, J7s+, T7s+, 97s+, 86s+, 75s+, 64s+, 54s, A5o+, K9o+, Q9o+, J9o+, T9o"
+        };
+
+        // Expand standard range notation into hand notations. Supports pairs ("77",
+        // "77+"), suited/offsuit singles ("QJs", "KQo"), "+" with a fixed high card and
+        // rising kicker ("ATs+", "97s+", "A5o+"), and same-high dash ranges ("A2s-A5s").
+        function expandRangeToken(tok) {
+            tok = tok.trim();
+            if (!tok) return [];
+            if (tok.indexOf('-') !== -1) {
+                const parts = tok.split('-');
+                const a = parts[0].trim(), b = parts[1].trim();
+                const hi = a[0], suit = a[2];
+                let lo1 = RANKS.indexOf(a[1]), lo2 = RANKS.indexOf(b[1]);
+                if (lo1 > lo2) { const t = lo1; lo1 = lo2; lo2 = t; }
+                const out = [];
+                for (let i = lo1; i <= lo2; i++) out.push(hi + RANKS[i] + suit);
+                return out;
+            }
+            const plus = tok.endsWith('+');
+            const t = plus ? tok.slice(0, -1) : tok;
+            if (t.length === 2 && t[0] === t[1]) { // pair
+                if (!plus) return [t];
+                const out = [];
+                for (let i = 0; i <= RANKS.indexOf(t[0]); i++) out.push(RANKS[i] + RANKS[i]);
+                return out;
+            }
+            const r1 = t[0], r2 = t[1], suit = t[2]; // 's' or 'o'
+            if (!plus) return [r1 + r2 + suit];
+            const hiIdx = RANKS.indexOf(r1), loIdx = RANKS.indexOf(r2);
+            const out = [];
+            for (let i = loIdx; i > hiIdx; i--) out.push(r1 + RANKS[i] + suit);
+            return out;
+        }
+        function parseRangeTokens(str) {
+            const set = new Set();
+            (str || '').split(',').forEach(tok => expandRangeToken(tok).forEach(n => set.add(n)));
+            return set;
+        }
 
         const LOCAL_STORAGE_COLORS_KEY = 'matrixCustomColors_v2';
-        const LOCAL_STORAGE_RANGES_KEY = 'matrixRanges_v2';
+        const LOCAL_STORAGE_RANGES_KEY = 'matrixRanges_v3';
 
         // --- DOM references ---
         const controlsContainer = document.querySelector('.controls');
@@ -378,13 +566,10 @@
         const fillAllBtn = document.getElementById('fillAllBtn');
         const clearBtn = document.getElementById('clearBtn');
         const resetBtn = document.getElementById('resetBtn');
-        const configArea = document.getElementById('configArea');
-        const exportBtn = document.getElementById('exportBtn');
-        const importBtn = document.getElementById('importBtn');
-        const ioFeedback = document.getElementById('ioFeedback');
-        const shareBtn = document.getElementById('shareBtn');
-        const shareLinkInput = document.getElementById('shareLinkInput');
-        const shareFeedback = document.getElementById('shareFeedback');
+        const saveNameInput = document.getElementById('saveNameInput');
+        const saveBtn = document.getElementById('saveBtn');
+        const saveStatus = document.getElementById('saveStatus');
+        const savesList = document.getElementById('savesList');
         const colorSwatches = document.querySelectorAll('.color-swatch');
         const cwPopover = document.getElementById('colorWheelPopover');
         const cwTitle = document.getElementById('cwTitle');
@@ -417,18 +602,17 @@
             return notations;
         }
 
-        // Build per-position defaults from the legacy cumulative string: a hand opened by
-        // its earliest position is also opened (100%) by every later position.
+        // Build per-position defaults by expanding each position's notation independently.
         function buildDefaultRanges() {
-            const classes = DEFAULT_RANGE_STRING.split(',');
+            const notations = generateHandNotations();
+            const idxOf = {};
+            notations.forEach((n, i) => { idxOf[n] = i; });
             const result = {};
-            POSITION_ORDER.forEach(p => { result[p] = new Array(NUM_HANDS).fill(0); });
-            classes.forEach((cls, i) => {
-                const earliest = POSITION_ORDER.indexOf(cls.trim());
-                if (earliest === -1) return; // 'fold' or unknown
-                for (let pi = earliest; pi < POSITION_ORDER.length; pi++) {
-                    result[POSITION_ORDER[pi]][i] = 100;
-                }
+            POSITION_ORDER.forEach(p => {
+                result[p] = new Array(NUM_HANDS).fill(0);
+                parseRangeTokens(DEFAULT_RANGE_TOKENS[p]).forEach(n => {
+                    if (idxOf[n] !== undefined) result[p][idxOf[n]] = 100;
+                });
             });
             return result;
         }
@@ -452,8 +636,8 @@
         function setCssVariable(name, value) { document.documentElement.style.setProperty(name, value); }
 
         // Colour state per position (hex). Includes 'fold' for the unfilled portion.
-        const COLOR_POSITIONS = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb', 'fold'];
-        const COLOR_LABELS = { ep1:'EP1', ep2:'EP2', ep3:'EP3', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB', fold:'Fold' };
+        const COLOR_POSITIONS = ['utg', 'utg1', 'lj', 'hj', 'co', 'btn', 'sb', 'fold'];
+        const COLOR_LABELS = { utg:'UTG', utg1:'UTG+1', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB', fold:'Fold' };
         const WHEEL_RADIUS = 90; // 180px canvas, centre 90,90
         let positionColors = {};
         let activeColorPos = null;
@@ -659,6 +843,9 @@
             if (f <= 0) cell.style.background = fold;
             else if (f >= 100) cell.style.background = bg;
             else cell.style.background = `linear-gradient(to top, ${bg} ${f}%, ${fold} ${f}%)`;
+            // Pick the label colour by how much of the tile is filled (see CSS).
+            cell.classList.remove('fill-none', 'fill-low', 'fill-high', 'fill-full');
+            cell.classList.add(f <= 0 ? 'fill-none' : f >= 100 ? 'fill-full' : f >= 50 ? 'fill-high' : 'fill-low');
             cell.dataset.tooltip = `${handNotations[index]} — ${POSITION_NAMES[currentPosition]} ${f}% raise`;
         }
 
@@ -686,72 +873,101 @@
             });
         }
 
-        // --- Config import / export (v2 = per-position frequencies) ---
-        function generateConfigString() {
-            return JSON.stringify({ v: 2, ranges });
+        // --- Named range saves (shared with the RFI Trainer via localStorage) ---
+        const SAVES_KEY = 'pokertrainer_rfiSaves_v1';
+
+        function loadSaves() {
+            try { const arr = JSON.parse(localStorage.getItem(SAVES_KEY)); return Array.isArray(arr) ? arr : []; }
+            catch (e) { return []; }
+        }
+        function persistSaves(saves) {
+            try { localStorage.setItem(SAVES_KEY, JSON.stringify(saves)); } catch (e) {}
+        }
+        // Force every position into a clean 169-length, clamped array.
+        function sanitizeRanges(src) {
+            const out = {};
+            POSITION_ORDER.forEach(p => {
+                const arr = src && src[p];
+                out[p] = (Array.isArray(arr) && arr.length === NUM_HANDS) ? arr.map(clampPct) : new Array(NUM_HANDS).fill(0);
+            });
+            return out;
+        }
+        function setSaveStatus(message, success) {
+            saveStatus.textContent = message;
+            saveStatus.className = 'io-feedback ' + (success ? 'success' : 'error');
+        }
+        function formatSaveDate(ts) {
+            try { return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+            catch (e) { return ''; }
         }
 
-        function applyConfig(configString, feedbackElement = ioFeedback) {
-            const raw = (configString || '').trim();
-            if (!raw) { setFeedback(feedbackElement, 'Import failed: empty configuration.', false); return false; }
-
-            // Try v2 JSON first
-            let parsed = null;
-            try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
-
-            if (parsed && parsed.ranges) {
-                const next = buildDefaultRanges();
-                let found = 0;
-                POSITION_ORDER.forEach(p => {
-                    const arr = parsed.ranges[p];
-                    if (Array.isArray(arr) && arr.length === NUM_HANDS) { next[p] = arr.map(clampPct); found++; }
-                });
-                if (found === 0) { setFeedback(feedbackElement, 'Import failed: no valid position matrices found.', false); return false; }
-                ranges = next;
-                renderMatrix();
-                saveRangesToLocalStorage();
-                setFeedback(feedbackElement, 'Configuration applied successfully!', true);
-                return true;
+        function saveCurrentRanges(rawName) {
+            const name = (rawName || '').trim();
+            if (!name) { setSaveStatus('Enter a name before saving.', false); saveNameInput.focus(); return; }
+            const saves = loadSaves();
+            const idx = saves.findIndex(s => s.name.toLowerCase() === name.toLowerCase());
+            const entry = { name, ranges: sanitizeRanges(ranges), savedAt: Date.now() };
+            if (idx >= 0) {
+                if (!confirm(`A saved range called "${saves[idx].name}" already exists. Overwrite it?`)) return;
+                saves[idx] = entry;
+            } else {
+                saves.push(entry);
             }
-
-            // Fallback: legacy v1 single cumulative string of 169 class names
-            const classes = raw.split(',').map(s => s.trim());
-            if (classes.length === NUM_HANDS) {
-                const next = {};
-                POSITION_ORDER.forEach(p => { next[p] = new Array(NUM_HANDS).fill(0); });
-                let valid = true;
-                classes.forEach((cls, i) => {
-                    if (cls === 'fold') return;
-                    const earliest = POSITION_ORDER.indexOf(cls);
-                    if (earliest === -1) { valid = false; return; }
-                    for (let pi = earliest; pi < POSITION_ORDER.length; pi++) next[POSITION_ORDER[pi]][i] = 100;
-                });
-                if (!valid) { setFeedback(feedbackElement, 'Import failed: invalid position code in legacy string.', false); return false; }
-                ranges = next;
-                renderMatrix();
-                saveRangesToLocalStorage();
-                setFeedback(feedbackElement, 'Legacy configuration converted and applied!', true);
-                return true;
-            }
-
-            setFeedback(feedbackElement, 'Import failed: unrecognized configuration format.', false);
-            return false;
+            persistSaves(saves);
+            renderSavesList();
+            setSaveStatus(`Saved "${name}".`, true);
+            saveNameInput.value = '';
         }
 
-        function setFeedback(el, message, success) {
-            el.textContent = message;
-            el.className = (el.id === 'shareFeedback' ? 'share-feedback ' : 'io-feedback ') + (success ? 'success' : 'error');
+        function loadSaveIntoEditor(name) {
+            const save = loadSaves().find(s => s.name === name);
+            if (!save) { setSaveStatus('That save no longer exists.', false); renderSavesList(); return; }
+            ranges = sanitizeRanges(save.ranges);
+            renderMatrix();
+            saveRangesToLocalStorage();
+            setSaveStatus(`Loaded "${name}" into the editor.`, true);
         }
 
-        function loadConfigFromURL() {
-            if (window.location.hash && window.location.hash.length > 1) {
-                try {
-                    const configString = decodeURIComponent(window.location.hash.substring(1));
-                    applyConfig(configString, ioFeedback);
-                } catch (e) {
-                    setFeedback(ioFeedback, 'Failed to load configuration from URL.', false);
-                }
+        function deleteSave(name) {
+            persistSaves(loadSaves().filter(s => s.name !== name));
+            renderSavesList();
+            setSaveStatus(`Deleted "${name}".`, true);
+        }
+
+        function renderSavesList() {
+            const saves = loadSaves().slice().sort((a, b) => b.savedAt - a.savedAt);
+            savesList.innerHTML = '';
+            if (saves.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'saves-empty';
+                li.textContent = 'No saved ranges yet — name one above and hit Save.';
+                savesList.appendChild(li);
+                return;
             }
+            saves.forEach(s => {
+                const li = document.createElement('li');
+                li.className = 'save-item';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'save-name';
+                nameSpan.textContent = s.name;
+
+                const meta = document.createElement('span');
+                meta.className = 'save-meta';
+                meta.textContent = formatSaveDate(s.savedAt);
+
+                const actions = document.createElement('span');
+                actions.className = 'save-actions';
+                const loadB = document.createElement('button');
+                loadB.type = 'button'; loadB.className = 'save-load'; loadB.dataset.name = s.name; loadB.textContent = 'Load';
+                const delB = document.createElement('button');
+                delB.type = 'button'; delB.className = 'save-del'; delB.dataset.name = s.name;
+                delB.textContent = '✕'; delB.setAttribute('aria-label', `Delete ${s.name}`);
+                actions.appendChild(loadB); actions.appendChild(delB);
+
+                li.appendChild(nameSpan); li.appendChild(meta); li.appendChild(actions);
+                savesList.appendChild(li);
+            });
         }
 
         // --- Event listeners ---
@@ -778,6 +994,20 @@
         window.addEventListener('mouseup', () => { isMouseDown = false; });
         matrix.addEventListener('dragstart', (event) => event.preventDefault());
 
+        // Touch painting (mobile). preventDefault stops the page from scrolling and
+        // suppresses the synthetic mouse events so a tile isn't painted twice.
+        matrix.addEventListener('touchstart', (event) => {
+            const cell = event.target.closest('td');
+            if (cell) { paintCell(cell); event.preventDefault(); }
+        }, { passive: false });
+        matrix.addEventListener('touchmove', (event) => {
+            const touch = event.touches[0];
+            if (!touch) return;
+            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            const cell = el && el.closest('td');
+            if (cell && matrix.contains(cell)) { paintCell(cell); event.preventDefault(); }
+        }, { passive: false });
+
         // Brush controls
         brushButtonsContainer.addEventListener('click', (event) => {
             const btn = event.target.closest('.brush-btn');
@@ -798,44 +1028,19 @@
         resetBtn.addEventListener('click', () => {
             ranges = buildDefaultRanges();
             renderMatrix(); saveRangesToLocalStorage();
-            setFeedback(ioFeedback, 'All positions reset to default.', true);
+            setSaveStatus('All positions reset to default.', true);
         });
 
-        // Export
-        exportBtn.addEventListener('click', () => {
-            const configString = generateConfigString();
-            configArea.value = configString;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(configString)
-                    .then(() => setFeedback(ioFeedback, 'Configuration copied to clipboard!', true))
-                    .catch(() => setFeedback(ioFeedback, 'Could not copy. Config in text area.', false));
-            } else {
-                setFeedback(ioFeedback, 'Clipboard unavailable. Config in text area.', false);
-            }
+        // Saved ranges
+        saveBtn.addEventListener('click', () => saveCurrentRanges(saveNameInput.value));
+        saveNameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); saveCurrentRanges(saveNameInput.value); }
         });
-
-        // Import
-        importBtn.addEventListener('click', () => {
-            if (!configArea.value) { setFeedback(ioFeedback, 'Import failed: Text area is empty.', false); return; }
-            applyConfig(configArea.value, ioFeedback);
-        });
-
-        // Share
-        shareBtn.addEventListener('click', () => {
-            try {
-                const encoded = encodeURIComponent(generateConfigString());
-                const shareUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${encoded}`;
-                shareLinkInput.value = shareUrl;
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(shareUrl)
-                        .then(() => setFeedback(shareFeedback, 'Share link copied to clipboard!', true))
-                        .catch(() => setFeedback(shareFeedback, 'Could not copy link. Link shown above.', false));
-                } else {
-                    setFeedback(shareFeedback, 'Clipboard unavailable. Link shown above.', false);
-                }
-            } catch (e) {
-                setFeedback(shareFeedback, 'Error generating share link.', false);
-            }
+        savesList.addEventListener('click', (e) => {
+            const loadEl = e.target.closest('.save-load');
+            const delEl = e.target.closest('.save-del');
+            if (loadEl) loadSaveIntoEditor(loadEl.dataset.name);
+            else if (delEl && confirm(`Delete saved range "${delEl.dataset.name}"?`)) deleteSave(delEl.dataset.name);
         });
 
         // Colour wheel
@@ -877,8 +1082,29 @@
             loadColors();        // sets CSS vars + swatches (and renders the matrix)
             setBrushValue(100);
             renderMatrix();
-            loadConfigFromURL(); // overrides if a share link is present
+            renderSavesList();
         });
+    </script>
+
+    <script>
+      /* Dark-mode toggle. Theme is already applied by the head script; this just
+         wires the button, swaps the icon, and persists the choice. */
+      (function () {
+        var btn = document.getElementById('themeToggle');
+        if (!btn) return;
+        function refresh() {
+          var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+          btn.textContent = dark ? '☀️' : '🌙';
+          btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        }
+        refresh();
+        btn.addEventListener('click', function () {
+          var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          try { localStorage.setItem('pokertrainer_theme', next); } catch (e) {}
+          refresh();
+        });
+      })();
     </script>
 
 </body>

@@ -5,197 +5,283 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RFI Range Trainer (Customizable)</title>
     <style>
-        /* Color Variables */
         :root {
-            --color-ep1-bg: #a46ab5; --color-ep1-text: #fff;
-            --color-ep2-bg: #8a7e77; --color-ep2-text: #fff;
-            --color-ep3-bg: #7e9aa8; --color-ep3-text: #fff;
+            --color-utg-bg: #a46ab5;  --color-utg-text: #fff;
+            --color-utg1-bg: #8a7e77; --color-utg1-text: #fff;
             --color-lj-bg: #d9534f;  --color-lj-text: #fff;
             --color-hj-bg: #f0ad4e;  --color-hj-text: #fff;
             --color-co-bg: #5bc0de;  --color-co-text: #fff;
             --color-btn-bg: #0275d8; --color-btn-text: #fff;
             --color-sb-bg: #5cb85c;  --color-sb-text: #fff;
             --color-fold-bg: #e9ecef; --color-fold-text: #495057;
-            --color-card-red: #D90000;
-            --color-card-black: #333;
-            --color-correct: #28a745;
-            --color-incorrect: #dc3545;
-            --color-warning: #f0ad4e;
+            --color-card-red: #d61f1f;
+            --color-card-black: #2b2b2b;
+            --color-correct: #1f9d4d;
+            --color-incorrect: #e23b3b;
+            --color-warning: #e8920c;
+
+            --bg: #eceff5;
+            --surface: #ffffff;
+            --surface-2: #f5f7fb;
+            --border: #e4e8f0;
+            --text: #1d2433;
+            --text-muted: #66707f;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --radius-lg: 16px;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 2px rgba(16,24,40,0.06);
+            --shadow: 0 6px 20px rgba(16,24,40,0.08);
+            --shadow-lg: 0 16px 40px rgba(16,24,40,0.16);
         }
+
+        /* ---- Dark theme ---- */
+        :root[data-theme="dark"] {
+            --bg: #11151c;
+            --surface: #1a1f29;
+            --surface-2: #222a36;
+            --border: #2e3744;
+            --text: #e6e9ef;
+            --text-muted: #9aa3b2;
+            --primary: #3b82f6;
+            --primary-hover: #2f6fe0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
+            --shadow: 0 6px 20px rgba(0,0,0,0.45);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.55);
+            --color-fold-bg: #2a3240;
+            --color-fold-text: #c4cad6;
+            --color-card-red: #ff6b6b;
+            --color-card-black: #e6e9ef;
+            --color-correct: #2ecc71;
+            --color-incorrect: #ff5a5a;
+            --color-warning: #f5b942;
+        }
+        :root[data-theme="dark"] .hand-matrix td { border-color: rgba(255,255,255,0.10); }
+        :root[data-theme="dark"] .hand-matrix td.fill-none span,
+        :root[data-theme="dark"] .hand-matrix td.fill-low span {
+            color: #e6e9ef; text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+        }
+        :root[data-theme="dark"] textarea,
+        :root[data-theme="dark"] select {
+            background: var(--surface-2); color: var(--text); border-color: var(--border);
+        }
+
+        /* Theme toggle — floats in the top-right corner of the page */
+        .theme-toggle {
+            position: fixed; top: 14px; right: 14px; z-index: 50;
+            border: 1px solid var(--border); background: var(--surface); cursor: pointer;
+            font-size: 1.05rem; line-height: 1; padding: 9px 13px;
+            border-radius: 999px; color: var(--text-muted);
+            box-shadow: var(--shadow-sm);
+            transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .theme-toggle:hover { background: var(--surface-2); color: var(--text); box-shadow: var(--shadow); }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
-            background-color: #f0f2f5;
-            color: #333;
+            background: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 0 20px 20px 20px;
-            line-height: 1.4;
+            padding: 0 16px 40px;
+            line-height: 1.45;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .top-nav {
-            background-color: #e9ecef;
-            width: 35%;
-            min-width: 250px;
-            margin: 0 auto;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            text-align: center;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .top-nav a {
-            color: #333; text-decoration: none; font-size: 1.1em;
-            font-weight: 500; transition: color 0.2s ease; margin: 0 10px;
-        }
-        .top-nav a:hover { color: #0056b3; }
 
         #trainer-container {
-            background-color: #fff; padding: 30px; border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;
-            width: 90%; max-width: 650px;
-            margin: 0 auto 20px auto;
+            background: var(--surface); padding: 28px; border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow); text-align: center;
+            width: 100%; max-width: 560px;
+            margin: 24px auto 20px auto;
         }
 
-        h1 { color: #1d2129; margin-top: 0; margin-bottom: 15px; font-weight: 400; }
+        /* "Change Ranges" link in the training-range footer */
+        .change-ranges-link {
+            flex-basis: 100%; text-align: center; margin-top: 6px;
+            font-size: 0.9rem; font-weight: 600; color: var(--primary);
+            text-decoration: none;
+        }
+        .change-ranges-link:hover { text-decoration: underline; color: var(--primary-hover); }
+
+        h1 {
+            color: var(--text); margin-top: 0; margin-bottom: 18px;
+            font-weight: 700; font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: -0.01em;
+        }
 
         .control-group {
-            margin-bottom: 20px; display: flex; justify-content: center;
-            align-items: center; gap: 15px; flex-wrap: wrap;
+            margin-bottom: 16px; display: flex; justify-content: center;
+            align-items: center; gap: 12px; flex-wrap: wrap;
         }
 
         .edge-case-controls {
-            margin-bottom: 20px; display: flex; justify-content: center; align-items: center;
-            gap: 8px; font-size: 0.9em; color: #555; flex-wrap: wrap;
+            margin: 0 auto 18px; display: flex; justify-content: center; align-items: center;
+            gap: 8px; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 999px; padding: 8px 16px; max-width: max-content;
         }
-        .edge-case-controls input[type="checkbox"] { margin-right: 3px; cursor: pointer; }
+        .edge-case-controls input[type="checkbox"] { margin-right: 3px; cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary); }
         .edge-case-controls label { cursor: pointer; user-select: none; margin-right: 5px; }
         .edge-case-controls label[for="edge-distance-select"] { margin-left: 5px; font-weight: normal; }
         .edge-case-controls select {
-            padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;
-            font-size: 0.9em; background-color: #fff;
+            padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+            font-size: 0.9rem; background: var(--surface);
         }
 
-        #position-selector label { margin: 0; font-weight: 500; color: #333; }
+        #position-selector { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        #position-selector label { margin: 0; font-weight: 600; color: var(--text); }
         #position-selector select {
-            padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc;
-            font-size: 1em; background-color: #fff;
+            padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+            font-size: 1rem; background: var(--surface); min-height: 44px; cursor: pointer;
         }
 
         #hand-display {
-            font-size: 5.5em; font-weight: normal; margin: 25px 0; padding: 15px;
-            border: 1px solid #ddd; border-radius: 5px; min-height: 100px;
-            display: flex; justify-content: center; align-items: center;
-            background-color: #f9f9f9; letter-spacing: 0.1em; user-select: none;
+            font-size: clamp(3rem, 16vw, 5rem); font-weight: 500; margin: 22px 0; padding: 18px;
+            border: 1px solid var(--border); border-radius: var(--radius); min-height: 120px;
+            display: flex; justify-content: center; align-items: center; gap: 0.08em;
+            background: var(--surface-2); letter-spacing: 0.05em; user-select: none;
         }
         .card-char { display: inline-block; }
         .suit-h, .suit-d { color: var(--color-card-red); }
         .suit-s, .suit-c { color: var(--color-card-black); }
 
+        #action-buttons { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
         #action-buttons button {
-            padding: 15px 30px; font-size: 1.2em; margin: 0 15px; cursor: pointer;
-            border: none; border-radius: 5px; color: white;
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1 1 160px; max-width: 220px;
+            padding: 16px 28px; font-size: 1.15rem; font-weight: 700; cursor: pointer;
+            border: none; border-radius: var(--radius); color: #fff;
+            transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+            box-shadow: var(--shadow-sm);
         }
-        #action-buttons button:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        #action-buttons button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
-        #raise-button { background-color: var(--color-correct); }
-        #raise-button:hover:not(:disabled) { background-color: #218838; }
-        #fold-button { background-color: var(--color-incorrect); }
-        #fold-button:hover:not(:disabled) { background-color: #c82333; }
+        #action-buttons button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow); }
+        #action-buttons button:active:not(:disabled) { transform: translateY(0); }
+        #action-buttons button:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+        #raise-button { background: var(--color-correct); }
+        #raise-button:hover:not(:disabled) { background: #1a8743; }
+        #fold-button { background: var(--color-incorrect); }
+        #fold-button:hover:not(:disabled) { background: #c92f2f; }
 
         #feedback {
-            margin-top: 20px; font-size: 1.1em; font-weight: 500;
-            min-height: 25px; color: #555;
+            margin-top: 20px; font-size: 1.05rem; font-weight: 600;
+            min-height: 25px; color: var(--text-muted);
         }
         .correct { color: var(--color-correct); }
         .incorrect { color: var(--color-incorrect); }
         .warning { color: var(--color-warning); font-weight: bold;}
 
         #session-stats {
-            margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;
-            font-size: 0.95em; color: #666;
+            margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+            font-size: 0.95rem; color: var(--text-muted);
         }
-        #session-stats span { font-weight: bold; margin: 0 8px; }
+        #session-stats span { font-weight: 700; margin: 0 6px; }
         #stats-correct { color: var(--color-correct); }
         #stats-incorrect { color: var(--color-incorrect); }
-        #stats-percentage { color: #333; }
+        #stats-percentage { color: var(--text); }
 
-        #import-section {
-            margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; text-align: left;
+        #range-source {
+            margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
         }
-        #import-section h2 {
-            font-weight: 400; font-size: 1.1em; color: #1d2129;
-            margin-bottom: 10px; text-align: center;
+        #range-source label { font-weight: 600; color: var(--text); }
+        #range-source select {
+            padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+            font-size: 1rem; background: var(--surface); color: var(--text);
+            min-height: 44px; cursor: pointer; max-width: 100%;
         }
-        #import-section textarea {
-            width: 96%; min-height: 70px; margin: 10px auto; padding: 8px;
-            border: 1px solid #ccc; border-radius: 4px; font-family: monospace;
-            font-size: 0.9em; resize: vertical; display: block;
+        #rangeSourceFeedback {
+            flex-basis: 100%; text-align: center; font-size: 0.85rem;
+            color: var(--text-muted); margin-top: 2px; min-height: 1.1em;
         }
-        #import-section button {
-            padding: 8px 15px; margin: 5px auto; border: none; border-radius: 4px;
-            background-color: #007bff; color: white; cursor: pointer;
-            font-size: 0.9em; display: block;
-        }
-        #import-section button:hover { background-color: #0056b3; }
-        #importFeedback { font-size: 0.85em; margin-top: 10px; min-height: 1.2em; text-align: center; }
-        #importFeedback.success { color: var(--color-correct); }
-        #importFeedback.error { color: var(--color-incorrect); }
 
         #grid-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.75); display: none;
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            background: rgba(15, 20, 30, 0.72); display: none;
             justify-content: center; align-items: center; z-index: 1000; cursor: pointer;
+            padding: 12px; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
         }
         #grid-container {
-            background-color: #fff; padding: 25px; border-radius: 5px;
-            cursor: default; max-width: 95%; overflow: auto; max-height: 90vh;
+            background: var(--surface); padding: 20px; border-radius: var(--radius-lg);
+            cursor: default; width: 100%; max-width: 560px; overflow: auto; max-height: 92vh;
+            box-shadow: var(--shadow-lg);
         }
         .hand-matrix {
-            border-collapse: collapse; margin: 15px auto; font-size: 0.8em;
-            user-select: none; border: 1px solid #ccc;
+            border-collapse: collapse; margin: 12px auto 4px; width: 100%;
+            table-layout: fixed; font-size: clamp(8px, 2.4vw, 12px);
+            user-select: none; border-radius: var(--radius-sm); overflow: hidden;
         }
         .hand-matrix td {
-            border: 1px solid #ddd; padding: 4px 7px; text-align: center;
-            min-width: 40px; position: relative; transition: background 0.1s ease;
+            border: 1px solid rgba(255,255,255,0.7); text-align: center;
+            width: calc(100% / 13); height: 0; padding: 0 0 calc(100% / 13);
+            position: relative; transition: background 0.1s ease;
             background-color: var(--color-fold-bg);
         }
+        /* Label colour adapts to the tile fill (set per-cell in JS) so it stays legible
+           on both the light fold tiles and the saturated in-range tiles, with only a
+           soft drop-shadow — no white outline/glow. */
         .hand-matrix td span {
-            display: block; font-weight: 500; color: #1a1a1a;
-            text-shadow: 0 0 3px #fff, 0 0 2px #fff, 0 0 1px #fff;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-weight: 600; letter-spacing: 0.02em; white-space: nowrap;
+            color: #2b2b2b;
         }
-        .hand-matrix .pair span { font-weight: bold; }
+        .hand-matrix td.fill-full span,
+        .hand-matrix td.fill-high span {
+            color: #ffffff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+        }
+        .hand-matrix td.fill-low span {
+            color: #2b2b2b; text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+        }
+        .hand-matrix .pair span { font-weight: 800; }
 
         #training-position-header {
-            text-align: center; margin: 5px 0 4px 0;
-            font-weight: bold; font-size: 1.1em; color: #1d2129;
+            text-align: center; margin: 6px 0 4px 0;
+            font-weight: 700; font-size: 1.05rem; color: var(--text);
         }
-        #grid-legend { text-align: center; margin: 0 0 12px 0; font-size: 0.85em; color: #555; }
+        #grid-legend { text-align: center; margin: 0 0 8px 0; font-size: 0.82rem; color: var(--text-muted); }
 
         .hand-matrix .highlight-error {
-            outline: 4px solid var(--color-incorrect) !important; outline-offset: -2px;
-            filter: brightness(1.1); z-index: 1;
+            outline: 3px solid var(--color-incorrect) !important; outline-offset: -2px;
+            filter: brightness(1.08); z-index: 2;
         }
 
         [data-tooltip] { position: relative; }
         [data-tooltip]:hover::after {
-            content: attr(data-tooltip); position: absolute; bottom: 105%; left: 50%;
-            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.8); color: white;
-            padding: 4px 8px; border-radius: 4px; font-size: 0.9em; white-space: nowrap;
+            content: attr(data-tooltip); position: absolute; bottom: 110%; left: 50%;
+            transform: translateX(-50%); background: rgba(20,26,38,0.92); color: #fff;
+            padding: 5px 9px; border-radius: 6px; font-size: 0.82rem; white-space: nowrap;
             z-index: 10; pointer-events: none; opacity: 0; visibility: hidden;
             transition: opacity 0.2s, visibility 0.2s;
         }
         [data-tooltip]:hover::after { opacity: 1; visibility: visible; }
+
+        @media (hover: none) {
+            [data-tooltip]:hover::after { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 0 10px 32px; }
+            #trainer-container { padding: 18px 14px; }
+            #action-buttons button { flex: 1 1 100%; max-width: none; }
+            #grid-container { padding: 14px; }
+        }
     </style>
+    <script>
+      /* Apply saved/OS theme before paint to avoid a flash of the wrong theme. */
+      (function () {
+        try {
+          var t = localStorage.getItem('pokertrainer_theme');
+          if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
 </head>
 <body>
 
-<div class="top-nav">
-    <a href="index.html">Range Selector</a>
-    <a href="RFITrainer.html">RFI Trainer</a>
-</div>
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
 
 <div id="trainer-container">
     <h1>RFI Range Trainer</h1>
@@ -205,9 +291,8 @@
         <div id="position-selector">
             <label for="position">Train for Position:</label>
             <select id="position">
-                <option value="ep1">EP1 (UTG)</option>
-                <option value="ep2">EP2 (UTG+1)</option>
-                <option value="ep3">EP3 (LJ-1)</option>
+                <option value="utg">UTG (Under the Gun)</option>
+                <option value="utg1">UTG+1</option>
                 <option value="lj" selected>LJ (Lojack)</option>
                 <option value="hj">HJ (Hijack)</option>
                 <option value="co">CO (Cutoff)</option>
@@ -249,12 +334,14 @@
         (<span id="stats-percentage">N/A</span>)
     </div>
 
-    <!-- Import Section -->
-    <div id="import-section">
-        <h2>Import Custom Range</h2>
-        <textarea id="configArea" placeholder="Paste configuration string from the Range Selector..."></textarea>
-        <button id="importBtn">Import and Use This Range</button>
-        <div id="importFeedback"></div>
+    <!-- Range Source -->
+    <div id="range-source">
+        <label for="rangeSelect">Training range:</label>
+        <select id="rangeSelect">
+            <option value="__default__">Built-in default</option>
+        </select>
+        <div id="rangeSourceFeedback"></div>
+        <a href="index.html" class="change-ranges-link">Change Ranges →</a>
     </div>
 </div>
 
@@ -284,9 +371,8 @@
         const feedbackDiv = document.getElementById('feedback');
         const gridOverlay = document.getElementById('grid-overlay');
         const handMatrixBody = document.getElementById('handMatrix').querySelector('tbody');
-        const configArea = document.getElementById('configArea');
-        const importBtn = document.getElementById('importBtn');
-        const importFeedback = document.getElementById('importFeedback');
+        const rangeSelect = document.getElementById('rangeSelect');
+        const rangeSourceFeedback = document.getElementById('rangeSourceFeedback');
         const errorHandNotationSpan = document.getElementById('error-hand-notation');
         const errorPositionSpan = document.getElementById('error-position');
         const trainingPositionNameSpan = document.getElementById('training-position-name');
@@ -299,8 +385,8 @@
         const SUITS_UNICODE = { h: '♥', d: '♦', c: '♣', s: '♠' };
         const SUIT_CLASSES = { h: 'suit-h', d: 'suit-d', c: 'suit-c', s: 'suit-s' };
         const ALL_SUITS = ['h', 'd', 'c', 's'];
-        const POSITION_ORDER = ['ep1', 'ep2', 'ep3', 'lj', 'hj', 'co', 'btn', 'sb'];
-        const POSITION_NAMES = { ep1:'EP1', ep2:'EP2', ep3:'EP3', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB' };
+        const POSITION_ORDER = ['utg', 'utg1', 'lj', 'hj', 'co', 'btn', 'sb'];
+        const POSITION_NAMES = { utg:'UTG', utg1:'UTG+1', lj:'LJ', hj:'HJ', co:'CO', btn:'BTN', sb:'SB' };
         const NUM_HANDS = 169;
 
         let currentHandNotation = null;
@@ -315,9 +401,57 @@
         let sessionIncorrect = 0;
         let pendingWarning = '';
 
-        // Legacy single-matrix default (earliest opener per hand). Converted into
-        // independent per-position frequency matrices below.
-        const DEFAULT_RANGE_STRING = "lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,lj,co,co,btn,btn,lj,lj,lj,lj,lj,lj,hj,co,co,co,btn,btn,btn,lj,lj,lj,lj,lj,hj,co,co,btn,btn,btn,fold,fold,lj,hj,hj,co,lj,lj,co,btn,btn,fold,fold,fold,fold,hj,co,btn,btn,btn,lj,co,btn,btn,fold,fold,fold,fold,co,btn,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,lj,btn,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,hj,btn,fold,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,co,btn,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,btn,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,fold,co";
+        // Per-position default opening ranges, written in standard hand notation and
+        // expanded into 169-cell frequency matrices below. Unlike a cumulative model,
+        // each position is independent — so SB can correctly be tighter than BTN in
+        // spots (e.g. SB opens A5o+ and no 98o, BTN opens A2o+ and 98o).
+        const DEFAULT_RANGE_TOKENS = {
+            utg:  "77+, A2s-A5s, ATs+, KJs+, QJs, JTs, T9s, AQo+",
+            utg1: "66+, A2s+, KTs+, QTs+, J9s+, T9s, 98s, AJo+, KQo",
+            lj:   "55+, A2s+, K9s+, Q9s+, J9s+, T9s, 98s, 87s, 76s, ATo+, KJo+, QJo",
+            hj:   "44+, A2s+, K7s+, Q9s+, J9s+, T8s+, 98s, 87s, 76s, 65s, 54s, ATo+, KTo+, QTo+, JTo",
+            co:   "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 97s+, 87s, 76s, 65s, 54s, A8o+, KTo+, QTo+, JTo",
+            btn:  "22+, A2s+, K2s+, Q2s+, J5s+, T6s+, 96s+, 85s+, 75s+, 64s+, 53s+, 43s, A2o+, K9o+, Q9o+, J9o+, T9o, 98o",
+            sb:   "22+, A2s+, K2s+, Q4s+, J7s+, T7s+, 97s+, 86s+, 75s+, 64s+, 54s, A5o+, K9o+, Q9o+, J9o+, T9o"
+        };
+
+        // Expand standard range notation into an array of hand notations.
+        // Supports: pairs ("77", "77+"), suited/offsuit singles ("QJs", "KQo"),
+        // "+" with a fixed high card and rising kicker ("ATs+", "97s+", "A5o+"),
+        // and same-high dash ranges ("A2s-A5s").
+        function expandRangeToken(tok) {
+            tok = tok.trim();
+            if (!tok) return [];
+            if (tok.indexOf('-') !== -1) {
+                const parts = tok.split('-');
+                const a = parts[0].trim(), b = parts[1].trim();
+                const hi = a[0], suit = a[2];
+                let lo1 = RANKS.indexOf(a[1]), lo2 = RANKS.indexOf(b[1]);
+                if (lo1 > lo2) { const t = lo1; lo1 = lo2; lo2 = t; }
+                const out = [];
+                for (let i = lo1; i <= lo2; i++) out.push(hi + RANKS[i] + suit);
+                return out;
+            }
+            const plus = tok.endsWith('+');
+            const t = plus ? tok.slice(0, -1) : tok;
+            if (t.length === 2 && t[0] === t[1]) { // pair
+                if (!plus) return [t];
+                const out = [];
+                for (let i = 0; i <= RANKS.indexOf(t[0]); i++) out.push(RANKS[i] + RANKS[i]);
+                return out;
+            }
+            const r1 = t[0], r2 = t[1], suit = t[2]; // 's' or 'o'
+            if (!plus) return [r1 + r2 + suit];
+            const hiIdx = RANKS.indexOf(r1), loIdx = RANKS.indexOf(r2);
+            const out = [];
+            for (let i = loIdx; i > hiIdx; i--) out.push(r1 + RANKS[i] + suit);
+            return out;
+        }
+        function parseRangeTokens(str) {
+            const set = new Set();
+            (str || '').split(',').forEach(tok => expandRangeToken(tok).forEach(n => set.add(n)));
+            return set;
+        }
 
         // --- Utility ---
         function getRandomElement(arr) {
@@ -361,15 +495,15 @@
         }
 
         function buildDefaultRanges() {
-            const classes = DEFAULT_RANGE_STRING.split(',');
+            const notations = generateHandNotations();
+            const idxOf = {};
+            notations.forEach((n, i) => { idxOf[n] = i; });
             const result = {};
-            POSITION_ORDER.forEach(p => { result[p] = new Array(NUM_HANDS).fill(0); });
-            classes.forEach((cls, i) => {
-                const earliest = POSITION_ORDER.indexOf(cls.trim());
-                if (earliest === -1) return;
-                for (let pi = earliest; pi < POSITION_ORDER.length; pi++) {
-                    result[POSITION_ORDER[pi]][i] = 100;
-                }
+            POSITION_ORDER.forEach(p => {
+                result[p] = new Array(NUM_HANDS).fill(0);
+                parseRangeTokens(DEFAULT_RANGE_TOKENS[p]).forEach(n => {
+                    if (idxOf[n] !== undefined) result[p][idxOf[n]] = 100;
+                });
             });
             return result;
         }
@@ -394,56 +528,67 @@
             }
         }
 
-        // Accepts v2 JSON ({v:2, ranges:{pos:[169]}}) or a legacy v1 cumulative string.
-        function applyRangeConfig(configString) {
-            importFeedback.textContent = '';
-            importFeedback.className = '';
-            const raw = (configString || '').trim();
-            if (!raw) { importFeedback.textContent = 'Import failed: empty configuration.'; importFeedback.className = 'error'; return false; }
+        // --- Named range saves (created in the Range Selector, shared via localStorage) ---
+        const RFI_SAVES_KEY = 'pokertrainer_rfiSaves_v1';
+        const RFI_SELECTED_KEY = 'pokertrainer_trainerRange_v1';
+        const DEFAULT_VALUE = '__default__';
 
-            let next = null;
-
-            let parsed = null;
-            try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
-
-            if (parsed && parsed.ranges) {
-                next = buildDefaultRanges();
-                let found = 0;
-                POSITION_ORDER.forEach(p => {
-                    const arr = parsed.ranges[p];
-                    if (Array.isArray(arr) && arr.length === NUM_HANDS) { next[p] = arr.map(clampPct); found++; }
-                });
-                if (found === 0) { importFeedback.textContent = 'Import failed: no valid position matrices found.'; importFeedback.className = 'error'; return false; }
-            } else {
-                // Legacy v1: 169 comma-separated class names (cumulative).
-                const classes = raw.split(',').map(s => s.trim());
-                if (classes.length !== NUM_HANDS) {
-                    importFeedback.textContent = `Import failed: unrecognized format (expected v2 JSON or ${NUM_HANDS} legacy values).`;
-                    importFeedback.className = 'error';
-                    return false;
-                }
-                next = {};
-                POSITION_ORDER.forEach(p => { next[p] = new Array(NUM_HANDS).fill(0); });
-                let invalid = null;
-                classes.forEach((cls, i) => {
-                    if (cls === 'fold') return;
-                    const earliest = POSITION_ORDER.indexOf(cls);
-                    if (earliest === -1) { invalid = cls; return; }
-                    for (let pi = earliest; pi < POSITION_ORDER.length; pi++) next[POSITION_ORDER[pi]][i] = 100;
-                });
-                if (invalid) { importFeedback.textContent = `Import failed: invalid position code "${invalid}".`; importFeedback.className = 'error'; return false; }
+        function loadRfiSaves() {
+            try { const arr = JSON.parse(localStorage.getItem(RFI_SAVES_KEY)); return Array.isArray(arr) ? arr : []; }
+            catch (e) { return []; }
+        }
+        function sanitizeRanges(src) {
+            const out = {};
+            POSITION_ORDER.forEach(p => {
+                const arr = src && src[p];
+                out[p] = (Array.isArray(arr) && arr.length === NUM_HANDS) ? arr.map(clampPct) : new Array(NUM_HANDS).fill(0);
+            });
+            return out;
+        }
+        // Rebuild the dropdown from the current saves, preserving the active selection.
+        function populateRangeSelect() {
+            const saves = loadRfiSaves().slice().sort((a, b) => b.savedAt - a.savedAt);
+            // Prefer the live selection; fall back to the persisted one (e.g. on first load,
+            // where the dropdown still only holds the default option).
+            const prev = (rangeSelect.value && rangeSelect.value !== DEFAULT_VALUE)
+                ? rangeSelect.value
+                : (localStorage.getItem(RFI_SELECTED_KEY) || DEFAULT_VALUE);
+            rangeSelect.innerHTML = '';
+            const defOpt = document.createElement('option');
+            defOpt.value = DEFAULT_VALUE; defOpt.textContent = 'Built-in default';
+            rangeSelect.appendChild(defOpt);
+            saves.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = 'save:' + s.name;
+                opt.textContent = s.name;
+                rangeSelect.appendChild(opt);
+            });
+            const exists = Array.from(rangeSelect.options).some(o => o.value === prev);
+            rangeSelect.value = exists ? prev : DEFAULT_VALUE;
+        }
+        function rangesForSelection(value) {
+            if (value && value.indexOf('save:') === 0) {
+                const name = value.slice(5);
+                const save = loadRfiSaves().find(s => s.name === name);
+                if (save) return sanitizeRanges(save.ranges);
             }
-
-            ranges = next;
-            importFeedback.textContent = 'Range applied successfully!';
-            importFeedback.className = 'success';
-            setTimeout(() => { importFeedback.textContent = ''; importFeedback.className = ''; }, 3000);
+            return buildDefaultRanges();
+        }
+        function selectionLabel(value) {
+            return value === DEFAULT_VALUE ? 'Built-in default' : value.slice(5);
+        }
+        // Apply the dropdown's current selection as the active training range.
+        function applySelectedRange(opts) {
+            opts = opts || {};
+            const value = rangeSelect.value;
+            ranges = rangesForSelection(value);
+            try { localStorage.setItem(RFI_SELECTED_KEY, value); } catch (e) {}
+            rangeSourceFeedback.textContent = `Using: ${selectionLabel(value)}`;
 
             styleGridForCurrentPosition();
             positionHasHands = checkPositionHasHands(currentPosition);
             if (!positionHasHands) { disableButtons(); handDisplay.textContent = '--'; }
-            else { displayNewHand(); }
-            return true;
+            else if (!opts.silent) { displayNewHand(); }
         }
 
         // --- Frequency helpers ---
@@ -567,6 +712,9 @@
                 if (f <= 0) cell.style.background = fold;
                 else if (f >= 100) cell.style.background = bg;
                 else cell.style.background = `linear-gradient(to top, ${bg} ${f}%, ${fold} ${f}%)`;
+                // Pick the label colour by how much of the tile is filled (see CSS).
+                cell.classList.remove('fill-none', 'fill-low', 'fill-high', 'fill-full');
+                cell.classList.add(f <= 0 ? 'fill-none' : f >= 100 ? 'fill-full' : f >= 50 ? 'fill-high' : 'fill-low');
                 const label = f <= 0 ? 'Fold' : (f >= 100 ? 'Raise' : `${f}% raise`);
                 cell.dataset.tooltip = `${hand} (${label})`;
             });
@@ -639,11 +787,12 @@
         raiseButton.addEventListener('click', () => checkAnswer('raise'));
         foldButton.addEventListener('click', () => checkAnswer('fold'));
 
-        importBtn.addEventListener('click', () => {
-            const configString = configArea.value;
-            if (configString) { if (applyRangeConfig(configString)) configArea.value = ''; }
-            else { importFeedback.textContent = 'Textarea is empty. Paste a configuration string.'; importFeedback.className = 'error'; }
-        });
+        rangeSelect.addEventListener('change', () => applySelectedRange());
+        // Refresh the list when the dropdown is opened or the tab regains focus, so
+        // ranges saved on the Range Selector show up without a manual reload.
+        rangeSelect.addEventListener('focus', populateRangeSelect);
+        window.addEventListener('focus', populateRangeSelect);
+        window.addEventListener('storage', (e) => { if (e.key === RFI_SAVES_KEY) populateRangeSelect(); });
 
         gridOverlay.addEventListener('click', (e) => { if (e.target === gridOverlay) hideGridAndContinue(); });
 
@@ -660,7 +809,9 @@
         allHandsNotations = generateHandNotations();
         allHandsNotations.forEach((h, i) => { handIndex[h] = i; });
         buildGridOverlay();
-        ranges = buildDefaultRanges();
+        populateRangeSelect();
+        ranges = rangesForSelection(rangeSelect.value);
+        rangeSourceFeedback.textContent = `Using: ${selectionLabel(rangeSelect.value)}`;
         styleGridForCurrentPosition();
 
         currentPosition = positionSelect.value;
@@ -678,6 +829,27 @@
             disableButtons();
         }
     });
+</script>
+
+<script>
+  /* Dark-mode toggle. Theme is already applied by the head script; this just
+     wires the button, swaps the icon, and persists the choice. */
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    function refresh() {
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.textContent = dark ? '☀️' : '🌙';
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    }
+    refresh();
+    btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('pokertrainer_theme', next); } catch (e) {}
+      refresh();
+    });
+  })();
 </script>
 </body>
 </html>
